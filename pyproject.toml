@@ -1,0 +1,42 @@
+[project]
+name = "box"
+version = "0.1.0"
+description = "Automatic packaging and installers of your GUI with PyApp"
+readme = "README.md"
+authors = [
+    { name = "Reto Trappitsch", email = "reto@galactic-forensics.space" }
+]
+dependencies = [
+    "click>=8.1.7",
+]
+requires-python = ">= 3.8"
+license = { text = "MIT" }
+
+[project.scripts]
+box = "box.cli:cli"
+
+[project.urls]
+Homepage = "https://github.com/trappitsc/box"
+Changelog = "https://github.com/trappitsc/box/releases"
+Issues = "https://github.com/trappitsc/box/issues"
+CI = "https://github.com/trappitsc/box/actions"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.rye]
+managed = true
+dev-dependencies = [
+    "pytest>=8.0.0",
+    "ruff>=0.1.15",
+]
+
+[tool.rye.scripts]
+test = "pytest ."
+
+[tool.hatch.metadata]
+allow-direct-references = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/box"]
