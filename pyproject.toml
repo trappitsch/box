@@ -8,6 +8,7 @@ authors = [
 ]
 dependencies = [
     "click>=8.1.7",
+    "tomlkit>=0.12.3",
 ]
 requires-python = ">= 3.8"
 license = { text = "MIT" }
@@ -30,6 +31,8 @@ managed = true
 dev-dependencies = [
     "pytest>=8.0.0",
     "ruff>=0.1.15",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.12.0",
 ]
 
 [tool.rye.scripts]
@@ -40,3 +43,10 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/box"]
+
+[tool.pytest]
+addopts = "--cov=box -v"
+testpaths = "tests"
+
+[tool.box]
+builder = "rye"
