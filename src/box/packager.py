@@ -62,8 +62,6 @@ class PackageApp:
 
         Download and or extraction are skipped if folder already exists.
 
-        # todo: implement clean calls
-
         :raises: `click.ClickException` if no pyapp source code is found
         """
         tar_name = Path("pyapp-source.tar.gz")
@@ -157,7 +155,8 @@ class PackageApp:
         os.environ["PYAPP_PROJECT_NAME"] = self._config.name_pkg
         os.environ["PYAPP_PROJECT_VERSION"] = self._config.version
         os.environ["PYAPP_PROJECT_PATH"] = str(dist_file)
-        os.environ["PYAPP_EXEC_SPEC"] = f"{self._config.name_pkg}:run"
+        # fixme: this whole thing is a hack. need to find better ways what to execute. see pyapp documentation
+        os.environ["PYAPP_EXEC_SPEC"] = self._config.app_entry
 
     # STATIC METHODS #
     @staticmethod

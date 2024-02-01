@@ -5,6 +5,8 @@ import shutil
 
 import click
 
+# fixme cleaner does not yet check if we have a box project folder!
+
 
 class CleanProject:
     """Cleaning class for the project folder."""

@@ -9,6 +9,7 @@ import click
 import pytest
 
 from box.packager import PackageApp, PYAPP_SOURCE
+from box.config import PyProjectParser
 import box.utils as ut
 
 # HELPER FUNCTIONS #
@@ -206,6 +207,9 @@ def test_package_pyapp_cargo_and_move(rye_project, mocker):
 @pytest.mark.long
 def test_set_env(rye_project):
     """Set environment for `PyApp` packaging."""
+    config = PyProjectParser()
+    exec_spec = config.app_entry
+
     packager = PackageApp()
     packager.build()
     packager._set_env()
@@ -216,7 +220,7 @@ def test_set_env(rye_project):
     assert os.environ["PYAPP_PROJECT_NAME"] == package_name
     assert os.environ["PYAPP_PROJECT_VERSION"] == "0.1.0"
     assert os.environ["PYAPP_PROJECT_PATH"] == str(dist_file)
-    assert os.environ["PYAPP_EXEC_SPEC"] == f"{package_name}:run"
+    assert os.environ["PYAPP_EXEC_SPEC"] == exec_spec
 
 
 def test_set_env_delete_existing(rye_project, mocker):

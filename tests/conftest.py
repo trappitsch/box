@@ -27,6 +27,7 @@ def rye_project(tmp_path):
     current_dir = Path().absolute()
     os.chdir(tmp_path)
     pyproject_writer("builder", "rye")
+    pyproject_writer("app_entry", "pkg:run")
 
     yield tmp_path
 
