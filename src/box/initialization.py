@@ -7,7 +7,11 @@ from box.config import PyProjectParser, pyproject_writer
 
 
 class InitializeProject:
-    """Initialize a new project."""
+    """Initialize a new project.
+
+    # todo: allow for custom build command, custom dist folder
+    # todo: prompts for: builder, dist folder, app entry when running `box init`
+    """
 
     def __init__(self):
         """Initialize the InitializeProject class."""
