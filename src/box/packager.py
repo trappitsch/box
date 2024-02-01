@@ -46,9 +46,11 @@ class PackageApp:
 
     def package(self):
         """Package the project with PyApp."""
+        click.echo("Hold on, packaging the project with PyApp...")
         self._get_pyapp()
         self._set_env()
         self._package_pyapp()
+        click.echo("Project packaged with PyApp.")
 
     def _build_rye(self):
         """Build the project with rye."""
@@ -126,7 +128,6 @@ class PackageApp:
             ["cargo", "build", "--release"],
             cwd=self._pyapp_path,
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
         )
 
         # create release folder if it does not exist
