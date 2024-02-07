@@ -13,7 +13,11 @@ class PyProjectParser:
         """Initialize the PyProjectParser."""
         with open("pyproject.toml", "rb") as f:
             self._pyproject = tomlkit.load(f)
-        self._project = self._pyproject["project"]
+
+        try:
+            self._project = self._pyproject["project"]
+        except KeyError as err:  # re-raise error with further error message
+            raise KeyError("Not a valid pyproject.toml file") from err
 
     @property
     def app_entry(self):

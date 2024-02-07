@@ -20,8 +20,10 @@ def test_pyproject_parser_file_not_found(tmp_path_chdir):
 def test_pyproject_parser_file_invalid(tmp_path_chdir):
     """Test the pyproject parser for an invalid `pyproject.toml` file."""
     tmp_path_chdir.joinpath("pyproject.toml").write_text("")
-    with pytest.raises(KeyError):
+    with pytest.raises(KeyError) as err:
         PyProjectParser()
+
+    assert "Not a valid pyproject.toml file" in err.value.args[0]
 
 
 def test_pyproject_parser_basic_project(tmp_path_chdir):
