@@ -107,6 +107,21 @@ def test_clean_multiple_folders(rye_project):
     assert result.output.__contains__("Folder(s) dist, target cleaned.")
 
 
+@pytest.mark.parametrize("init_folder", [True, False])
+def test_clean_no_pyproject(tmp_path_chdir, rye_project_no_box, init_folder):
+    """Display a message that not in a box folder and do nothing."""
+    proj_folder = rye_project_no_box if init_folder else tmp_path_chdir
+    dist_dir = proj_folder.joinpath("dist")
+    dist_dir.mkdir()
+
+    runner = CliRunner()
+    result = runner.invoke(cli, ["clean"])
+
+    assert dist_dir.exists()
+    assert result.exit_code == 0
+    assert "Not a box project." in result.output
+
+
 @pytest.mark.parametrize(
     "option", ["-p", "--pyapp-folder", "-s", "--source-pyapp", "-ps"]
 )

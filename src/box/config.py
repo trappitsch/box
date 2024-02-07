@@ -25,6 +25,15 @@ class PyProjectParser:
         return self._pyproject["tool"]["box"]["builder"]
 
     @property
+    def is_box_project(self):
+        """Return if this folder is a box project or not."""
+        try:
+            _ = self._pyproject["tool"]["box"]
+            return True
+        except KeyError:
+            return False
+
+    @property
     def name(self) -> str:
         """Return the name of the project."""
         return self._project["name"]

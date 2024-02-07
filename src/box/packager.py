@@ -126,6 +126,7 @@ class PackageApp:
             ["cargo", "build", "--release"],
             cwd=self._pyapp_path,
             stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
         )
 
         # create release folder if it does not exist
@@ -155,7 +156,7 @@ class PackageApp:
         os.environ["PYAPP_PROJECT_NAME"] = self._config.name_pkg
         os.environ["PYAPP_PROJECT_VERSION"] = self._config.version
         os.environ["PYAPP_PROJECT_PATH"] = str(dist_file)
-        # fixme: this whole thing is a hack. need to find better ways what to execute. see pyapp documentation
+        # fixme: this whole thing is a hack. give options for entry, see PyApp docs
         os.environ["PYAPP_EXEC_SPEC"] = self._config.app_entry
 
     # STATIC METHODS #

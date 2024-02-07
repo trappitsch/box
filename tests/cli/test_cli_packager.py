@@ -7,8 +7,8 @@ from click.testing import CliRunner
 from box.cli import cli
 
 
-def test_initialize_project(rye_project, mocker):
-    """Initialize a new project."""
+def test_package_project(rye_project, mocker):
+    """Package an initialized project."""
     # mock subprocess
     sp_devnull_mock = mocker.patch("subprocess.DEVNULL")
     sp_run_mock = mocker.patch("subprocess.run")
@@ -45,4 +45,5 @@ def test_initialize_project(rye_project, mocker):
         ["cargo", "build", "--release"],
         cwd=pyapp_dir,
         stdout=sp_devnull_mock,
+        stderr=sp_devnull_mock,
     )
