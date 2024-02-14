@@ -13,8 +13,13 @@ class InitializeProject:
     # todo: prompts for: builder, dist folder, app entry when running `box init`
     """
 
-    def __init__(self):
-        """Initialize the InitializeProject class."""
+    def __init__(self, quiet=False):
+        """Initialize the InitializeProject class.
+
+        :param quiet: bool, flag to suppress output
+        """
+        self._quiet = quiet
+
         self.pyproj = None
 
         # set box variables
@@ -24,7 +29,8 @@ class InitializeProject:
 
     def initialize(self):
         """Initialize a new project."""
-        click.echo("Project initialized.")
+        if not self._quiet:
+            click.echo("Project initialized.")
 
     def _set_builder(self):
         """Set the builder for the project."""

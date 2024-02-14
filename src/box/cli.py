@@ -13,9 +13,21 @@ def cli():
 
 
 @cli.command(name="init")
-def init():
+@click.option(
+    "-q",
+    "--quiet",
+    default=False,
+    is_flag=True,
+    help="Quiet mode: don't ask questions and initialize with default values.",
+)
+def init(quiet):
     """Initialize a new project in the current folder."""
-    my_init = InitializeProject()
+    my_init = InitializeProject(quiet=quiet)
+
+    # if not quiet, prompt for values
+    if not quiet:
+        name_default = my_init.pyproj.name
+        name = click.prompt("Enter project name", default=name_default)
     my_init.initialize()
 
 
