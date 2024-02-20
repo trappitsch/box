@@ -148,7 +148,7 @@ class PackageApp:
         # find the tar.gz file in dist folder with correct version number
         dist_file = None
         for file in self._dist_path.iterdir():
-            if file.name.__contains__(self._config.version):
+            if self._config.version in file.name and file.suffix == ".tar.gz":
                 dist_file = file
                 break
 
