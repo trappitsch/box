@@ -10,15 +10,17 @@ from box.initialization import InitializeProject
 
 def test_app_entry(rye_project):
     """Set the configuration in `pyproject.toml` to rye."""
-    InitializeProject()
+    init = InitializeProject(quiet=True)
+    init.initialize()
 
     pyproj = PyProjectParser()
-    assert pyproj.app_entry == f"{rye_project.name}:run"
+    assert pyproj.app_entry == f"{rye_project.name}:hello"
 
 
 def test_set_builder(rye_project):
     """Set the configuration in `pyproject.toml` to rye."""
-    InitializeProject()
+    init = InitializeProject(quiet=True)
+    init.initialize()
 
     pyproj = PyProjectParser()
 

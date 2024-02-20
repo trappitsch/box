@@ -1,7 +1,7 @@
 # Parse the pyproject.toml file
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Dict
 
 import tomlkit
 
@@ -21,6 +21,7 @@ class PyProjectParser:
 
     @property
     def app_entry(self):
+        """Return the box-saved app entry point."""
         return self._pyproject["tool"]["box"]["app_entry"]
 
     @property
@@ -48,19 +49,34 @@ class PyProjectParser:
         return self.name.replace("-", "_")
 
     @property
-    def version(self) -> str:
-        """Return the version of the project."""
-        return self._project["version"]
+    def possible_app_entries(self) -> Dict:
+        """Return [project.gui-scripts] or [project.scripts] entry if available.
 
-    @property
-    def scripts(self) -> dict:
-        """Return the scripts of the project."""
-        return self._project["scripts"]
+        If no entry is available, return None. If more than one entry available,
+        return a list of all entries.
+
+        :return: A list of possible entry points or None.
+        """
+        possible_entries = {}
+        try:
+            possible_entries["gui-scripts"] = self._project["gui-scripts"]
+        except KeyError:
+            pass
+        try:
+            possible_entries["scripts"] = self._project["scripts"]
+        except KeyError:
+            pass
+        return possible_entries
 
     @property
     def rye(self) -> dict:
         """Return the rye configuration of the project."""
         return self._pyproject["tool"]["rye"]
+
+    @property
+    def version(self) -> str:
+        """Return the version of the project."""
+        return self._project["version"]
 
 
 def pyproject_writer(key: str, value: Any) -> None:

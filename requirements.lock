@@ -9,4 +9,6 @@
 
 -e file:.
 click==8.1.7
+    # via box
 tomlkit==0.12.3
+    # via box
