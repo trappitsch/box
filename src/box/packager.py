@@ -24,7 +24,10 @@ class PackageApp:
 
         :param verbose: bool, flag to enable verbose mode.
         """
-        self._verbose = verbose
+        self.subp_kwargs = {}
+        if not verbose:
+            self.subp_kwargs["stdout"] = subprocess.DEVNULL
+
         # self._builder = box_config.builder
         self._dist_path = None
         self._pyapp_path = None
@@ -58,10 +61,7 @@ class PackageApp:
 
     def _build_rye(self):
         """Build the project with rye."""
-        if self._verbose:
-            subprocess.run(["rye", "build"])
-        else:
-            subprocess.run(["rye", "build"], stdout=subprocess.DEVNULL)
+        subprocess.run(["rye", "build"], **self.subp_kwargs)
 
         self._dist_path = Path.cwd().joinpath("dist")
 
@@ -130,17 +130,9 @@ class PackageApp:
         Environment must already be setup and PyApp source code must already be
         extracted in `self._pyapp_path`.
         """
-        if self._verbose:
-            subprocess.run(
-                ["cargo", "build", "--release"], cwd=self._pyapp_path
-            )
-        else:
-            subprocess.run(
-                ["cargo", "build", "--release"],
-                cwd=self._pyapp_path,
-                stdout=subprocess.DEVNULL,
-                # stderr=subprocess.DEVNULL,
-            )
+        subprocess.run(
+            ["cargo", "build", "--release"], cwd=self._pyapp_path, **self.subp_kwargs
+        )
 
         # create release folder if it does not exist
         self._release_dir.mkdir(exist_ok=True, parents=True)

@@ -7,6 +7,7 @@ import pytest
 
 from box.cli import cli
 
+
 @pytest.mark.parametrize("verbose", [True, False])
 def test_package_project(rye_project, mocker, verbose):
     """Package an initialized project, verbose and not."""
@@ -52,7 +53,5 @@ def test_package_project(rye_project, mocker, verbose):
     # assert system calls
     sp_run_mock.assert_any_call(["rye", "build"], **subp_kwargs)
     sp_run_mock.assert_called_with(
-        ["cargo", "build", "--release"],
-        cwd=pyapp_dir,
-        **subp_kwargs
+        ["cargo", "build", "--release"], cwd=pyapp_dir, **subp_kwargs
     )
