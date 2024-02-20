@@ -55,6 +55,7 @@ class PackageApp:
     def _build_rye(self):
         """Build the project with rye."""
         subprocess.run(["rye", "build"], stdout=subprocess.DEVNULL)
+
         self._dist_path = Path.cwd().joinpath("dist")
 
     def _get_pyapp(self):
@@ -145,10 +146,14 @@ class PackageApp:
             if var.startswith("PYAPP"):
                 del os.environ[var]
 
+        print("set env")
+        print(self._dist_path)
+        print(os.listdir(self._dist_path))
+
         # find the tar.gz file in dist folder with correct version number
         dist_file = None
         for file in self._dist_path.iterdir():
-            if file.name.__contains__(self._config.version):
+            if self._config.version in file.name and file.suffix == ".gz":
                 dist_file = file
                 break
 

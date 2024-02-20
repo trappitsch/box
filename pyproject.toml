@@ -36,7 +36,8 @@ dev-dependencies = [
 ]
 
 [tool.rye.scripts]
-test = "pytest ."
+test = "pytest"
+test_cov = "pytest --cov --cov-report xml"
 
 [tool.hatch.metadata]
 allow-direct-references = true
@@ -47,6 +48,11 @@ packages = ["src/box"]
 [tool.pytest]
 addopts = "--cov=box -v"
 testpaths = "tests"
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
 
 [tool.box]
 builder = "rye"

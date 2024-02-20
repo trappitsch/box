@@ -22,7 +22,7 @@ def test_package_project(rye_project, mocker):
     # create dist folder and package
     dist_folder = rye_project.joinpath("dist")
     dist_folder.mkdir()
-    dist_folder.joinpath(f"{rye_project.name.replace("-", "_")}-v0.1.0.tar.gz").touch()
+    dist_folder.joinpath(f"{rye_project.name.replace('-', '_')}-v0.1.0.tar.gz").touch()
 
     # create fake source and pyapp directory
     build_dir = rye_project.joinpath("build")

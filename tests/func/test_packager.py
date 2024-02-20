@@ -205,7 +205,7 @@ def test_package_pyapp_cargo_and_move(rye_project, mocker):
     assert exp_binary.read_text() == "not really a binary"
 
 
-@pytest.mark.long
+@pytest.mark.slow
 def test_set_env(rye_project):
     """Set environment for `PyApp` packaging."""
     config = PyProjectParser()
