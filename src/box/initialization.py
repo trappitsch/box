@@ -1,5 +1,6 @@
 # Initialize a new project
 
+from typing import List
 
 import click
 
@@ -13,22 +14,26 @@ class InitializeProject:
     # todo: prompts for: builder, dist folder, app entry when running `box init`
     """
 
-    def __init__(self, quiet=False):
+    def __init__(self, quiet: bool = False):
         """Initialize the InitializeProject class.
 
         :param quiet: bool, flag to suppress output
         """
         self._quiet = quiet
 
+        self.app_entry = None
         self.pyproj = None
 
-        # set box variables
         self._set_pyproj()
+
+    def initialize(self):
+        """Initialize a new project.
+
+        :param app_entry: the app entry point
+        """
         self._set_builder()
         self._set_app_entry()
 
-    def initialize(self):
-        """Initialize a new project."""
         if not self._quiet:
             click.echo("Project initialized.")
 
@@ -47,10 +52,48 @@ class InitializeProject:
 
     def _set_app_entry(self):
         """Set the app entry for the project."""
-        # todo: give options here
-        # todo: if no options given, check existing ones and if only one, then use it
-        pkg_name = self.pyproj.name_pkg
-        pyproject_writer("app_entry", f"{pkg_name}:run")
+        possible_entries = self.pyproj.possible_app_entries
+        # create a list of possible entries
+        options = []
+        sup_keys = possible_entries.keys()  # outside keys
+        for sup_key in sup_keys:
+            for _, value in possible_entries[sup_key].items():
+                options.append(value)
+
+        def query_app_entry(query_txt, opts: List) -> None:
+            """Query the user for a string prompt and set class variable."""
+
+            user_entry = click.prompt(query_txt, type=str)
+            try:
+                self.app_entry = opts[int(user_entry)]
+            except ValueError:
+                self.app_entry = user_entry
+            except IndexError:
+                click.echo("Invalid entry. Please try again.")
+                query_app_entry(query_txt, opts)
+
+        if self._quiet:  # all automatic
+            if options == []:  # choose package_name:run and raise warning
+                app_entry = f"{self.pyproj.name_pkg}:run"
+                click.echo(f"Warning: No app entry found, using {app_entry}:run.")
+            else:
+                self.app_entry = options[0]
+        else:
+            if options == []:
+                self.app_entry = click.prompt(
+                    "No app entry found. Please set an app entry for the project."
+                )
+            else:
+                query_text = (
+                    "Please type an app entry for the project or choose one "
+                    "from the list below:\n"
+                )
+                for it, option in enumerate(options):
+                    query_text += f"    [{it}] {option}\n"
+
+                query_app_entry(query_text, options)
+
+        pyproject_writer("app_entry", self.app_entry)
 
     def _set_pyproj(self):
         """Check if the pyproject.toml file is valid."""

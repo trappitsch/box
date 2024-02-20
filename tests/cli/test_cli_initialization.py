@@ -1,19 +1,20 @@
 # Test initialization of a new project with CLI
 
 from click.testing import CliRunner
+import pytest
 
-from box.cli import cli, init
+from box.cli import cli
 from box.config import PyProjectParser
 
 
-def test_initialize_project(rye_project_no_box):
+@pytest.mark.parametrize("app_entry", ["hello", "127\nhello"])
+def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     """Initialize a new project."""
     runner = CliRunner()
-    result = runner.invoke(cli, ["init"])
+    result = runner.invoke(cli, ["init"], input=app_entry)
 
     # accept default config for name config
-    name_result = runner.invoke(init, input="")
-    assert not name_result.exception
+    assert not result.exception
 
     # proper app exit
     assert result.exit_code == 0
@@ -21,10 +22,9 @@ def test_initialize_project(rye_project_no_box):
 
     # assert name is in pyproject.toml
     pyproj = PyProjectParser()
+    app_entry_exp = app_entry.split("\n")[-1]
+    assert pyproj.app_entry == app_entry_exp
     # todo: assert name is in pyproject.toml under [tool.box]
-    # todo: add a test where we modify the name
-    # todo: continue with further queries
-    # assert pyproj.name ==
 
 
 def test_initialize_project_quiet(rye_project_no_box):

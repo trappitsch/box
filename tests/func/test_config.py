@@ -35,12 +35,36 @@ def test_pyproject_parser_basic_project(tmp_path_chdir):
     assert parser.version == "0.1.0"
 
 
+def test_pyproject_parser_entry_point(tmp_path_chdir):
+    """Try to get an entry point for the app from project.scripts."""
+    TOML_FILE = (
+        TOML_BASIC_FILE
+        + """
+
+[project.scripts]
+run = "my-app.app:run"
+
+[project.gui-scripts]
+run = "my-app.gui:run"
+run2 = "my-app.gui:run2"
+"""
+    )
+
+    possible_entries_exp = {
+        "gui-scripts": {"run": "my-app.gui:run", "run2": "my-app.gui:run2"},
+        "scripts": {"run": "my-app.app:run"},
+    }
+
+    tmp_path_chdir.joinpath("pyproject.toml").write_text(TOML_FILE)
+    parser = PyProjectParser()
+    assert parser.possible_app_entries == possible_entries_exp
+
+
 def test_pyproject_parser_rye_project(rye_project):
     """Test the pyproject parser for a valid `rye` project."""
     parser = PyProjectParser()
     assert isinstance(parser.name, str)
     assert isinstance(parser.version, str)
-    assert isinstance(parser.scripts, dict)
     assert isinstance(parser.rye, dict)
 
 
