@@ -1,5 +1,7 @@
 # CLI tests for cleaning the project folder
 
+from typing import List
+
 from pathlib import Path
 
 from click.testing import CliRunner
@@ -8,7 +10,7 @@ import pytest
 from box.cli import cli
 
 
-def setup_folders(project_folder: Path) -> list[Path]:
+def setup_folders(project_folder: Path) -> List[Path]:
     """Setup `dist`, `build`, `target` folder.
 
     The `dist` and `target` folder get a file each. The `build` folder gets a

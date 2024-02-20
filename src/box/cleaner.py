@@ -88,7 +88,7 @@ class CleanProject:
         if self._cleaned_whole_project:
             click.echo("The whole project was cleaned.")
         else:
-            click.echo(f"Folder(s) {", ".join(self.folders_to_clean)} cleaned.")
+            click.echo(f"Folder(s) {', '.join(self.folders_to_clean)} cleaned.")
 
     def _clean_build_folder(self):
         """Clean the pyapp specific file/folder(s) in the build folder."""
