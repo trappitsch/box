@@ -1,0 +1,41 @@
+name: tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  MAIN_PYTHON_VERSION: "3.12"
+
+jobs:
+  # Build and test
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+    - name: Install the latest version of rye
+      uses: eifinger/setup-rye@v1
+    - name: Sync Rye
+      run: |
+        rye pin ${{ matrix.python-version }}
+        rye sync
+    - name: Run Tests for python interface
+      run: rye run test
+    - name: Run Lint on one python
+      if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION }}
+      run: rye lint
+    - name: Run Pytest with coverage
+      if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION }}
+      run: |
+        rye run test_cov
+    - name: Upload coverage reports to Codecov
+      if: ${{ matrix.python-version == env.MAIN_PYTHON_VERSION && github.repository_owner == 'trappitsch' }}
+      uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
