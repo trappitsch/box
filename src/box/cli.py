@@ -27,9 +27,16 @@ def init(quiet):
 
 
 @cli.command(name="package")
-def package():
+@click.option(
+    "-v",
+    "--verbose",
+    default=False,
+    is_flag=True,
+    help="Flag to enable verbose mode.",
+)
+def package(verbose):
     """Build the project, then package it with PyApp."""
-    my_packager = PackageApp()
+    my_packager = PackageApp(verbose=verbose)
     my_packager.build()
     my_packager.package()
     click.echo(

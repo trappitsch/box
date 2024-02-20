@@ -3,15 +3,25 @@
 import urllib.request
 
 from click.testing import CliRunner
+import pytest
 
 from box.cli import cli
 
 
-def test_package_project(rye_project, mocker):
-    """Package an initialized project."""
+@pytest.mark.parametrize("verbose", [True, False])
+def test_package_project(rye_project, mocker, verbose):
+    """Package an initialized project, verbose and not."""
     # mock subprocess
     sp_devnull_mock = mocker.patch("subprocess.DEVNULL")
     sp_run_mock = mocker.patch("subprocess.run")
+
+    # handle verbose mode
+    if verbose:
+        cmd = ["package", "-v"]
+        subp_kwargs = {}
+    else:
+        cmd = ["package"]
+        subp_kwargs = {"stdout": sp_devnull_mock}
 
     # mock urllib.request.urlretrieve
     mocker.patch.object(urllib.request, "urlretrieve")
@@ -36,14 +46,12 @@ def test_package_project(rye_project, mocker):
     cargo_target.joinpath("pyapp").touch()
 
     runner = CliRunner()
-    result = runner.invoke(cli, ["package"])
+    result = runner.invoke(cli, cmd)
     assert result.exit_code == 0
     assert result.output.__contains__("Project successfully packaged.")
 
-    sp_run_mock.assert_any_call(["rye", "build"], stdout=sp_devnull_mock)
+    # assert system calls
+    sp_run_mock.assert_any_call(["rye", "build"], **subp_kwargs)
     sp_run_mock.assert_called_with(
-        ["cargo", "build", "--release"],
-        cwd=pyapp_dir,
-        stdout=sp_devnull_mock,
-        stderr=sp_devnull_mock,
+        ["cargo", "build", "--release"], cwd=pyapp_dir, **subp_kwargs
     )

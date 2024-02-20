@@ -198,7 +198,6 @@ def test_package_pyapp_cargo_and_move(rye_project, mocker):
         ["cargo", "build", "--release"],
         cwd=pyapp_path,
         stdout=sp_devnull_mock,
-        stderr=sp_devnull_mock,
     )
     exp_binary = rye_project.joinpath(f"target/release/{rye_project.name}")
     assert exp_binary.is_file()
