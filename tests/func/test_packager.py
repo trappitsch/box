@@ -215,6 +215,8 @@ def test_set_env(rye_project):
     packager.build()
     packager._set_env()
 
+    print(os.environ)
+    print(rye_project.joinpath("dist").glob("*"))
     dist_file = rye_project.joinpath(f"dist/{rye_project.name}-0.1.0.tar.gz")
 
     package_name = rye_project.name.replace("-", "_")
