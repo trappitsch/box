@@ -215,17 +215,7 @@ def test_set_env(rye_project):
     packager.build()
     packager._set_env()
 
-    print(os.environ)
-    print(list(rye_project.joinpath("dist").glob("*")))
     dist_file = rye_project.joinpath(f"dist/{rye_project.name}-0.1.0.tar.gz")
-
-    import subprocess
-
-    subprocess.run(["rye", "build"], cwd=rye_project)
-    print("Rye project directory")
-    print(os.listdir(rye_project))
-    print("Dist directory")
-    print(os.listdir(rye_project.joinpath("dist")))
 
     package_name = rye_project.name.replace("-", "_")
     assert os.environ["PYAPP_PROJECT_NAME"] == package_name
