@@ -5,6 +5,7 @@ from typing import List
 import rich_click as click
 
 from box.config import PyProjectParser, pyproject_writer
+import box.formatters as fmt
 
 
 class InitializeProject:
@@ -35,7 +36,7 @@ class InitializeProject:
         self._set_app_entry()
 
         if not self._quiet:
-            click.echo("Project initialized.")
+            fmt.success("Project initialized.")
 
     def _set_builder(self):
         """Set the builder for the project."""
@@ -69,13 +70,13 @@ class InitializeProject:
             except ValueError:
                 self.app_entry = user_entry
             except IndexError:
-                click.echo("Invalid entry. Please try again.")
+                fmt.warning("Invalid entry. Please try again.")
                 query_app_entry(query_txt, opts)
 
         if self._quiet:  # all automatic
             if options == []:  # choose package_name:run and raise warning
                 self.app_entry = f"{self.pyproj.name_pkg}:run"
-                click.echo(f"Warning: No app entry found, using {self.app_entry}:run.")
+                fmt.warning(f"No app entry found, using {self.app_entry}:run.")
             else:
                 self.app_entry = options[0]
         else:

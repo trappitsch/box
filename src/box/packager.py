@@ -11,6 +11,7 @@ import rich_click as click
 
 from box import BUILD_DIR_NAME, RELEASE_DIR_NAME
 from box.config import PyProjectParser
+import box.formatters as fmt
 import box.utils as ut
 
 PYAPP_SOURCE = "https://github.com/ofek/pyapp/releases/latest/download/source.tar.gz"
@@ -44,20 +45,21 @@ class PackageApp:
     def build(self):
         """Build the project with PyApp."""
         builder = self._config.builder
+        fmt.info(f"Building project with {builder}...")
         if builder == "rye":
             self._build_rye()
         else:
             raise ValueError("Unknown builder")
 
-        click.echo(f"Project built with {builder}.")
+        fmt.success(f"Project built with {builder}.")
 
     def package(self):
         """Package the project with PyApp."""
-        click.echo("Hold on, packaging the project with PyApp...")
+        fmt.info("Hold on, packaging the project with PyApp...")
         self._get_pyapp()
         self._set_env()
         self._package_pyapp()
-        click.echo("Project packaged with PyApp.")
+        fmt.success("Project packaged with PyApp.")
 
     def _build_rye(self):
         """Build the project with rye."""
@@ -113,8 +115,8 @@ class PackageApp:
             elif len(all_pyapp_folders) > 1:
                 all_pyapp_folders.sort(key=lambda x: x.stem)
                 self._pyapp_path = all_pyapp_folders[-1].absolute()
-                click.echo(
-                    "Warning: Multiple pyapp versions were. "
+                fmt.warning(
+                    "Multiple pyapp versions were. "
                     f"Using {self._pyapp_path.name}. "
                     "Consider cleaning the build folder with `box clean`."
                 )

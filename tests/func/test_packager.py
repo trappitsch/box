@@ -81,7 +81,7 @@ def test_get_pyapp_extraction_multiple_folders(rye_project, mocker):
     """Raise a warning if multiple pyapp folders are found."""
     mocker.patch.object(urllib.request, "urlretrieve")
     mocker.patch("tarfile.open")
-    echo_mock = mocker.patch("rich_click.echo")
+    echo_mock = mocker.patch("box.formatters.warning")
 
     # create two pyapp folders in the build folder
     rye_project.joinpath("build/pyapp-v1.2.3").mkdir(parents=True)
@@ -93,7 +93,7 @@ def test_get_pyapp_extraction_multiple_folders(rye_project, mocker):
     packager._get_pyapp()
 
     echo_mock.assert_called_with(
-        "Warning: Multiple pyapp versions were. Using pyapp-v2.2.3. "
+        "Multiple pyapp versions were. Using pyapp-v2.2.3. "
         "Consider cleaning the build folder with `box clean`."
     )
 

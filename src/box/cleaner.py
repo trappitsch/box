@@ -3,9 +3,9 @@
 from pathlib import Path
 import shutil
 
-import rich_click as click
 
 from box.config import PyProjectParser
+import box.formatters as fmt
 
 
 class CleanProject:
@@ -39,7 +39,7 @@ class CleanProject:
 
         if source_pyapp or pyapp_folder:
             if build:
-                click.echo("Info: Build folder flag `-b`, `--build` ignored.")
+                fmt.info("Build folder flag `-b`, `--build` ignored.")
             build = False
 
         self._cleaned_whole_project = False
@@ -72,7 +72,7 @@ class CleanProject:
         """Clean the project according to the options selected."""
         # check if in project folder, if not exit
         if not self._check_box_project:
-            click.echo("Not a box project. Cleaning canceled.")
+            fmt.warning("Not a box project. Cleaning canceled.")
             return
         # delete all folders_to_clean and files therein
         self._clean_folders()
@@ -86,9 +86,9 @@ class CleanProject:
                 shutil.rmtree(folder_path)
 
         if self._cleaned_whole_project:
-            click.echo("The whole project was cleaned.")
+            fmt.success("The whole project was cleaned.")
         else:
-            click.echo(f"Folder(s) {', '.join(self.folders_to_clean)} cleaned.")
+            fmt.success(f"Folder(s) {', '.join(self.folders_to_clean)} cleaned.")
 
     def _clean_build_folder(self):
         """Clean the pyapp specific file/folder(s) in the build folder."""
@@ -110,4 +110,4 @@ class CleanProject:
             out_string += "pyapp folder(s)"
 
         if out_string != "":
-            click.echo(f"{out_string} cleaned.")
+            fmt.success(f"{out_string} cleaned.")

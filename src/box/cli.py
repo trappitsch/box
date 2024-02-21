@@ -2,6 +2,7 @@ import rich_click as click
 
 from box.cleaner import CleanProject
 from box.initialization import InitializeProject
+import box.formatters as fmt
 from box.packager import PackageApp
 
 
@@ -39,7 +40,7 @@ def package(verbose):
     my_packager = PackageApp(verbose=verbose)
     my_packager.build()
     my_packager.package()
-    click.echo(
+    fmt.success(
         "Project successfully packaged. "
         "You can find the binary file in the `target/release` folder."
     )
