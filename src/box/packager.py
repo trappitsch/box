@@ -7,7 +7,7 @@ import subprocess
 import tarfile
 import urllib.request
 
-import click
+import rich_click as click
 
 from box import BUILD_DIR_NAME, RELEASE_DIR_NAME
 from box.config import PyProjectParser
