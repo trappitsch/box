@@ -3,7 +3,6 @@
 from pathlib import Path
 import shutil
 
-
 from box.config import PyProjectParser
 import box.formatters as fmt
 
@@ -42,6 +41,7 @@ class CleanProject:
                 fmt.info("Build folder flag `-b`, `--build` ignored.")
             build = False
 
+        self._echo_string = ""
         self._cleaned_whole_project = False
 
         # if all options are None, clean all folders
@@ -78,17 +78,26 @@ class CleanProject:
         self._clean_folders()
         self._clean_build_folder()
 
+        # echo stuff
+        if self._cleaned_whole_project and self._echo_string != "":
+            fmt.success("The whole project was cleaned.")
+        else:
+            if self._echo_string != "":
+                fmt.success(self._echo_string)
+            else:
+                fmt.info("Nothing to clean.")
+
     def _clean_folders(self):
         """Clean the main folders."""
+        folder_cleaned = []
         for folder in self.folders_to_clean:
             folder_path = Path.cwd().joinpath(folder)
             if folder_path.exists():
                 shutil.rmtree(folder_path)
+                folder_cleaned.append(folder)
 
-        if self._cleaned_whole_project:
-            fmt.success("The whole project was cleaned.")
-        else:
-            fmt.success(f"Folder(s) {', '.join(self.folders_to_clean)} cleaned.")
+        if folder_cleaned:
+            self._echo_string += f"Folder(s) {', '.join(folder_cleaned)} cleaned.\n"
 
     def _clean_build_folder(self):
         """Clean the pyapp specific file/folder(s) in the build folder."""
@@ -100,14 +109,16 @@ class CleanProject:
                 out_string += "pyapp-source.tar.gz"
         if self.pyapp_folder:
             pyapp_folders = []
-            for file in Path.cwd().joinpath("build").iterdir():
-                if file.is_dir() and file.name.startswith("pyapp-"):
-                    pyapp_folders.append(file)
-            for folder in pyapp_folders:
-                shutil.rmtree(folder)
-            if self.pyapp_folder:
-                out_string += ", "
-            out_string += "pyapp folder(s)"
+            if Path.cwd().joinpath("build").exists():
+                for file in Path.cwd().joinpath("build").iterdir():
+                    if file.is_dir() and file.name.startswith("pyapp-"):
+                        pyapp_folders.append(file)
+                for folder in pyapp_folders:
+                    shutil.rmtree(folder)
+                if pyapp_folders:
+                    if out_string != "":
+                        out_string += ", "
+                    out_string += "pyapp folder(s)"
 
         if out_string != "":
-            fmt.success(f"{out_string} cleaned.")
+            self._echo_string += f"{out_string} cleaned.\n"
