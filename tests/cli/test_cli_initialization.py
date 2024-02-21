@@ -28,7 +28,31 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
 
 
 def test_initialize_project_quiet(rye_project_no_box):
-    """Initialize a new project."""
+    """Initialize a new project quietly."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ["init", "-q"])
+    assert result.exit_code == 0
+    assert "Project initialized." not in result.output
+
+    # assert it's now a box project
+    pyproj = PyProjectParser()
+    assert pyproj.is_box_project
+
+
+def test_initialize_project_quiet_no_project_script(rye_project_no_box):
+    """Initialize a new project quietly with app_entry as the package name."""
+    with open("pyproject.toml", "r") as f:
+        toml_data = f.read().split("\n")
+    # delete the line with scripts and save back out
+    for it, line in enumerate(toml_data):
+        if "project.scripts" in line:
+            idx = it
+            break
+    toml_data.pop(idx)
+    toml_data.pop(idx + 1)
+    with open("pyproject.toml", "w") as f:
+        f.write("\n".join(toml_data))
+
     runner = CliRunner()
     result = runner.invoke(cli, ["init", "-q"])
     assert result.exit_code == 0

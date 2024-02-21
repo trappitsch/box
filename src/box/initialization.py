@@ -74,8 +74,8 @@ class InitializeProject:
 
         if self._quiet:  # all automatic
             if options == []:  # choose package_name:run and raise warning
-                app_entry = f"{self.pyproj.name_pkg}:run"
-                click.echo(f"Warning: No app entry found, using {app_entry}:run.")
+                self.app_entry = f"{self.pyproj.name_pkg}:run"
+                click.echo(f"Warning: No app entry found, using {self.app_entry}:run.")
             else:
                 self.app_entry = options[0]
         else:
