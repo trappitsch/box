@@ -3,7 +3,7 @@
 from pathlib import Path
 import shutil
 
-import click
+import rich_click as click
 
 from box.config import PyProjectParser
 

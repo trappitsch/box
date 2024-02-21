@@ -1,4 +1,4 @@
-import click
+import rich_click as click
 
 from box.cleaner import CleanProject
 from box.initialization import InitializeProject

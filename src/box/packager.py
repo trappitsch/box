@@ -7,7 +7,7 @@ import subprocess
 import tarfile
 import urllib.request
 
-import click
+import rich_click as click
 
 from box import BUILD_DIR_NAME, RELEASE_DIR_NAME
 from box.config import PyProjectParser
@@ -15,7 +15,7 @@ import box.utils as ut
 
 PYAPP_SOURCE = "https://github.com/ofek/pyapp/releases/latest/download/source.tar.gz"
 
-
+lgit
 class PackageApp:
     """Package the project with PyApp."""
 
