@@ -9,6 +9,7 @@ authors = [
 dependencies = [
     "click>=8.1.7",
     "tomlkit>=0.12.3",
+    "rich-click>=1.7.3",
 ]
 requires-python = ">= 3.8"
 license = { text = "MIT" }
@@ -56,3 +57,4 @@ markers = [
 
 [tool.box]
 builder = "rye"
+app_entry = "box.cli:cli"

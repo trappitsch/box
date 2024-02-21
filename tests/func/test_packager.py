@@ -5,7 +5,7 @@ from pathlib import Path
 import tarfile
 import urllib.request
 
-import click
+import rich_click as click
 import pytest
 
 from box.packager import PackageApp, PYAPP_SOURCE
@@ -40,7 +40,7 @@ def create_pyapp_source(project_path: Path) -> Path:
 # TESTS #
 
 
-def test_cargo_not_found(mocker):
+def test_cargo_not_found(rye_project, mocker):
     """Test that cargo not found raises an exception."""
     # mock $PATH to remove cargo
     mocker.patch.dict(os.environ, {"PATH": ""})
@@ -81,7 +81,7 @@ def test_get_pyapp_extraction_multiple_folders(rye_project, mocker):
     """Raise a warning if multiple pyapp folders are found."""
     mocker.patch.object(urllib.request, "urlretrieve")
     mocker.patch("tarfile.open")
-    echo_mock = mocker.patch("click.echo")
+    echo_mock = mocker.patch("rich_click.echo")
 
     # create two pyapp folders in the build folder
     rye_project.joinpath("build/pyapp-v1.2.3").mkdir(parents=True)
