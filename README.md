@@ -1,39 +1,60 @@
 # box
 
-[![PyPI](https://img.shields.io/pypi/v/box.svg)](https://pypi.org/project/box/)
-[![Changelog](https://img.shields.io/github/v/release/trappitsc/box?include_prereleases&label=changelog)](https://github.com/trappitsc/box/releases)
-[![Tests](https://github.com/trappitsc/box/actions/workflows/test.yml/badge.svg)](https://github.com/trappitsc/box/actions/workflows/tests.yml)
+[![Rye](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/mitsuhiko/rye/main/artwork/badge.json)](https://rye-up.com)
+[![tests](https://github.com/trappitsch/box/actions/workflows/tests.yml/badge.svg)](https://github.com/trappitsch/box/actions/workflows/tests.yml)
 
-Automatic packaging and installers of your GUI with PyApp
+The goal of this package is
+to provide a command line interface
+that allows you to easily package your existing python project
+with [`PyApp`](https://ofek.dev/pyapp/).
+
+**Important:** This package is still in a very early
+development phase! Please report your findings and issues,
+so that we can improve this tool together.
+
+## Pre-requisites
+
+In order to run `box`, you must have `cargo` installed.
+Instructions to do so can be found
+[here](https://doc.rust-lang.org/cargo/getting-started/installation.html).
+
+Furthermore, we currently only support `rye` build environments,
+however, support for more builders is planned for the near future.
 
 ## Installation
 
-Install this tool using `pip`:
+Install this tool using `pipx`:
 
-    pip install box
+    pipx install git+https://github.com/trappitsch/box.git
 
 ## Usage
 
-For help, run:
+### Initialize a project
 
-    box --help
+From within your project directory, run:
 
-You can also use:
+```
+box init
+```
 
-    python -m box --help
+The initialization will ask your for your script entry point.
+We automatically read `[project.scripts]` and `[project.gui-scripts]`
+to propose some values to select from.
+However, you can also type your own entry point.
+This is the entry point that will be set in `PyApp`
+using the `PYAPP_EXEC_SPEC` environment variable.
+Details can be found [here](https://ofek.dev/pyapp/latest/config/#execution-mode).
 
-## Development
+### Packaging
 
-To contribute to this tool, first checkout the code. Then create a new virtual environment:
+To package your project, run:
 
-    cd box
-    python -m venv venv
-    source venv/bin/activate
+```
+box package
+```
 
-Now install the dependencies and test dependencies:
+This will first build your project using `rye`.
+Then, the latest `PyApp` source will be downloaded and unpacked.
+Finally, the project will be packaged with `PyApp` using `cargo`.
 
-    pip install -e '.[test]'
-
-To run the tests:
-
-    pytest
+You can find the executable in the `target/release` directory.
