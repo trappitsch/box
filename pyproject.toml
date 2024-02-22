@@ -36,6 +36,7 @@ dev-dependencies = [
     "ruff>=0.1.15",
     "pytest-cov>=4.1.0",
     "pytest-mock>=3.12.0",
+    "gitpython>=3.1.42",
 ]
 
 [tool.rye.scripts]
@@ -55,6 +56,7 @@ testpaths = "tests"
 [tool.pytest.ini_options]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "unit: marks unit tests, which build a full PyApp with cargo (deselect with '-m \"not unit\"')",
 ]
 
 [tool.box]
