@@ -42,9 +42,10 @@ def package(verbose):
     my_packager = PackageApp(verbose=verbose)
     my_packager.build()
     my_packager.package()
+    binary_file = my_packager.binary_name
     fmt.success(
-        "Project successfully packaged. "
-        "You can find the binary file in the `target/release` folder."
+        f"Project successfully packaged.\n"
+        f"You can find the executable file {binary_file.name} in the `target/release` folder."
     )
 
 

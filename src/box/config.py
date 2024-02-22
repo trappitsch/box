@@ -103,5 +103,5 @@ def pyproject_writer(key: str, value: Any) -> None:
 
     box_table.update({key: value})
 
-    with open(pyproject_file, "w") as f:
+    with open(pyproject_file, "w", newline="\n") as f:
         tomlkit.dump(doc, f)
