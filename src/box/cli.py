@@ -5,8 +5,10 @@ from box.initialization import InitializeProject
 import box.formatters as fmt
 from box.packager import PackageApp
 
+CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
-@click.group()
+
+@click.group(context_settings=CONTEXT_SETTINGS)
 @click.version_option()
 def cli():
     """Automatic packaging and installers of your GUI with PyApp."""
