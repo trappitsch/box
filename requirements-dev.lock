@@ -15,6 +15,9 @@ colorama==0.4.6
     # via box
 coverage==7.4.1
     # via pytest-cov
+gitdb==4.0.11
+    # via gitpython
+gitpython==3.1.42
 iniconfig==2.0.0
     # via pytest
 markdown-it-py==3.0.0
@@ -38,6 +41,8 @@ rich==13.7.0
 rich-click==1.7.3
     # via box
 ruff==0.1.15
+smmap==5.0.1
+    # via gitdb
 tomlkit==0.12.3
     # via box
 typing-extensions==4.9.0
