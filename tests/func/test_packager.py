@@ -56,7 +56,7 @@ def test_build_rye(rye_project, mocker):
     packager = PackageApp()
     packager.build()
 
-    sp_mock.assert_called_with(["rye", "build"], stdout=mocker.ANY)
+    sp_mock.assert_called_with(["rye", "build"], stdout=mocker.ANY, stderr=mocker.ANY)
 
     expected_path = rye_project.joinpath("dist")
     assert packager._dist_path == expected_path
@@ -198,6 +198,7 @@ def test_package_pyapp_cargo_and_move(rye_project, mocker):
         ["cargo", "build", "--release"],
         cwd=pyapp_path,
         stdout=sp_devnull_mock,
+        stderr=sp_devnull_mock,
     )
     exp_binary = rye_project.joinpath(f"target/release/{rye_project.name}")
     assert exp_binary.is_file()

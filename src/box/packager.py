@@ -28,6 +28,7 @@ class PackageApp:
         self.subp_kwargs = {}
         if not verbose:
             self.subp_kwargs["stdout"] = subprocess.DEVNULL
+            self.subp_kwargs["stderr"] = subprocess.DEVNULL
 
         # self._builder = box_config.builder
         self._dist_path = None
@@ -59,7 +60,6 @@ class PackageApp:
         self._get_pyapp()
         self._set_env()
         self._package_pyapp()
-        fmt.success("Project packaged with PyApp.")
 
     def _build_rye(self):
         """Build the project with rye."""

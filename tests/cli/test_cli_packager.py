@@ -16,12 +16,13 @@ def test_package_project(rye_project, mocker, verbose):
     sp_run_mock = mocker.patch("subprocess.run")
 
     # handle verbose mode
+    subp_kwargs = {}
     if verbose:
         cmd = ["package", "-v"]
-        subp_kwargs = {}
     else:
         cmd = ["package"]
-        subp_kwargs = {"stdout": sp_devnull_mock}
+        subp_kwargs["stdout"] = sp_devnull_mock
+        subp_kwargs["stderr"] = sp_devnull_mock
 
     # mock urllib.request.urlretrieve
     mocker.patch.object(urllib.request, "urlretrieve")
