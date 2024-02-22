@@ -1,5 +1,6 @@
 # Build the `qtcowsay` project with PyApp.
 
+import os
 from pathlib import Path
 
 from click.testing import CliRunner
@@ -19,6 +20,8 @@ def test_gui_build():
     with runner.isolated_filesystem():
         # app expected
         app_expected = Path("target/release/qtcowsay")
+        if os.name == "nt":  # on windows with have an .exe!
+            app_expected = app_expected.with_suffix(".exe")
 
         # clone the repo
         Repo.clone_from(GIT_URL, ".")

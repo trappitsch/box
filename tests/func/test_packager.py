@@ -177,13 +177,14 @@ def test_get_pyapp_wrong_no_pyapp_folder(rye_project, mocker):
     assert e.value.args[0].__contains__("Error: no pyapp source code folder found.")
 
 
-def test_package_pyapp_cargo_and_move(rye_project, mocker):
+@pytest.mark.parametrize("binary_extensions", [".exe", ""])
+def test_package_pyapp_cargo_and_move(rye_project, mocker, binary_extensions):
     """Ensure cargo is called correctly and final binary moved to the right folder."""
     pyapp_path = rye_project.joinpath("build/pyapp-vx.y.z")
     cargo_binary_folder = pyapp_path.joinpath("target/release")
     cargo_binary_folder.mkdir(parents=True)
 
-    pyapp_binary = cargo_binary_folder.joinpath("pyapp")
+    pyapp_binary = cargo_binary_folder.joinpath("pyapp").with_suffix(binary_extensions)
     pyapp_binary.write_text("not really a binary")
 
     # mock subprocess.run
@@ -200,7 +201,9 @@ def test_package_pyapp_cargo_and_move(rye_project, mocker):
         stdout=sp_devnull_mock,
         stderr=sp_devnull_mock,
     )
-    exp_binary = rye_project.joinpath(f"target/release/{rye_project.name}")
+    exp_binary = rye_project.joinpath(
+        f"target/release/{rye_project.name}{binary_extensions}"
+    )
     assert exp_binary.is_file()
     assert exp_binary.read_text() == "not really a binary"
 

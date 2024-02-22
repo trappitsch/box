@@ -1,5 +1,6 @@
 # Test the pyproject parser
 
+from pathlib import Path
 
 import pytest
 
@@ -97,3 +98,17 @@ def test_pyproject_writer_change_builder(tmp_path_chdir):
     pyproject_writer("builder", "hatch")
     parser = PyProjectParser()
     assert parser.builder == "hatch"
+
+
+def test_pyproject_writer_called_with_newline(tmp_path_chdir, mocker):
+    """Ensure newline is always '\n', even on Windows (otherwise issue with tomllib)."""
+    fname = "pyproject.toml"
+    tmp_path_chdir.joinpath(fname).write_text(TOML_BASIC_FILE)
+
+    # mock open
+    mock_open = mocker.patch("builtins.open", mocker.mock_open())
+
+    pyproject_writer("builder", "rye")
+    print(tmp_path_chdir.absolute())
+
+    mock_open.assert_called_with(Path(fname), "w", newline="\n")

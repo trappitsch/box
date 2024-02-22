@@ -30,6 +30,8 @@ class PackageApp:
             self.subp_kwargs["stdout"] = subprocess.DEVNULL
             self.subp_kwargs["stderr"] = subprocess.DEVNULL
 
+        self.binary_name = None  # name of the binary file at the end of packaging
+
         # self._builder = box_config.builder
         self._dist_path = None
         self._pyapp_path = None
@@ -140,10 +142,15 @@ class PackageApp:
         self._release_dir.mkdir(exist_ok=True, parents=True)
 
         # move package to dev folder and rename it to module_name
-        shutil.move(
-            self._pyapp_path.joinpath("target/release/pyapp"),
-            self._release_dir.joinpath(self._config.name_pkg),
-        )
+        binary_path = self._pyapp_path.joinpath("target/release/pyapp")
+        suffix = ""
+        if not binary_path.is_file():
+            binary_path = binary_path.with_suffix(".exe")  # we are probably on windows!
+            suffix = ".exe"
+        self.binary_name = self._release_dir.joinpath(
+            self._config.name_pkg
+        ).with_suffix(suffix)
+        shutil.move(binary_path, self.binary_name)
 
     def _set_env(self):
         """Set the environment for packaging the project with PyApp."""
