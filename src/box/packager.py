@@ -37,8 +37,18 @@ class PackageApp:
         self._pyapp_path = None
 
         # supported builders
+        # fixme: windows needs "py" and not "python"
         self._builders = {
-            "rye": ["rye", "build", "--out", f"{self._dist_path}", "--sdist"]
+            "rye": ["rye", "build", "--out", f"{self._dist_path}", "--sdist"],
+            "hatch": ["hatch", "build", "-t", "sdist"],
+            "build": [
+                ut.cmd_python(),
+                "-m",
+                "build",
+                "--sdist",
+                "--outdir",
+                f"{self._dist_path}",
+            ],
         }
 
         self._build_dir = Path.cwd().joinpath(BUILD_DIR_NAME)

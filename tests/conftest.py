@@ -10,6 +10,25 @@ from box.config import pyproject_writer
 
 
 @pytest.fixture
+def min_proj_no_box(tmp_path):
+    """Create a minimal project with a `pyproject.toml` file."""
+    current_dir = Path().absolute()
+    os.chdir(tmp_path)
+    toml_data = """[project]
+name = "myapp"
+version = "0.1.0"
+dependencies = []
+"""
+    with open("pyproject.toml", "w") as f:
+        f.write(toml_data)
+
+    yield tmp_path
+
+    # clean up
+    os.chdir(current_dir)
+
+
+@pytest.fixture
 def tmp_path_chdir(tmp_path):
     """Change directory to tmp_path and set back at end."""
     os.chdir(tmp_path)
