@@ -14,7 +14,7 @@ def test_app_entry(rye_project):
     init.initialize()
 
     pyproj = PyProjectParser()
-    assert pyproj.app_entry == f"{rye_project.name}:hello"
+    assert pyproj.app_entry == f"{rye_project.name}:run"
 
 
 def test_set_builder(rye_project):
