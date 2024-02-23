@@ -56,7 +56,9 @@ def test_build_rye(rye_project, mocker):
     packager = PackageApp()
     packager.build()
 
-    sp_mock.assert_called_with(["rye", "build"], stdout=mocker.ANY, stderr=mocker.ANY)
+    sp_mock.assert_called_with(
+        packager.builders["rye"], stdout=mocker.ANY, stderr=mocker.ANY
+    )
 
     expected_path = rye_project.joinpath("dist")
     assert packager._dist_path == expected_path

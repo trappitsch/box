@@ -33,8 +33,13 @@ class PackageApp:
         self.binary_name = None  # name of the binary file at the end of packaging
 
         # self._builder = box_config.builder
-        self._dist_path = None
+        self._dist_path = Path.cwd().joinpath("dist")
         self._pyapp_path = None
+
+        # supported builders
+        self._builders = {
+            "rye": ["rye", "build", "--out", f"{self._dist_path}", "--sdist"]
+        }
 
         self._build_dir = Path.cwd().joinpath(BUILD_DIR_NAME)
         self._release_dir = Path.cwd().joinpath(RELEASE_DIR_NAME)
@@ -45,14 +50,19 @@ class PackageApp:
 
         self._check_requirements()
 
+    @property
+    def builders(self):
+        """Return a dictionary with supported builders and their commands."""
+        return self._builders
+
     def build(self):
         """Build the project with PyApp."""
         builder = self._config.builder
         fmt.info(f"Building project with {builder}...")
-        if builder == "rye":
-            self._build_rye()
-        else:
-            raise ValueError("Unknown builder")
+        try:
+            subprocess.run(self._builders[builder], **self.subp_kwargs)
+        except KeyError as e:
+            raise KeyError("Unknown builder") from e
 
         fmt.success(f"Project built with {builder}.")
 
@@ -62,12 +72,6 @@ class PackageApp:
         self._get_pyapp()
         self._set_env()
         self._package_pyapp()
-
-    def _build_rye(self):
-        """Build the project with rye."""
-        subprocess.run(["rye", "build"], **self.subp_kwargs)
-
-        self._dist_path = Path.cwd().joinpath("dist")
 
     def _get_pyapp(self):
         """Download the PyApp source code and extract to `build/pyapp-latest` folder.

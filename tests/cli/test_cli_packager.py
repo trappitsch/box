@@ -1,5 +1,6 @@
 # Test builder with CLI - system calls mostly mocked, full build in unit tests
 
+from pathlib import Path
 import urllib.request
 
 from click.testing import CliRunner
@@ -52,7 +53,10 @@ def test_package_project(rye_project, mocker, verbose):
     assert result.output.__contains__("Project successfully packaged.")
 
     # assert system calls
-    sp_run_mock.assert_any_call(["rye", "build"], **subp_kwargs)
+    sp_run_mock.assert_any_call(
+        ["rye", "build", "--out", f"{Path.cwd().joinpath('dist')}", "--sdist"],
+        **subp_kwargs,
+    )
     sp_run_mock.assert_called_with(
         ["cargo", "build", "--release"], cwd=pyapp_dir, **subp_kwargs
     )
