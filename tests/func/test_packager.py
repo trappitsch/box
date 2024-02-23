@@ -9,7 +9,7 @@ import rich_click as click
 import pytest
 
 from box.packager import PackageApp, PYAPP_SOURCE
-from box.config import PyProjectParser
+from box.config import PyProjectParser, pyproject_writer
 import box.utils as ut
 
 # HELPER FUNCTIONS #
@@ -208,23 +208,33 @@ def test_package_pyapp_cargo_and_move(rye_project, mocker, binary_extensions):
     assert exp_binary.read_text() == "not really a binary"
 
 
-@pytest.mark.slow
-def test_set_env(rye_project):
+@pytest.mark.parametrize("opt_deps", ["gui", None])
+def test_set_env(rye_project, opt_deps, mocker):
     """Set environment for `PyApp` packaging."""
     config = PyProjectParser()
     exec_spec = config.app_entry
+
+    # mock subprocess.run to avoid building
+    mocker.patch("subprocess.run")
+    rye_project.joinpath("dist").mkdir()
+    dist_file = rye_project.joinpath(f"dist/{rye_project.name.lower()}-0.1.0.tar.gz")
+    dist_file.touch()
+
+    # write optional deps to the pyproject.toml
+    if opt_deps:
+        pyproject_writer("optional_deps", opt_deps)
 
     packager = PackageApp()
     packager.build()
     packager._set_env()
 
-    dist_file = rye_project.joinpath(f"dist/{rye_project.name}-0.1.0.tar.gz")
-
-    package_name = rye_project.name.replace("-", "_")
+    package_name = rye_project.name.replace("-", "_").lower()
     assert os.environ["PYAPP_PROJECT_NAME"] == package_name
     assert os.environ["PYAPP_PROJECT_VERSION"] == "0.1.0"
     assert os.environ["PYAPP_PROJECT_PATH"] == str(dist_file)
     assert os.environ["PYAPP_EXEC_SPEC"] == exec_spec
+    if opt_deps:
+        assert os.environ["PYAPP_PIP_OPTIONAL_DEPS"] == opt_deps
 
 
 def test_set_env_delete_existing(rye_project, mocker):

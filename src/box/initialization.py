@@ -12,7 +12,6 @@ class InitializeProject:
     """Initialize a new project.
 
     # todo: allow for custom build command, custom dist folder
-    # todo: prompts for: builder, dist folder, app entry when running `box init`
     """
 
     def __init__(self, quiet: bool = False):
@@ -33,6 +32,7 @@ class InitializeProject:
         :param app_entry: the app entry point
         """
         self._set_builder()
+        self._set_optional_deps()
         self._set_app_entry()
 
         if not self._quiet:
@@ -95,6 +95,19 @@ class InitializeProject:
                 query_app_entry(query_text, options)
 
         pyproject_writer("app_entry", self.app_entry)
+
+    def _set_optional_deps(self):
+        """Set optional dependencies for the project (if any)."""
+        if self._quiet:
+            opt_deps = ""
+        else:
+            opt_deps = click.prompt(
+                "Provide any optional dependencies for the project.",
+                type=str,
+                default="",
+            )
+        if opt_deps != "":
+            pyproject_writer("optional_deps", opt_deps)
 
     def _set_pyproj(self):
         """Check if the pyproject.toml file is valid."""

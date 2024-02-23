@@ -7,9 +7,18 @@ from box.cli import cli
 from box.config import PyProjectParser
 
 
-@pytest.mark.parametrize("app_entry", ["hello", "127\nhello"])
+@pytest.mark.parametrize("app_entry", ["\nhello", "gui\n127\nhello"])
 def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     """Initialize a new project."""
+    # modify pyproject.toml to contain an app entry
+    with open("pyproject.toml") as fin:
+        toml_data = fin.read().split("\n")
+    idx = toml_data.index("[build-system]")
+    toml_data.insert(idx, "[project.scripts]")
+    toml_data.insert(idx + 1, "run = 'something'\n")
+    with open("pyproject.toml", "w") as fout:
+        fout.write("\n".join(toml_data))
+
     runner = CliRunner()
     result = runner.invoke(cli, ["init"], input=app_entry)
 
@@ -24,7 +33,10 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     pyproj = PyProjectParser()
     app_entry_exp = app_entry.split("\n")[-1]
     assert pyproj.app_entry == app_entry_exp
-    # todo: assert name is in pyproject.toml under [tool.box]
+
+    # assert that extra dependencies were set
+    if (deps_exp := app_entry.split("\n")[0]) != "":
+        assert pyproj.optional_dependencies == deps_exp
 
 
 def test_initialize_project_quiet(rye_project_no_box):
@@ -41,18 +53,6 @@ def test_initialize_project_quiet(rye_project_no_box):
 
 def test_initialize_project_quiet_no_project_script(rye_project_no_box):
     """Initialize a new project quietly with app_entry as the package name."""
-    with open("pyproject.toml", "r") as f:
-        toml_data = f.read().split("\n")
-    # delete the line with scripts and save back out
-    for it, line in enumerate(toml_data):
-        if "project.scripts" in line:
-            idx = it
-            break
-    toml_data.pop(idx)
-    toml_data.pop(idx + 1)
-    with open("pyproject.toml", "w") as f:
-        f.write("\n".join(toml_data))
-
     runner = CliRunner()
     result = runner.invoke(cli, ["init", "-q"])
     assert result.exit_code == 0
