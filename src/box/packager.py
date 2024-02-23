@@ -172,6 +172,8 @@ class PackageApp:
         os.environ["PYAPP_PROJECT_PATH"] = str(dist_file)
         # fixme: this whole thing is a hack. give options for entry, see PyApp docs
         os.environ["PYAPP_EXEC_SPEC"] = self._config.app_entry
+        if value := self._config.optional_dependencies:
+            os.environ["PYAPP_PIP_OPTIONAL_DEPS"] = value
 
     # STATIC METHODS #
     @staticmethod

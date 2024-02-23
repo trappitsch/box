@@ -1,7 +1,7 @@
 # Parse the pyproject.toml file
 
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 import tomlkit
 
@@ -47,6 +47,14 @@ class PyProjectParser:
     def name_pkg(self) -> str:
         """Return the name of the package (project name with '-' replaced by '_')."""
         return self.name.replace("-", "_")
+
+    @property
+    def optional_dependencies(self) -> Union[str, None]:
+        """Return optional dependencies for the project, or `None` if no key found."""
+        try:
+            return self._pyproject["tool"]["box"]["optional_deps"]
+        except KeyError:
+            return None
 
     @property
     def possible_app_entries(self) -> Dict:

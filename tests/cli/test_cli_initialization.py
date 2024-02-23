@@ -7,7 +7,7 @@ from box.cli import cli
 from box.config import PyProjectParser
 
 
-@pytest.mark.parametrize("app_entry", ["hello", "127\nhello"])
+@pytest.mark.parametrize("app_entry", ["\nhello", "gui\n127\nhello"])
 def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     """Initialize a new project."""
     runner = CliRunner()
@@ -24,7 +24,10 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     pyproj = PyProjectParser()
     app_entry_exp = app_entry.split("\n")[-1]
     assert pyproj.app_entry == app_entry_exp
-    # todo: assert name is in pyproject.toml under [tool.box]
+
+    # assert that extra dependencies were set
+    if (deps_exp := app_entry.split("\n")[0]) != "":
+        assert pyproj.optional_dependencies == deps_exp
 
 
 def test_initialize_project_quiet(rye_project_no_box):
@@ -41,7 +44,7 @@ def test_initialize_project_quiet(rye_project_no_box):
 
 def test_initialize_project_quiet_no_project_script(rye_project_no_box):
     """Initialize a new project quietly with app_entry as the package name."""
-    with open("pyproject.toml", "r") as f:
+    with open("pyproject.toml") as f:
         toml_data = f.read().split("\n")
     # delete the line with scripts and save back out
     for it, line in enumerate(toml_data):
