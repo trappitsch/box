@@ -120,8 +120,8 @@ def test_clean_no_pyproject(tmp_path_chdir, rye_project_no_box, init_folder):
     result = runner.invoke(cli, ["clean"])
 
     assert dist_dir.exists()
-    assert result.exit_code == 0
-    assert "Not a box project." in result.output
+    assert result.exit_code == 1
+    assert "This is not a box project." in result.output
 
 
 @pytest.mark.parametrize(
