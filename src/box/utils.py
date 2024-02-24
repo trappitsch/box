@@ -4,6 +4,24 @@ from contextlib import contextmanager
 import os
 from pathlib import Path
 
+from rich_click import ClickException
+
+from box.config import PyProjectParser
+
+
+def check_boxproject() -> None:
+    """Check if the box project is already initialized."""
+    check_pyproject()
+    pyproj = PyProjectParser()
+    if not pyproj.is_box_project:
+        raise ClickException("This is not a box project. Initialize with `box init`.")
+
+
+def check_pyproject() -> None:
+    """Raise a click exception if a pyproject.toml file is not found."""
+    if not Path("pyproject.toml").exists():
+        raise ClickException("No pyproject.toml file found.")
+
 
 @contextmanager
 def set_dir(dir: Path) -> None:
