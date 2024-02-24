@@ -40,6 +40,7 @@ class PackageApp:
         self._builders = {
             "rye": ["rye", "build", "--out", f"{self._dist_path}", "--sdist"],
             "hatch": ["hatch", "build", "-t", "sdist"],
+            "pdm": ["pdm", "build", "--no-wheel", "-d", f"{self._dist_path}"],
             "build": [
                 ut.cmd_python(),
                 "-m",
@@ -48,6 +49,7 @@ class PackageApp:
                 "--outdir",
                 f"{self._dist_path}",
             ],
+            "flit": ["flit", "build", "--format", "sdist"],
         }
 
         self._build_dir = Path.cwd().joinpath(BUILD_DIR_NAME)

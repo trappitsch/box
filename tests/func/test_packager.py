@@ -40,7 +40,7 @@ def create_pyapp_source(project_path: Path) -> Path:
 # TESTS #
 
 
-@pytest.mark.parametrize("builder", ["rye", "hatch", "build"])
+@pytest.mark.parametrize("builder", ["rye", "hatch", "build", "flit", "pdm"])
 def test_builders(min_proj_no_box, mocker, builder):
     """Test all builders are called correctly."""
     # mock subprocess.run
