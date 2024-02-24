@@ -4,6 +4,7 @@ from box.cleaner import CleanProject
 from box.initialization import InitializeProject
 import box.formatters as fmt
 from box.packager import PackageApp
+import box.utils as ut
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
@@ -25,6 +26,7 @@ def cli():
 )
 def init(quiet):
     """Initialize a new project in the current folder."""
+    ut.check_pyproject()
     my_init = InitializeProject(quiet=quiet)
     my_init.initialize()
 
@@ -39,6 +41,7 @@ def init(quiet):
 )
 def package(verbose):
     """Build the project, then package it with PyApp."""
+    ut.check_boxproject()
     my_packager = PackageApp(verbose=verbose)
     my_packager.build()
     my_packager.package()
@@ -95,6 +98,7 @@ def clean(dist, build, target, source_pyapp, pyapp_folder):
     By default, the `dist`, `build`, and `target` folders are deleted.
     The cleaner will ensure that you are in an initialized `box` project folder.
     """
+    ut.check_boxproject()
     my_cleaner = CleanProject(
         dist=dist,
         build=build,
