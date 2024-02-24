@@ -1,5 +1,6 @@
 # Test builder with CLI - system calls mostly mocked, full build in unit tests
 
+import os
 from pathlib import Path
 import urllib.request
 
@@ -60,3 +61,15 @@ def test_package_project(rye_project, mocker, verbose):
     sp_run_mock.assert_called_with(
         ["cargo", "build", "--release"], cwd=pyapp_dir, **subp_kwargs
     )
+
+
+def test_cargo_not_found(rye_project, mocker):
+    """Test that cargo not found raises an exception."""
+    # mock $PATH to remove cargo
+    mocker.patch.dict(os.environ, {"PATH": ""})
+
+    runner = CliRunner()
+    result = runner.invoke(cli, "package")
+
+    assert result.exit_code == 1
+    assert "cargo not found" in result.output

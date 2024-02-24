@@ -6,6 +6,7 @@ import rich_click as click
 
 from box.config import PyProjectParser, pyproject_writer
 import box.formatters as fmt
+from box.packager import PackageApp
 
 
 class InitializeProject:
@@ -39,15 +40,17 @@ class InitializeProject:
             fmt.success("Project initialized.")
 
     def _set_builder(self):
-        """Set the builder for the project."""
-        try:
-            _ = self.pyproj.rye
-            pyproject_writer("builder", "rye")
-        except KeyError:
-            raise click.ClickException(
-                "No builder tool was found in configuration. "
-                "Currently only `rye` is supported."
+        """Set the builder for the project (defaults to rye)."""
+        possible_builders = PackageApp().builders.keys()
+        if self._quiet:
+            builder = "rye"
+        else:
+            builder = click.prompt(
+                "Choose a builder tool for the project.",
+                type=click.Choice(possible_builders),
+                default="rye",
             )
+        pyproject_writer("builder", builder)
         # reload
         self._set_pyproj()
 

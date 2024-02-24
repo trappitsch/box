@@ -52,21 +52,24 @@ class PackageApp:
 
         self._build_dir = Path.cwd().joinpath(BUILD_DIR_NAME)
         self._release_dir = Path.cwd().joinpath(RELEASE_DIR_NAME)
-        self._build_dir.mkdir(exist_ok=True)
-        self._release_dir.mkdir(parents=True, exist_ok=True)
 
-        self._config = PyProjectParser()
-
-        self._check_requirements()
+        self._config = None
 
     @property
     def builders(self):
         """Return a dictionary with supported builders and their commands."""
         return self._builders
 
+    @property
+    def config(self) -> PyProjectParser:
+        """Return the project configuration."""
+        if self._config is None:
+            self._config = PyProjectParser()
+        return self._config
+
     def build(self):
         """Build the project with PyApp."""
-        builder = self._config.builder
+        builder = self.config.builder
         fmt.info(f"Building project with {builder}...")
         try:
             subprocess.run(self._builders[builder], **self.subp_kwargs)
@@ -78,6 +81,8 @@ class PackageApp:
     def package(self):
         """Package the project with PyApp."""
         fmt.info("Hold on, packaging the project with PyApp...")
+        self._build_dir.mkdir(exist_ok=True)
+        self._release_dir.mkdir(parents=True, exist_ok=True)
         self._get_pyapp()
         self._set_env()
         self._package_pyapp()
@@ -160,9 +165,9 @@ class PackageApp:
         if not binary_path.is_file():
             binary_path = binary_path.with_suffix(".exe")  # we are probably on windows!
             suffix = ".exe"
-        self.binary_name = self._release_dir.joinpath(
-            self._config.name_pkg
-        ).with_suffix(suffix)
+        self.binary_name = self._release_dir.joinpath(self.config.name_pkg).with_suffix(
+            suffix
+        )
         shutil.move(binary_path, self.binary_name)
 
     def _set_env(self):
@@ -175,22 +180,22 @@ class PackageApp:
         # find the tar.gz file in dist folder with correct version number
         dist_file = None
         for file in self._dist_path.iterdir():
-            if self._config.version in file.name and file.suffix == ".gz":
+            if self.config.version in file.name and file.suffix == ".gz":
                 dist_file = file
                 break
 
         # set variables
-        os.environ["PYAPP_PROJECT_NAME"] = self._config.name_pkg
-        os.environ["PYAPP_PROJECT_VERSION"] = self._config.version
+        os.environ["PYAPP_PROJECT_NAME"] = self.config.name_pkg
+        os.environ["PYAPP_PROJECT_VERSION"] = self.config.version
         os.environ["PYAPP_PROJECT_PATH"] = str(dist_file)
         # fixme: this whole thing is a hack. give options for entry, see PyApp docs
-        os.environ["PYAPP_EXEC_SPEC"] = self._config.app_entry
-        if value := self._config.optional_dependencies:
+        os.environ["PYAPP_EXEC_SPEC"] = self.config.app_entry
+        if value := self.config.optional_dependencies:
             os.environ["PYAPP_PIP_OPTIONAL_DEPS"] = value
 
     # STATIC METHODS #
     @staticmethod
-    def _check_requirements():
+    def check_requirements():
         """Check if all requirements are installed."""
         # check for cargo
         try:

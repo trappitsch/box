@@ -40,14 +40,6 @@ def create_pyapp_source(project_path: Path) -> Path:
 # TESTS #
 
 
-def test_cargo_not_found(rye_project, mocker):
-    """Test that cargo not found raises an exception."""
-    # mock $PATH to remove cargo
-    mocker.patch.dict(os.environ, {"PATH": ""})
-    with pytest.raises(click.ClickException):
-        PackageApp()
-
-
 @pytest.mark.parametrize("builder", ["rye", "hatch", "build"])
 def test_builders(min_proj_no_box, mocker, builder):
     """Test all builders are called correctly."""
@@ -136,6 +128,7 @@ def test_get_pyapp_no_file_found(rye_project, mocker):
     url_mock = mocker.patch.object(urllib.request, "urlretrieve")
 
     packager = PackageApp()
+    packager._build_dir.mkdir(parents=True, exist_ok=True)  # avoid error
     with pytest.raises(click.ClickException) as e:
         packager._get_pyapp()
 
