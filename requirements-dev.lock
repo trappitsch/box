@@ -8,6 +8,7 @@
 #   with-sources: false
 
 -e file:.
+build==1.0.3
 click==8.1.7
     # via box
     # via rich-click
@@ -25,11 +26,14 @@ markdown-it-py==3.0.0
 mdurl==0.1.2
     # via markdown-it-py
 packaging==23.2
+    # via build
     # via pytest
 pluggy==1.4.0
     # via pytest
 pygments==2.17.2
     # via rich
+pyproject-hooks==1.0.0
+    # via build
 pytest==8.0.0
     # via pytest-cov
     # via pytest-mock
