@@ -24,10 +24,32 @@ def cli():
     is_flag=True,
     help="Quiet mode: don't ask questions and initialize with default values.",
 )
-def init(quiet):
+@click.option(
+    "-b",
+    "--builder",
+    type=click.Choice(PackageApp().builders),
+    help="Set the builder for the project.",
+)
+@click.option(
+    "-opt", "--optional-deps", help="Set optional dependencies for the project."
+)
+@click.option("-e", "--entry", help="Set the app entry for the project.")
+@click.option(
+    "-py",
+    "--python-version",
+    type=click.Choice(ut.PYAPP_PYTHON_VERSIONS),
+    help="Set the python version to use with PyApp.",
+)
+def init(quiet, builder, optional_deps, entry, python_version):
     """Initialize a new project in the current folder."""
     ut.check_pyproject()
-    my_init = InitializeProject(quiet=quiet)
+    my_init = InitializeProject(
+        quiet=quiet,
+        builder=builder,
+        optional_deps=optional_deps,
+        app_entry=entry,
+        python_version=python_version,
+    )
     my_init.initialize()
 
 
@@ -40,7 +62,13 @@ def init(quiet):
     help="Flag to enable verbose mode.",
 )
 def package(verbose):
-    """Build the project, then package it with PyApp."""
+    """Build the project, then package it with PyApp.
+
+    Note that if the pyapp source is already in the `build` directory,
+    it will not be downloaded and/or extracted again.
+    This speeds up the process if you are packaging multiple times.
+    If you want to re-download it, please clean the project first with `box clean`.
+    """
     ut.check_boxproject()
     my_packager = PackageApp(verbose=verbose)
     my_packager.check_requirements()

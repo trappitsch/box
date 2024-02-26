@@ -50,6 +50,43 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     assert pyproj.python_version == py_version_exp
 
 
+def test_initialize_with_options(rye_project_no_box):
+    """Initialize a new project with options."""
+    py_version = "3.8"
+    entry_point = "myapp:entry"
+    optional_deps = "gui"
+    builder = "hatch"
+
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        [
+            "init",
+            "-e",
+            entry_point,
+            "-py",
+            py_version,
+            "-opt",
+            optional_deps,
+            "-b",
+            builder,
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert "Project initialized." in result.output
+
+    # assert it's now a box project
+    pyproj = PyProjectParser()
+    assert pyproj.is_box_project
+
+    # assert settings in pyproject are according to options selected
+    assert pyproj.builder == builder
+    assert pyproj.python_version == py_version
+    assert pyproj.optional_dependencies == optional_deps
+    assert pyproj.app_entry == entry_point
+
+
 def test_initialize_project_quiet(rye_project_no_box):
     """Initialize a new project quietly."""
     runner = CliRunner()
@@ -64,7 +101,7 @@ def test_initialize_project_quiet(rye_project_no_box):
     assert pyproj.python_version == ut.PYAPP_PYTHON_VERSIONS[-1]
 
 
-@pytest.mark.parametrize("builder", PackageApp().builders.keys())
+@pytest.mark.parametrize("builder", PackageApp().builders)
 def test_initialize_project_builders(rye_project_no_box, builder):
     """Initialize a new project with a specific builder."""
     runner = CliRunner()
