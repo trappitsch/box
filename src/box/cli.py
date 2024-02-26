@@ -43,6 +43,7 @@ def package(verbose):
     """Build the project, then package it with PyApp."""
     ut.check_boxproject()
     my_packager = PackageApp(verbose=verbose)
+    my_packager.check_requirements()
     my_packager.build()
     my_packager.package()
     binary_file = my_packager.binary_name

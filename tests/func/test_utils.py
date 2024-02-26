@@ -8,6 +8,17 @@ from rich_click import ClickException
 import box.utils as ut
 
 
+@pytest.mark.parametrize(
+    "os_python",
+    [["nt", "py"], ["posix", "python"]],
+)
+def test_cmd_python(mocker, os_python):
+    """Get python on mulitple operating systems."""
+    # mock os.name
+    mocker.patch("os.name", os_python[0])
+    assert ut.cmd_python() == os_python[1]
+
+
 def test_check_boxproject(rye_project):
     """Check if the box project is already initialized."""
     ut.check_boxproject()

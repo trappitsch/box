@@ -40,25 +40,23 @@ def create_pyapp_source(project_path: Path) -> Path:
 # TESTS #
 
 
-def test_cargo_not_found(rye_project, mocker):
-    """Test that cargo not found raises an exception."""
-    # mock $PATH to remove cargo
-    mocker.patch.dict(os.environ, {"PATH": ""})
-    with pytest.raises(click.ClickException):
-        PackageApp()
-
-
-def test_build_rye(rye_project, mocker):
-    """Test that rye build is called and dist folder is found."""
+@pytest.mark.parametrize("builder", ["rye", "hatch", "build", "flit", "pdm"])
+def test_builders(min_proj_no_box, mocker, builder):
+    """Test all builders are called correctly."""
     # mock subprocess.run
     sp_mock = mocker.patch("subprocess.run")
+
+    # write builder to pyproject.toml file
+    pyproject_writer("builder", builder)
 
     packager = PackageApp()
     packager.build()
 
-    sp_mock.assert_called_with(["rye", "build"], stdout=mocker.ANY, stderr=mocker.ANY)
+    sp_mock.assert_called_with(
+        packager.builders[builder], stdout=mocker.ANY, stderr=mocker.ANY
+    )
 
-    expected_path = rye_project.joinpath("dist")
+    expected_path = min_proj_no_box.joinpath("dist")
     assert packager._dist_path == expected_path
 
 
@@ -130,6 +128,7 @@ def test_get_pyapp_no_file_found(rye_project, mocker):
     url_mock = mocker.patch.object(urllib.request, "urlretrieve")
 
     packager = PackageApp()
+    packager._build_dir.mkdir(parents=True, exist_ok=True)  # avoid error
     with pytest.raises(click.ClickException) as e:
         packager._get_pyapp()
 

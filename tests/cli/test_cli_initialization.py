@@ -5,9 +5,10 @@ import pytest
 
 from box.cli import cli
 from box.config import PyProjectParser
+from box.packager import PackageApp
 
 
-@pytest.mark.parametrize("app_entry", ["\nhello", "gui\n127\nhello"])
+@pytest.mark.parametrize("app_entry", ["\n\nhello", "\ngui\n127\nhello"])
 def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     """Initialize a new project."""
     # modify pyproject.toml to contain an app entry
@@ -38,6 +39,9 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     if (deps_exp := app_entry.split("\n")[0]) != "":
         assert pyproj.optional_dependencies == deps_exp
 
+    # assert that default builder is set to rye
+    assert pyproj.builder == "rye"
+
 
 def test_initialize_project_quiet(rye_project_no_box):
     """Initialize a new project quietly."""
@@ -51,6 +55,18 @@ def test_initialize_project_quiet(rye_project_no_box):
     assert pyproj.is_box_project
 
 
+@pytest.mark.parametrize("builder", PackageApp().builders.keys())
+def test_initialize_project_builders(rye_project_no_box, builder):
+    """Initialize a new project with a specific builder."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ["init"], input=f"{builder}\n\nsome_entry")
+    assert result.exit_code == 0
+
+    # assert that default builder is set to rye
+    pyproj = PyProjectParser()
+    assert pyproj.builder == builder
+
+
 def test_initialize_project_quiet_no_project_script(rye_project_no_box):
     """Initialize a new project quietly with app_entry as the package name."""
     runner = CliRunner()
@@ -61,27 +77,6 @@ def test_initialize_project_quiet_no_project_script(rye_project_no_box):
     # assert it's now a box project
     pyproj = PyProjectParser()
     assert pyproj.is_box_project
-
-
-# EXCEPTIONS #
-
-
-def test_no_builder():
-    """Abort if no builder tooling was found."""
-    runner = CliRunner()
-    with runner.isolated_filesystem():
-        # write toml file with no builder
-        with open("pyproject.toml", "w") as f:
-            f.write(
-                """[project]
-name = "myapp"
-version = "0.1.0"
-"""
-            )
-
-        result = runner.invoke(cli, ["init", "-q"])
-        assert result.exit_code != 0
-        assert result.output.__contains__("No builder tool was found in configuration.")
 
 
 def test_pyproject_does_not_exist():
