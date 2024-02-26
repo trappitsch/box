@@ -77,6 +77,14 @@ class PyProjectParser:
         return possible_entries
 
     @property
+    def python_version(self):
+        """Get the python version to package the project with. If unset, return None."""
+        try:
+            return self._pyproject["tool"]["box"]["python_version"]
+        except KeyError:
+            return None
+
+    @property
     def rye(self) -> dict:
         """Return the rye configuration of the project."""
         return self._pyproject["tool"]["rye"]

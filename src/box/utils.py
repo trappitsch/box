@@ -8,6 +8,19 @@ from rich_click import ClickException
 
 from box.config import PyProjectParser
 
+# supported Python versions. Default will be set to last entry (latest).
+PYAPP_PYTHON_VERSIONS = (
+    "pypy2.7",
+    "pypy3.9",
+    "pypy3.10",
+    "3.7",
+    "3.8",
+    "3.9",
+    "3.10",
+    "3.11",
+    "3.12",
+)
+
 
 def check_boxproject() -> None:
     """Check if the box project is already initialized."""
