@@ -6,9 +6,10 @@ import pytest
 from box.cli import cli
 from box.config import PyProjectParser
 from box.packager import PackageApp
+import box.utils as ut
 
 
-@pytest.mark.parametrize("app_entry", ["\n\nhello", "\ngui\n127\nhello"])
+@pytest.mark.parametrize("app_entry", ["\n\nhello\n3.8", "\ngui\n127\nhello\n"])
 def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     """Initialize a new project."""
     # modify pyproject.toml to contain an app entry
@@ -32,7 +33,7 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
 
     # assert name is in pyproject.toml
     pyproj = PyProjectParser()
-    app_entry_exp = app_entry.split("\n")[-1]
+    app_entry_exp = app_entry.split("\n")[-2]
     assert pyproj.app_entry == app_entry_exp
 
     # assert that extra dependencies were set
@@ -41,6 +42,12 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
 
     # assert that default builder is set to rye
     assert pyproj.builder == "rye"
+
+    # assert default python version
+    py_version_exp = app_entry.split("\n")[-1]
+    if py_version_exp == "":
+        py_version_exp = ut.PYAPP_PYTHON_VERSIONS[-1]
+    assert pyproj.python_version == py_version_exp
 
 
 def test_initialize_project_quiet(rye_project_no_box):
@@ -53,6 +60,8 @@ def test_initialize_project_quiet(rye_project_no_box):
     # assert it's now a box project
     pyproj = PyProjectParser()
     assert pyproj.is_box_project
+
+    assert pyproj.python_version == ut.PYAPP_PYTHON_VERSIONS[-1]
 
 
 @pytest.mark.parametrize("builder", PackageApp().builders.keys())

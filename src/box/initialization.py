@@ -7,6 +7,7 @@ import rich_click as click
 from box.config import PyProjectParser, pyproject_writer
 import box.formatters as fmt
 from box.packager import PackageApp
+import box.utils as ut
 
 
 class InitializeProject:
@@ -35,24 +36,10 @@ class InitializeProject:
         self._set_builder()
         self._set_optional_deps()
         self._set_app_entry()
+        self._set_python_version()
 
         if not self._quiet:
             fmt.success("Project initialized.")
-
-    def _set_builder(self):
-        """Set the builder for the project (defaults to rye)."""
-        possible_builders = PackageApp().builders.keys()
-        if self._quiet:
-            builder = "rye"
-        else:
-            builder = click.prompt(
-                "Choose a builder tool for the project.",
-                type=click.Choice(possible_builders),
-                default="rye",
-            )
-        pyproject_writer("builder", builder)
-        # reload
-        self._set_pyproj()
 
     def _set_app_entry(self):
         """Set the app entry for the project."""
@@ -99,6 +86,21 @@ class InitializeProject:
 
         pyproject_writer("app_entry", self.app_entry)
 
+    def _set_builder(self):
+        """Set the builder for the project (defaults to rye)."""
+        possible_builders = PackageApp().builders.keys()
+        if self._quiet:
+            builder = "rye"
+        else:
+            builder = click.prompt(
+                "Choose a builder tool for the project.",
+                type=click.Choice(possible_builders),
+                default="rye",
+            )
+        pyproject_writer("builder", builder)
+        # reload
+        self._set_pyproj()
+
     def _set_optional_deps(self):
         """Set optional dependencies for the project (if any)."""
         if self._quiet:
@@ -125,3 +127,19 @@ class InitializeProject:
                 "Invalid `pyproject.toml` file. Missing `project` table."
                 "At least the `name` and `version` keys are required."
             )
+
+    def _set_python_version(self):
+        """Set the python version for the project.
+
+        Ask the user what python version to use. If none is provided (or quiet),
+        set the default to the latest python version.
+        """
+        if self._quiet:
+            py_version = ut.PYAPP_PYTHON_VERSIONS[-1]
+        else:
+            py_version = click.prompt(
+                "Choose a python version for packaging the project with PyApp.",
+                type=click.Choice(ut.PYAPP_PYTHON_VERSIONS),
+                default=ut.PYAPP_PYTHON_VERSIONS[-1],
+            )
+        pyproject_writer("python_version", py_version)

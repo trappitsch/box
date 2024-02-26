@@ -232,6 +232,7 @@ def test_set_env(rye_project, opt_deps, mocker):
     assert os.environ["PYAPP_PROJECT_VERSION"] == "0.1.0"
     assert os.environ["PYAPP_PROJECT_PATH"] == str(dist_file)
     assert os.environ["PYAPP_EXEC_SPEC"] == exec_spec
+    assert os.environ["PYAPP_PYTHON_VERSION"] == ut.PYAPP_PYTHON_VERSIONS[-1]
     if opt_deps:
         assert os.environ["PYAPP_PIP_OPTIONAL_DEPS"] == opt_deps
 

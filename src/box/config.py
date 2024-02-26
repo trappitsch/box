@@ -77,6 +77,14 @@ class PyProjectParser:
         return possible_entries
 
     @property
+    def python_version(self):
+        """Get the python version to package the project with. If unset, return None."""
+        try:
+            return self._pyproject["tool"]["box"]["python_version"]
+        except KeyError:
+            return None
+
+    @property
     def rye(self) -> dict:
         """Return the rye configuration of the project."""
         return self._pyproject["tool"]["rye"]
@@ -101,13 +109,28 @@ def pyproject_writer(key: str, value: Any) -> None:
     with open(pyproject_file, "rb") as f:
         doc = tomlkit.load(f)
 
+    key_box_present = False
     try:
+        _ = doc["tool"]["box"]
+        key_box_present = True
+    except KeyError:
+        pass
+
+    # add new line for tool if box table is not present
+    if not key_box_present:
+        try:
+            doc["tool"].add(tomlkit.nl())
+        except KeyError:
+            doc.add(tomlkit.nl())
+
+    if key_box_present:
+        box_table = doc["tool"]["box"]
+    else:
         tool_table = tomlkit.table(True)
+        tool_table.add(tomlkit.nl())
         box_table = tomlkit.table()
         tool_table.append("box", box_table)
-        doc.append("tool", tool_table)
-    except tomlkit.exceptions.KeyAlreadyPresent:
-        box_table = doc["tool"]["box"]
+        doc.add("tool", tool_table)
 
     box_table.update({key: value})
 
