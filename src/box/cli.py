@@ -1,6 +1,7 @@
 import rich_click as click
 
 from box.cleaner import CleanProject
+from box.config import uninitialize
 from box.initialization import InitializeProject
 import box.formatters as fmt
 from box.packager import PackageApp
@@ -136,3 +137,23 @@ def clean(dist, build, target, source_pyapp, pyapp_folder):
         pyapp_folder=pyapp_folder,
     )
     my_cleaner.clean()
+
+
+@cli.command(name="uninit")
+@click.option(
+    "-c",
+    "--clean-project",
+    default=False,
+    is_flag=True,
+    help="Flag to clean the full project before uninitializing it.",
+)
+def uninit(clean_project):
+    """Uninitialize the project.
+
+    All references to `box` will be removed from the `pyproject.toml` file.
+    """
+    ut.check_pyproject()
+    if clean_project:
+        clean()
+    uninitialize()
+    fmt.success("Project un-initialized.")

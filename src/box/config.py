@@ -136,3 +136,16 @@ def pyproject_writer(key: str, value: Any) -> None:
 
     with open(pyproject_file, "w", newline="\n") as f:
         tomlkit.dump(doc, f)
+
+
+def uninitialize() -> None:
+    """Un-initialize a box project."""
+    pyproject_file = Path("pyproject.toml")
+
+    with open(pyproject_file, "rb") as f:
+        doc = tomlkit.load(f)
+
+    doc["tool"].remove("box")
+
+    with open(pyproject_file, "w", newline="\n") as f:
+        tomlkit.dump(doc, f)
