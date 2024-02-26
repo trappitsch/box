@@ -11,7 +11,7 @@ from box.cli import cli
 
 
 GIT_URL = "https://github.com/VaasuDevanS/cowsay-python.git"  # repo for qtcowsay
-COMMIT_HASH = "9b627e154adb29f3840a0f92229b88fbd495baf4"  # commit hash for v6.1
+COMMIT_HASH = "3db622cefd8b11620ece7386d4151b5e734b078b"  # commit hash for v6.1
 
 
 @pytest.mark.unit
