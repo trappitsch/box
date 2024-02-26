@@ -5,6 +5,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import tarfile
+from typing import List
 import urllib.request
 
 import rich_click as click
@@ -58,9 +59,9 @@ class PackageApp:
         self._config = None
 
     @property
-    def builders(self):
-        """Return a dictionary with supported builders and their commands."""
-        return self._builders
+    def builders(self) -> List:
+        """Return a list of supported builders and their commands."""
+        return list(self._builders.keys())
 
     @property
     def config(self) -> PyProjectParser:
@@ -76,7 +77,7 @@ class PackageApp:
         try:
             subprocess.run(self._builders[builder], **self.subp_kwargs)
         except KeyError as e:
-            raise KeyError("Unknown builder") from e
+            raise KeyError(f"Unknown {builder=}") from e
 
         fmt.success(f"Project built with {builder}.")
 

@@ -53,7 +53,7 @@ def test_builders(min_proj_no_box, mocker, builder):
     packager.build()
 
     sp_mock.assert_called_with(
-        packager.builders[builder], stdout=mocker.ANY, stderr=mocker.ANY
+        packager._builders[builder], stdout=mocker.ANY, stderr=mocker.ANY
     )
 
     expected_path = min_proj_no_box.joinpath("dist")

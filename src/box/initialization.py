@@ -16,12 +16,27 @@ class InitializeProject:
     # todo: allow for custom build command, custom dist folder
     """
 
-    def __init__(self, quiet: bool = False):
+    def __init__(
+        self,
+        quiet: bool = False,
+        builder: str = None,
+        optional_deps: str = None,
+        app_entry: str = None,
+        python_version: str = None,
+    ):
         """Initialize the InitializeProject class.
 
-        :param quiet: bool, flag to suppress output
+        :param quiet: Flag to suppress output
+        :param builder: Builder tool to use.
+        :param optional_deps: Optional dependencies for the project.
+        :param app_entry: App entry for the project.
+        :param python_version: Python version for the project.
         """
         self._quiet = quiet
+        self._builder = builder
+        self._optional_deps = optional_deps
+        self._app_entry = app_entry
+        self._python_version = python_version
 
         self.app_entry = None
         self.pyproj = None
@@ -63,54 +78,66 @@ class InitializeProject:
                 fmt.warning("Invalid entry. Please try again.")
                 query_app_entry(query_txt, opts)
 
-        if self._quiet:  # all automatic
-            if options == []:  # choose package_name:run and raise warning
-                self.app_entry = f"{self.pyproj.name_pkg}:run"
-                fmt.warning(f"No app entry found, using {self.app_entry}:run.")
-            else:
-                self.app_entry = options[0]
+        if self._app_entry:
+            self.app_entry = self._app_entry
         else:
-            if options == []:
-                self.app_entry = click.prompt(
-                    "No app entry found. Please set an app entry for the project."
-                )
+            if self._quiet:  # all automatic
+                if options == []:  # choose package_name:run and raise warning
+                    self.app_entry = f"{self.pyproj.name_pkg}:run"
+                    fmt.warning(f"No app entry found, using {self.app_entry}:run.")
+                else:
+                    self.app_entry = options[0]
             else:
-                query_text = (
-                    "Please type an app entry for the project or choose one "
-                    "from the list below:\n"
-                )
-                for it, option in enumerate(options):
-                    query_text += f"    [{it}] {option}\n"
+                if options == []:
+                    self.app_entry = click.prompt(
+                        "No app entry found. Please set an app entry for the project."
+                    )
+                else:
+                    query_text = (
+                        "Please type an app entry for the project or choose one "
+                        "from the list below:\n"
+                    )
+                    for it, option in enumerate(options):
+                        query_text += f"    [{it}] {option}\n"
 
-                query_app_entry(query_text, options)
+                    query_app_entry(query_text, options)
 
         pyproject_writer("app_entry", self.app_entry)
 
     def _set_builder(self):
         """Set the builder for the project (defaults to rye)."""
-        possible_builders = PackageApp().builders.keys()
-        if self._quiet:
-            builder = "rye"
+        possible_builders = PackageApp().builders
+
+        if self._builder:
+            builder = self._builder
         else:
-            builder = click.prompt(
-                "Choose a builder tool for the project.",
-                type=click.Choice(possible_builders),
-                default="rye",
-            )
+            if self._quiet:
+                builder = "rye"
+            else:
+                builder = click.prompt(
+                    "Choose a builder tool for the project.",
+                    type=click.Choice(possible_builders),
+                    default="rye",
+                )
+
         pyproject_writer("builder", builder)
         # reload
         self._set_pyproj()
 
     def _set_optional_deps(self):
         """Set optional dependencies for the project (if any)."""
-        if self._quiet:
-            opt_deps = ""
+        if self._optional_deps:
+            opt_deps = self._optional_deps
         else:
-            opt_deps = click.prompt(
-                "Provide any optional dependencies for the project.",
-                type=str,
-                default="",
-            )
+            if self._quiet:
+                opt_deps = ""
+            else:
+                opt_deps = click.prompt(
+                    "Provide any optional dependencies for the project.",
+                    type=str,
+                    default="",
+                )
+
         if opt_deps != "":
             pyproject_writer("optional_deps", opt_deps)
 
@@ -134,12 +161,16 @@ class InitializeProject:
         Ask the user what python version to use. If none is provided (or quiet),
         set the default to the latest python version.
         """
-        if self._quiet:
-            py_version = ut.PYAPP_PYTHON_VERSIONS[-1]
+        if self._python_version:
+            py_version = self._python_version
         else:
-            py_version = click.prompt(
-                "Choose a python version for packaging the project with PyApp.",
-                type=click.Choice(ut.PYAPP_PYTHON_VERSIONS),
-                default=ut.PYAPP_PYTHON_VERSIONS[-1],
-            )
+            if self._quiet:
+                py_version = ut.PYAPP_PYTHON_VERSIONS[-1]
+            else:
+                py_version = click.prompt(
+                    "Choose a python version for packaging the project with PyApp.",
+                    type=click.Choice(ut.PYAPP_PYTHON_VERSIONS),
+                    default=ut.PYAPP_PYTHON_VERSIONS[-1],
+                )
+
         pyproject_writer("python_version", py_version)
