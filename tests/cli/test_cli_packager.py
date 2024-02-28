@@ -51,7 +51,7 @@ def test_package_project(rye_project, mocker, verbose):
     runner = CliRunner()
     result = runner.invoke(cli, cmd)
     assert result.exit_code == 0
-    assert result.output.__contains__("Project successfully packaged.")
+    assert "Project successfully packaged." in result.output
 
     # assert system calls
     sp_run_mock.assert_any_call(
@@ -61,6 +61,29 @@ def test_package_project(rye_project, mocker, verbose):
     sp_run_mock.assert_called_with(
         ["cargo", "build", "--release"], cwd=pyapp_dir, **subp_kwargs
     )
+
+
+@pytest.mark.parametrize("pyapp_source_name", ["pyapp-source.tar.gz", "pyapp-v0.14.0"])
+def test_package_project_local_pyapp(rye_project, mocker, data_dir, pyapp_source_name):
+    """Package an initialized project with local pyapp source."""
+    mocker.patch("subprocess.run")
+    urllib_mock = mocker.patch.object(urllib.request, "urlretrieve")  # not called
+
+    mocker.patch("box.packager.PackageApp._package_pyapp")
+    mocker.patch("box.packager.PackageApp.binary_name", return_value="pyapp")
+
+    # create dist folder and package
+    dist_folder = rye_project.joinpath("dist")
+    dist_folder.mkdir()
+    dist_folder.joinpath(f"{rye_project.name.replace('-', '_')}-v0.1.0.tar.gz").touch()
+
+    runner = CliRunner()
+    result = runner.invoke(cli, ["package", "-p", data_dir.joinpath(pyapp_source_name)])
+
+    assert result.exit_code == 0
+    urllib_mock.assert_not_called()
+
+    # assert rye_project.joinpath("build/pyapp-v0.14.0/source.txt").is_file()
 
 
 def test_cargo_not_found(rye_project, mocker):

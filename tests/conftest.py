@@ -10,6 +10,12 @@ from box.config import pyproject_writer
 
 
 @pytest.fixture
+def data_dir():
+    """Return the path to the data directory."""
+    return Path(__file__).parent.joinpath("data")
+
+
+@pytest.fixture
 def min_proj_no_box(tmp_path):
     """Create a minimal project with a `pyproject.toml` file."""
     current_dir = Path().absolute()

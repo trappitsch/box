@@ -1,0 +1,1 @@
+This is a mock source to assure tests with local sources grab the correct files.
