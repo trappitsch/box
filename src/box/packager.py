@@ -5,7 +5,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import tarfile
-from typing import List
+from typing import List, Union
 import urllib.request
 
 import rich_click as click
@@ -31,7 +31,7 @@ class PackageApp:
             self.subp_kwargs["stdout"] = subprocess.DEVNULL
             self.subp_kwargs["stderr"] = subprocess.DEVNULL
 
-        self.binary_name = None  # name of the binary file at the end of packaging
+        self._binary_name = None  # name of the binary file at the end of packaging
 
         # self._builder = box_config.builder
         self._dist_path = Path.cwd().joinpath("dist")
@@ -64,6 +64,10 @@ class PackageApp:
         return list(self._builders.keys())
 
     @property
+    def binary_name(self):
+        return self._binary_name
+
+    @property
     def config(self) -> PyProjectParser:
         """Return the project configuration."""
         if self._config is None:
@@ -81,33 +85,55 @@ class PackageApp:
 
         fmt.success(f"Project built with {builder}.")
 
-    def package(self):
-        """Package the project with PyApp."""
+    def package(self, local_source: Union[Path, str] = None):
+        """Package the project with PyApp.
+
+        :param local_source: Path to the local source. Can be folder or .tar.gz archive.
+        """
         fmt.info("Hold on, packaging the project with PyApp...")
         self._build_dir.mkdir(exist_ok=True)
         self._release_dir.mkdir(parents=True, exist_ok=True)
-        self._get_pyapp()
+        self._get_pyapp(local_source=local_source)
         self._set_env()
         self._package_pyapp()
 
-    def _get_pyapp(self):
+    def _get_pyapp(self, local_source: Union[Path, str] = None):
         """Download the PyApp source code and extract to `build/pyapp-latest` folder.
 
         Download and or extraction are skipped if folder already exists.
+
+        :param local_source: Path to the local source. Can be folder or .tar.gz archive.
 
         :raises: `click.ClickException` if no pyapp source code is found
         """
         tar_name = Path("pyapp-source.tar.gz")
 
-        with ut.set_dir(self._build_dir):
-            if not tar_name.is_file():
-                urllib.request.urlretrieve(PYAPP_SOURCE, tar_name)
+        if isinstance(local_source, str):
+            local_source = Path(local_source)
 
-            if not tar_name.is_file():
-                raise click.ClickException(
-                    "Error: no pyapp source code found. "
-                    "Please check your internet connection and try again."
-                )
+        with ut.set_dir(self._build_dir):
+            if local_source:  # copy local source if provided
+                if local_source.suffix == ".gz" and local_source.is_file():
+                    shutil.copy(local_source, tar_name)
+                elif local_source.is_dir():
+                    shutil.copytree(
+                        local_source, self._build_dir.joinpath(local_source.name)
+                    )
+                else:
+                    raise click.ClickException(
+                        "Error: invalid local pyapp source code. "
+                        "Please provide a valid folder or a .tar.gz archive."
+                    )
+
+            else:  # no local source
+                if not tar_name.is_file():
+                    urllib.request.urlretrieve(PYAPP_SOURCE, tar_name)
+
+                if not tar_name.is_file():
+                    raise click.ClickException(
+                        "Error: no pyapp source code found. "
+                        "Please check your internet connection and try again."
+                    )
 
             # check if pyapp source code is already extracted
             all_pyapp_folders = []
@@ -115,22 +141,24 @@ class PackageApp:
                 if file.is_dir() and file.name.startswith("pyapp-"):
                     all_pyapp_folders.append(file)
 
-            with tarfile.open(tar_name, "r:gz") as tar:
-                tarfile_members = tar.getmembers()
+            # extract the source code if we didn't just copy a local folder
+            if not local_source or local_source.suffix == ".gz":
+                with tarfile.open(tar_name, "r:gz") as tar:
+                    tarfile_members = tar.getmembers()
 
-                # only extract if the folder in there (first entry) does not already exist
-                folder_exists = False
-                new_folder = tarfile_members[0].name
-                for folder in all_pyapp_folders:
-                    if folder.name == new_folder:
-                        folder_exists = True
-                        break
+                    # only extract if the folder in archive does not already exist
+                    folder_exists = False
+                    new_folder = tarfile_members[0].name
+                    for folder in all_pyapp_folders:
+                        if folder.name == new_folder:
+                            folder_exists = True
+                            break
 
-                # extract the source with tarfile package as pyapp-latest
-                if not folder_exists:
-                    tar.extractall()
-                    if "pyapp-" in new_folder:
-                        all_pyapp_folders.append(Path(new_folder))
+                    # extract the source with tarfile package
+                    if not folder_exists:
+                        tar.extractall()
+                        if "pyapp-" in new_folder:
+                            all_pyapp_folders.append(Path(new_folder))
 
             # find the name of the pyapp folder and return it
             if len(all_pyapp_folders) == 1:
@@ -168,10 +196,10 @@ class PackageApp:
         if not binary_path.is_file():
             binary_path = binary_path.with_suffix(".exe")  # we are probably on windows!
             suffix = ".exe"
-        self.binary_name = self._release_dir.joinpath(self.config.name_pkg).with_suffix(
-            suffix
-        )
-        shutil.move(binary_path, self.binary_name)
+        self._binary_name = self._release_dir.joinpath(
+            self.config.name_pkg
+        ).with_suffix(suffix)
+        shutil.move(binary_path, self._binary_name)
 
     def _set_env(self):
         """Set the environment for packaging the project with PyApp."""

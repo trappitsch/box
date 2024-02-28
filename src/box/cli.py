@@ -62,7 +62,16 @@ def init(quiet, builder, optional_deps, entry, python_version):
     is_flag=True,
     help="Flag to enable verbose mode.",
 )
-def package(verbose):
+@click.option(
+    "-p",
+    "--pyapp-source",
+    default=None,
+    help=(
+        "Use local PyApp source code. "
+        "Provide path to the folder or the .tar.gz archive."
+    ),
+)
+def package(verbose, pyapp_source):
     """Build the project, then package it with PyApp.
 
     Note that if the pyapp source is already in the `build` directory,
@@ -74,7 +83,7 @@ def package(verbose):
     my_packager = PackageApp(verbose=verbose)
     my_packager.check_requirements()
     my_packager.build()
-    my_packager.package()
+    my_packager.package(local_source=pyapp_source)
     binary_file = my_packager.binary_name
     fmt.success(
         f"Project successfully packaged.\n"

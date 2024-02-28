@@ -176,6 +176,29 @@ def test_get_pyapp_wrong_no_pyapp_folder(rye_project, mocker):
     assert e.value.args[0].__contains__("Error: no pyapp source code folder found.")
 
 
+def test_get_pyapp_local_wrong_file(rye_project):
+    """Raise an error if local file is not a .tar.gz."""
+    rye_project.joinpath("build/").mkdir()
+
+    wrong_source = rye_project.joinpath("wrong_source.txt")
+    wrong_source.touch()
+
+    packager = PackageApp()
+
+    with pytest.raises(click.ClickException):
+        packager._get_pyapp(local_source="wrong_source.txt")
+
+
+def test_get_pyapp_local_invalid_file(rye_project):
+    """Raise error if given file does not exist."""
+    rye_project.joinpath("build/").mkdir()
+
+    packager = PackageApp()
+
+    with pytest.raises(click.ClickException):
+        packager._get_pyapp(local_source="wrong_source.tar.gz")
+
+
 @pytest.mark.parametrize("binary_extensions", [".exe", ""])
 def test_package_pyapp_cargo_and_move(rye_project, mocker, binary_extensions):
     """Ensure cargo is called correctly and final binary moved to the right folder."""
