@@ -113,7 +113,7 @@ class PackageApp:
 
         with ut.set_dir(self._build_dir):
             if local_source:  # copy local source if provided
-                if local_source.suffix == ".gz":
+                if local_source.suffix == ".gz" and local_source.is_file():
                     shutil.copy(local_source, tar_name)
                 elif local_source.is_dir():
                     shutil.copytree(
@@ -122,7 +122,7 @@ class PackageApp:
                 else:
                     raise click.ClickException(
                         "Error: invalid local pyapp source code. "
-                        "Please provide a folder or a .tar.gz archive."
+                        "Please provide a valid folder or a .tar.gz archive."
                     )
 
             else:  # no local source
