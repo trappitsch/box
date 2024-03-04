@@ -23,6 +23,7 @@ class InitializeProject:
         optional_deps: str = None,
         app_entry: str = None,
         python_version: str = None,
+        opt_pyapp_vars: str = None,
     ):
         """Initialize the InitializeProject class.
 
@@ -31,10 +32,12 @@ class InitializeProject:
         :param optional_deps: Optional dependencies for the project.
         :param app_entry: App entry for the project.
         :param python_version: Python version for the project.
+        :param opt_pyapp_vars: Optional PyApp variables to set.
         """
         self._quiet = quiet
         self._builder = builder
         self._optional_deps = optional_deps
+        self._opt_paypp_vars = opt_pyapp_vars
         self._app_entry = app_entry
         self._python_version = python_version
 
@@ -144,7 +147,10 @@ class InitializeProject:
 
     def _set_optional_pyapp_variables(self):
         """Set optional environmental variables for PyApp."""
-        if not self._quiet:
+        opt_vars = None
+        if self._opt_paypp_vars:
+            opt_vars = self._opt_paypp_vars
+        elif not self._quiet:
             opt_vars = click.prompt(
                 "Please enter optional PyApp variables to set. "
                 "Example: `PYAPP_SKIP_INSTALL 1 PYAPP_FULL_ISOLATION 1",
@@ -153,8 +159,9 @@ class InitializeProject:
             )
 
             if opt_vars == "":
-                return
+                opt_vars = None
 
+        if opt_vars:
             opt_vars = opt_vars.split()
             if len(opt_vars) % 2 != 0:
                 fmt.warning("Invalid number of variables. Please try again.")

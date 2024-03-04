@@ -83,6 +83,8 @@ def test_initialize_with_options(rye_project_no_box):
             optional_deps,
             "-b",
             builder,
+            "--opt-pyapp-vars",
+            "PYAPP_FULL_ISOLATION 1",
         ],
     )
 
@@ -98,6 +100,7 @@ def test_initialize_with_options(rye_project_no_box):
     assert pyproj.python_version == py_version
     assert pyproj.optional_dependencies == optional_deps
     assert pyproj.app_entry == entry_point
+    assert pyproj.optional_pyapp_variables == {"PYAPP_FULL_ISOLATION": "1"}
 
 
 def test_initialize_project_quiet(rye_project_no_box):
