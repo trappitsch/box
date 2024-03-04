@@ -29,20 +29,22 @@ jobs:
       run: |
         pip install box
         pip install build
-    - name: Unit test with qtcowsay (GUI)
+    - name: Checkout qtcowsay
       uses: actions/check-run-action@v4
       with:
         repository: trappitsch/qtcowsay
         path: "qtcowsay"
+    - name: Test build qtcowsay (GUI)
       run: |
         cd qtcowsay
         box init -q -b build
         box package
-    - name: Unit test with cowsay (CLI)
+    - name: Checkout cowsay-python
       uses: actions/check-run-action@v4
       with:
           repository: VassuDevanS/cowsay-python
           path: "cowsay"
+    - name: Test build cowsay-python (CLI)
       run: |
           git checkout 3db622cefd8b11620ece7386d4151b5e734b078b
           cd cowsay
