@@ -52,6 +52,7 @@ class InitializeProject:
         self._set_optional_deps()
         self._set_app_entry()
         self._set_python_version()
+        self._set_optional_pyapp_variables()
 
         if not self._quiet:
             fmt.success("Project initialized.")
@@ -140,6 +141,29 @@ class InitializeProject:
 
         if opt_deps != "":
             pyproject_writer("optional_deps", opt_deps)
+
+    def _set_optional_pyapp_variables(self):
+        """Set optional environmental variables for PyApp."""
+        if not self._quiet:
+            opt_vars = click.prompt(
+                "Please enter optional PyApp variables to set. "
+                "Example: `PYAPP_SKIP_INSTALL 1 PYAPP_FULL_ISOLATION 1",
+                type=str,
+                default="",
+            )
+
+            if opt_vars == "":
+                return
+
+            opt_vars = opt_vars.split()
+            if len(opt_vars) % 2 != 0:
+                fmt.warning("Invalid number of variables. Please try again.")
+                self._set_optional_pyapp_variables()
+            else:
+                opt_vars_dict = {}
+                for i in range(0, len(opt_vars), 2):
+                    opt_vars_dict[opt_vars[i]] = opt_vars[i + 1]
+                pyproject_writer("optional_pyapp_vars", opt_vars_dict)
 
     def _set_pyproj(self):
         """Check if the pyproject.toml file is valid."""

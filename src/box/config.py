@@ -57,6 +57,14 @@ class PyProjectParser:
             return None
 
     @property
+    def optional_pyapp_variables(self) -> Dict:
+        """Return optional pyapp variables as list (if set), otherwise empty dict."""
+        try:
+            return self._pyproject["tool"]["box"]["optional_pyapp_vars"]
+        except KeyError:
+            return {}
+
+    @property
     def possible_app_entries(self) -> Dict:
         """Return [project.gui-scripts] or [project.scripts] entry if available.
 
