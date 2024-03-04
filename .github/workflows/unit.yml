@@ -24,7 +24,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
     - name: pip install
       run: |
-        pip install box
+        pip install .
         pip install build
     - name: Checkout qtcowsay
       uses: actions/checkout@v4
