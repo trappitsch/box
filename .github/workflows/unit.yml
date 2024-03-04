@@ -23,7 +23,7 @@ jobs:
     - name: Install python and setup project
       uses: actions/setup-python@v5
       with:
-          python-version: env.MAIN_PYTHON_VERSION
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
     - name: pip install
       run: |
         pip install box
