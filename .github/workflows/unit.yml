@@ -1,4 +1,4 @@
-name: unittests
+name: unit_tests
 
 on:
   push:
@@ -10,41 +10,40 @@ env:
   MAIN_PYTHON_VERSION: "3.12"
 
 jobs:
-  # Build and test
-  strategy:
-    matrix:
-      os: [ubuntu-latest, macos-latest, windows-latest]
-  unit-tests:
-    runs-on: {{matrix.os }}
+  unit_tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout box
       uses: actions/checkout@v4
-      with:
-        path: "box"
     - name: Install python and setup project
       uses: actions/setup-python@v5
       with:
-          python-version: env.MAIN_PYTHON_VERSION
-    - name: Pip install
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+    - name: pip install
       run: |
-        pip install box
+        pip install .
         pip install build
-    - name: Unit test with qtcowsay (GUI)
-      uses: actions/check-run-action@v4
+    - name: Checkout qtcowsay
+      uses: actions/checkout@v4
       with:
         repository: trappitsch/qtcowsay
         path: "qtcowsay"
+    - name: Test build qtcowsay (GUI)
       run: |
         cd qtcowsay
         box init -q -b build
         box package
-    - name: Unit test with cowsay (CLI)
-      uses: actions/check-run-action@v4
+    - name: Checkout cowsay-python
+      uses: actions/checkout@v4
       with:
-          repository: VassuDevanS/cowsay-python
+          repository: VaasuDevanS/cowsay-python
           path: "cowsay"
+    - name: Test build cowsay-python (CLI)
       run: |
-          git checkout 3db622cefd8b11620ece7386d4151b5e734b078b
-          cd cowsay
-          box init -q -b build
-          box package
+        cd cowsay
+        git checkout 3db622cefd8b11620ece7386d4151b5e734b078b
+        box init -q -b build
+        box package
