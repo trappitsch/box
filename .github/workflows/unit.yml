@@ -10,11 +10,10 @@ env:
   MAIN_PYTHON_VERSION: "3.12"
 
 jobs:
-  # Build and test
-  strategy:
-    matrix:
-      os: [ubuntu-latest, macos-latest, windows-latest]
   unit-tests:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: {{matrix.os }}
     steps:
     - name: Checkout box
