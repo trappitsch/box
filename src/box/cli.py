@@ -34,6 +34,14 @@ def cli():
 @click.option(
     "-opt", "--optional-deps", help="Set optional dependencies for the project."
 )
+@click.option(
+    "--opt-pyapp-vars",
+    help=(
+        "Set optional PyApp variables for the project. "
+        "`Example: PYAPP_FULL_ISOLATION 1`"
+    ),
+    type=str,
+)
 @click.option("-e", "--entry", help="Set the app entry for the project.")
 @click.option(
     "-py",
@@ -41,7 +49,7 @@ def cli():
     type=click.Choice(ut.PYAPP_PYTHON_VERSIONS),
     help="Set the python version to use with PyApp.",
 )
-def init(quiet, builder, optional_deps, entry, python_version):
+def init(quiet, builder, optional_deps, entry, python_version, opt_pyapp_vars):
     """Initialize a new project in the current folder."""
     ut.check_pyproject()
     my_init = InitializeProject(
@@ -50,6 +58,7 @@ def init(quiet, builder, optional_deps, entry, python_version):
         optional_deps=optional_deps,
         app_entry=entry,
         python_version=python_version,
+        opt_pyapp_vars=opt_pyapp_vars,
     )
     my_init.initialize()
 
@@ -87,7 +96,8 @@ def package(verbose, pyapp_source):
     binary_file = my_packager.binary_name
     fmt.success(
         f"Project successfully packaged.\n"
-        f"You can find the executable file {binary_file.name} in the `target/release` folder."
+        f"You can find the executable file {binary_file.name} "
+        f"in the `target/release` folder."
     )
 
 

@@ -9,7 +9,9 @@ from box.packager import PackageApp
 import box.utils as ut
 
 
-@pytest.mark.parametrize("app_entry", ["\n\nhello\n3.8", "\ngui\n127\nhello\n"])
+@pytest.mark.parametrize(
+    "app_entry", ["\n\nhello\n3.8\nPYAPP_FULL_ISOLATION 1", "\ngui\n127\nhello\n\n"]
+)
 def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     """Initialize a new project."""
     # modify pyproject.toml to contain an app entry
@@ -33,7 +35,7 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
 
     # assert name is in pyproject.toml
     pyproj = PyProjectParser()
-    app_entry_exp = app_entry.split("\n")[-2]
+    app_entry_exp = app_entry.split("\n")[-3]
     assert pyproj.app_entry == app_entry_exp
 
     # assert that extra dependencies were set
@@ -44,10 +46,21 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     assert pyproj.builder == "rye"
 
     # assert default python version
-    py_version_exp = app_entry.split("\n")[-1]
+    py_version_exp = app_entry.split("\n")[-2]
     if py_version_exp == "":
         py_version_exp = ut.PYAPP_PYTHON_VERSIONS[-1]
     assert pyproj.python_version == py_version_exp
+
+    # optional pyapp variables
+    optional_pyapp_vars_exp = app_entry.split("\n")[-1]
+    if optional_pyapp_vars_exp == "":
+        exp_dict = {}
+    else:
+        tmp_split = optional_pyapp_vars_exp.split()
+        exp_dict = {}
+        for it in range(0, len(tmp_split), 2):
+            exp_dict[tmp_split[it]] = tmp_split[it + 1]
+    assert pyproj.optional_pyapp_variables == exp_dict
 
 
 def test_initialize_with_options(rye_project_no_box):
@@ -70,6 +83,8 @@ def test_initialize_with_options(rye_project_no_box):
             optional_deps,
             "-b",
             builder,
+            "--opt-pyapp-vars",
+            "PYAPP_FULL_ISOLATION 1",
         ],
     )
 
@@ -85,6 +100,7 @@ def test_initialize_with_options(rye_project_no_box):
     assert pyproj.python_version == py_version
     assert pyproj.optional_dependencies == optional_deps
     assert pyproj.app_entry == entry_point
+    assert pyproj.optional_pyapp_variables == {"PYAPP_FULL_ISOLATION": "1"}
 
 
 def test_initialize_project_quiet(rye_project_no_box):
@@ -111,6 +127,21 @@ def test_initialize_project_builders(rye_project_no_box, builder):
     # assert that default builder is set to rye
     pyproj = PyProjectParser()
     assert pyproj.builder == builder
+
+
+def test_initialize_project_wrong_number_of_pyapp_vars(rye_project_no_box):
+    """Initialize a new project with a specific builder."""
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        ["init"],
+        input="\n\nhello\n\nPYAPP_FULL_ISOLATION 1 2\nPYAPP_FULL_ISOLATION 1",
+    )
+    assert result.exit_code == 0
+
+    pyproj = PyProjectParser()
+    exp_dict = {"PYAPP_FULL_ISOLATION": "1"}
+    assert pyproj.optional_pyapp_variables == exp_dict
 
 
 def test_initialize_project_quiet_no_project_script(rye_project_no_box):

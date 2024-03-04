@@ -23,6 +23,7 @@ class InitializeProject:
         optional_deps: str = None,
         app_entry: str = None,
         python_version: str = None,
+        opt_pyapp_vars: str = None,
     ):
         """Initialize the InitializeProject class.
 
@@ -31,10 +32,12 @@ class InitializeProject:
         :param optional_deps: Optional dependencies for the project.
         :param app_entry: App entry for the project.
         :param python_version: Python version for the project.
+        :param opt_pyapp_vars: Optional PyApp variables to set.
         """
         self._quiet = quiet
         self._builder = builder
         self._optional_deps = optional_deps
+        self._opt_paypp_vars = opt_pyapp_vars
         self._app_entry = app_entry
         self._python_version = python_version
 
@@ -52,6 +55,7 @@ class InitializeProject:
         self._set_optional_deps()
         self._set_app_entry()
         self._set_python_version()
+        self._set_optional_pyapp_variables()
 
         if not self._quiet:
             fmt.success("Project initialized.")
@@ -140,6 +144,33 @@ class InitializeProject:
 
         if opt_deps != "":
             pyproject_writer("optional_deps", opt_deps)
+
+    def _set_optional_pyapp_variables(self):
+        """Set optional environmental variables for PyApp."""
+        opt_vars = None
+        if self._opt_paypp_vars:
+            opt_vars = self._opt_paypp_vars
+        elif not self._quiet:
+            opt_vars = click.prompt(
+                "Please enter optional PyApp variables to set. "
+                "Example: `PYAPP_SKIP_INSTALL 1 PYAPP_FULL_ISOLATION 1",
+                type=str,
+                default="",
+            )
+
+            if opt_vars == "":
+                opt_vars = None
+
+        if opt_vars:
+            opt_vars = opt_vars.split()
+            if len(opt_vars) % 2 != 0:
+                fmt.warning("Invalid number of variables. Please try again.")
+                self._set_optional_pyapp_variables()
+            else:
+                opt_vars_dict = {}
+                for i in range(0, len(opt_vars), 2):
+                    opt_vars_dict[opt_vars[i]] = opt_vars[i + 1]
+                pyproject_writer("optional_pyapp_vars", opt_vars_dict)
 
     def _set_pyproj(self):
         """Check if the pyproject.toml file is valid."""
