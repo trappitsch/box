@@ -19,7 +19,6 @@ jobs:
     - name: Checkout box
       uses: actions/checkout@v4
       with:
-        path: "box"
     - name: Install python and setup project
       uses: actions/setup-python@v5
       with:
