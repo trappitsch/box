@@ -39,7 +39,7 @@ jobs:
     - name: Checkout cowsay-python
       uses: actions/checkout@v4
       with:
-          repository: VassuDevanS/cowsay-python
+          repository: VaasuDevanS/cowsay-python
           path: "cowsay"
     - name: Test build cowsay-python (CLI)
       run: |
