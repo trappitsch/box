@@ -25,6 +25,11 @@ class PyProjectParser:
         return self._pyproject["tool"]["box"]["app_entry"]
 
     @property
+    def app_entry_type(self):
+        """Return the entry type of the project for PyApp."""
+        return self._pyproject["tool"]["box"]["entry_type"]
+
+    @property
     def builder(self) -> str:
         """Return the builder of the project."""
         return self._pyproject["tool"]["box"]["builder"]

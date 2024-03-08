@@ -44,12 +44,19 @@ def cli():
 )
 @click.option("-e", "--entry", help="Set the app entry for the project.")
 @click.option(
+    "-et",
+    "--entry-type",
+    help="Set the app entry type to pass to PyApp for the project.",
+)
+@click.option(
     "-py",
     "--python-version",
     type=click.Choice(ut.PYAPP_PYTHON_VERSIONS),
     help="Set the python version to use with PyApp.",
 )
-def init(quiet, builder, optional_deps, entry, python_version, opt_pyapp_vars):
+def init(
+    quiet, builder, optional_deps, entry, entry_type, python_version, opt_pyapp_vars
+):
     """Initialize a new project in the current folder."""
     ut.check_pyproject()
     my_init = InitializeProject(
@@ -57,6 +64,7 @@ def init(quiet, builder, optional_deps, entry, python_version, opt_pyapp_vars):
         builder=builder,
         optional_deps=optional_deps,
         app_entry=entry,
+        app_entry_type=entry_type,
         python_version=python_version,
         opt_pyapp_vars=opt_pyapp_vars,
     )

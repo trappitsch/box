@@ -3,7 +3,6 @@
 Only functions that are not tested within the CLI are tested here.
 """
 
-
 from box.config import PyProjectParser
 from box.initialization import InitializeProject
 

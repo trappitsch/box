@@ -8,6 +8,10 @@ from rich_click import ClickException
 
 from box.config import PyProjectParser
 
+# available app entry types that are used in box
+PYAPP_APP_ENTRY_TYPES = ["spec", "module", "script", "notebook"]
+
+
 # supported Python versions. Default will be set to last entry (latest).
 PYAPP_PYTHON_VERSIONS = (
     "pypy2.7",

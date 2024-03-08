@@ -10,10 +10,19 @@ import box.utils as ut
 
 
 @pytest.mark.parametrize(
-    "app_entry", ["\n\nhello\n3.8\nPYAPP_FULL_ISOLATION 1", "\ngui\n127\nhello\n\n"]
+    "app_entry",
+    ["\n\nhello\n\n3.8\nPYAPP_FULL_ISOLATION 1", "\ngui\n127\nhello\nmodule\n\n"],
 )
 def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     """Initialize a new project."""
+    # provided app_entry values
+    app_entry_split = app_entry.split("\n")
+    deps_exp = app_entry_split[0]
+    app_entry_exp = app_entry_split[-4]
+    entry_type_exp = app_entry_split[-3]
+    py_version_exp = app_entry_split[-2]
+    optional_pyapp_vars_exp = app_entry_split[-1]
+
     # modify pyproject.toml to contain an app entry
     with open("pyproject.toml") as fin:
         toml_data = fin.read().split("\n")
@@ -33,26 +42,29 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     assert result.exit_code == 0
     assert "Project initialized." in result.output
 
-    # assert name is in pyproject.toml
     pyproj = PyProjectParser()
-    app_entry_exp = app_entry.split("\n")[-3]
+
+    # assert correct app_entry
     assert pyproj.app_entry == app_entry_exp
 
+    # assert correct app_entry_type
+    if entry_type_exp == "":
+        entry_type_exp = "spec"  # default value
+    assert pyproj.app_entry_type == entry_type_exp
+
     # assert that extra dependencies were set
-    if (deps_exp := app_entry.split("\n")[0]) != "":
+    if deps_exp != "":
         assert pyproj.optional_dependencies == deps_exp
 
     # assert that default builder is set to rye
     assert pyproj.builder == "rye"
 
     # assert default python version
-    py_version_exp = app_entry.split("\n")[-2]
     if py_version_exp == "":
         py_version_exp = ut.PYAPP_PYTHON_VERSIONS[-1]
     assert pyproj.python_version == py_version_exp
 
     # optional pyapp variables
-    optional_pyapp_vars_exp = app_entry.split("\n")[-1]
     if optional_pyapp_vars_exp == "":
         exp_dict = {}
     else:
@@ -67,6 +79,7 @@ def test_initialize_with_options(rye_project_no_box):
     """Initialize a new project with options."""
     py_version = "3.8"
     entry_point = "myapp:entry"
+    entry_type = "module"
     optional_deps = "gui"
     builder = "hatch"
 
@@ -77,6 +90,8 @@ def test_initialize_with_options(rye_project_no_box):
             "init",
             "-e",
             entry_point,
+            "-et",
+            entry_type,
             "-py",
             py_version,
             "-opt",
@@ -100,6 +115,7 @@ def test_initialize_with_options(rye_project_no_box):
     assert pyproj.python_version == py_version
     assert pyproj.optional_dependencies == optional_deps
     assert pyproj.app_entry == entry_point
+    assert pyproj.app_entry_type == entry_type
     assert pyproj.optional_pyapp_variables == {"PYAPP_FULL_ISOLATION": "1"}
 
 
@@ -135,7 +151,7 @@ def test_initialize_project_wrong_number_of_pyapp_vars(rye_project_no_box):
     result = runner.invoke(
         cli,
         ["init"],
-        input="\n\nhello\n\nPYAPP_FULL_ISOLATION 1 2\nPYAPP_FULL_ISOLATION 1",
+        input="\n\nhello\n\n\nPYAPP_FULL_ISOLATION 1 2\nPYAPP_FULL_ISOLATION 1",
     )
     assert result.exit_code == 0
 
