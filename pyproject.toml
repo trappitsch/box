@@ -21,9 +21,18 @@ box = "box.cli:cli"
 
 [project.urls]
 Homepage = "https://github.com/trappitsc/box"
+Documentation = "https://box.readthedocs.io/"
 Changelog = "https://github.com/trappitsc/box/releases"
 Issues = "https://github.com/trappitsc/box/issues"
 CI = "https://github.com/trappitsc/box/actions"
+
+[project.optional-dependencies]
+docs = [
+    "mkdocs>=1.5.3",
+    "mkdocs-material>=9.5.13",
+    "mkdocs-click>=0.8.1",
+    "mkdocs-include-markdown-plugin>=6.0.4",
+]
 
 [build-system]
 requires = ["hatchling"]

@@ -4,34 +4,84 @@
 # last locked with the following flags:
 #   pre: false
 #   features: []
-#   all-features: false
+#   all-features: true
 #   with-sources: false
 
 -e file:.
+babel==2.14.0
+    # via mkdocs-material
+bracex==2.4
+    # via wcmatch
 build==1.0.3
+certifi==2024.2.2
+    # via requests
+charset-normalizer==3.3.2
+    # via requests
 click==8.1.7
     # via box
+    # via mkdocs
+    # via mkdocs-click
     # via rich-click
 colorama==0.4.6
     # via box
+    # via mkdocs-material
 coverage==7.4.3
     # via pytest-cov
+ghp-import==2.1.0
+    # via mkdocs
 gitdb==4.0.11
     # via gitpython
 gitpython==3.1.42
+idna==3.6
+    # via requests
 iniconfig==2.0.0
     # via pytest
+jinja2==3.1.3
+    # via mkdocs
+    # via mkdocs-material
+markdown==3.5.2
+    # via mkdocs
+    # via mkdocs-click
+    # via mkdocs-material
+    # via pymdown-extensions
 markdown-it-py==3.0.0
     # via rich
+markupsafe==2.1.5
+    # via jinja2
+    # via mkdocs
 mdurl==0.1.2
     # via markdown-it-py
+mergedeep==1.3.4
+    # via mkdocs
+mkdocs==1.5.3
+    # via box
+    # via mkdocs-include-markdown-plugin
+    # via mkdocs-material
+mkdocs-click==0.8.1
+    # via box
+mkdocs-include-markdown-plugin==6.0.4
+    # via box
+mkdocs-material==9.5.13
+    # via box
+mkdocs-material-extensions==1.3.1
+    # via mkdocs-material
 packaging==23.2
     # via build
+    # via mkdocs
     # via pytest
+paginate==0.5.6
+    # via mkdocs-material
+pathspec==0.12.1
+    # via mkdocs
+platformdirs==4.2.0
+    # via mkdocs
 pluggy==1.4.0
     # via pytest
 pygments==2.17.2
+    # via mkdocs-material
     # via rich
+pymdown-extensions==10.7.1
+    # via mkdocs-material
 pyproject-hooks==1.0.0
     # via build
 pytest==8.0.2
@@ -39,15 +89,35 @@ pytest==8.0.2
     # via pytest-mock
 pytest-cov==4.1.0
 pytest-mock==3.12.0
+python-dateutil==2.9.0.post0
+    # via ghp-import
+pyyaml==6.0.1
+    # via mkdocs
+    # via pymdown-extensions
+    # via pyyaml-env-tag
+pyyaml-env-tag==0.1
+    # via mkdocs
+regex==2023.12.25
+    # via mkdocs-material
+requests==2.31.0
+    # via mkdocs-material
 rich==13.7.0
     # via box
     # via rich-click
 rich-click==1.7.3
     # via box
 ruff==0.2.2
+six==1.16.0
+    # via python-dateutil
 smmap==5.0.1
     # via gitdb
 tomlkit==0.12.4
     # via box
 typing-extensions==4.10.0
     # via rich-click
+urllib3==2.2.1
+    # via requests
+watchdog==4.0.0
+    # via mkdocs
+wcmatch==8.5.1
+    # via mkdocs-include-markdown-plugin
