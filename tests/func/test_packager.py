@@ -132,7 +132,7 @@ def test_get_pyapp_no_file_found(rye_project, mocker):
     with pytest.raises(click.ClickException) as e:
         packager._get_pyapp()
 
-    assert e.value.args[0].__contains__("Error: no pyapp source code found")
+    assert "Error: no pyapp source code found" in e.value.args[0]
     url_mock.assert_called_with(PYAPP_SOURCE, Path("pyapp-source.tar.gz"))
 
 
@@ -166,14 +166,14 @@ def test_get_pyapp_wrong_no_pyapp_folder(rye_project, mocker):
     with pytest.raises(click.ClickException) as e:
         packager._get_pyapp()
 
-    assert e.value.args[0].__contains__("Error: no pyapp source code found")
+    assert "Error: no pyapp source code found" in e.value.args[0]
 
     rye_project.joinpath("build/pyapp-source.tar.gz").touch()
 
     with pytest.raises(click.ClickException) as e:
         packager._get_pyapp()
 
-    assert e.value.args[0].__contains__("Error: no pyapp source code folder found.")
+    assert "Error: no pyapp source code folder found." in e.value.args[0]
 
 
 def test_get_pyapp_local_wrong_file(rye_project):
