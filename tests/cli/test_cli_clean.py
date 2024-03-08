@@ -49,7 +49,7 @@ def test_clean(rye_project):
         assert not folder.exists()
 
     assert result.exit_code == 0
-    assert result.output.__contains__("The whole project was cleaned.")
+    assert "The whole project was cleaned." in result.output
 
 
 @pytest.mark.parametrize(
@@ -91,7 +91,7 @@ def test_clean_folder(rye_project, option):
             assert folder.exists()
 
     assert result.exit_code == 0
-    assert result.output.__contains__(f"Folder(s) {folder_name} cleaned.")
+    assert f"Folder(s) {folder_name} cleaned." in result.output
 
 
 def test_clean_multiple_folders(rye_project):
@@ -106,7 +106,7 @@ def test_clean_multiple_folders(rye_project):
     assert build.exists()
 
     assert result.exit_code == 0
-    assert result.output.__contains__("Folder(s) dist, target cleaned.")
+    assert "Folder(s) dist, target cleaned." in result.output
 
 
 @pytest.mark.parametrize("init_folder", [True, False])

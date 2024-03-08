@@ -178,7 +178,7 @@ def test_pyproject_does_not_exist():
     with runner.isolated_filesystem():
         result = runner.invoke(cli, ["init", "-q"])
         assert result.exit_code != 0
-        assert result.output.__contains__("No pyproject.toml file found")
+        assert "No pyproject.toml file found" in result.output
 
 
 def test_pyproject_invalid_toml(tmp_path_chdir):
@@ -187,4 +187,4 @@ def test_pyproject_invalid_toml(tmp_path_chdir):
     runner = CliRunner()
     result = runner.invoke(cli, ["init", "-q"])
     assert result.exit_code != 0
-    assert result.output.__contains__("Invalid `pyproject.toml` file")
+    assert "Invalid `pyproject.toml` file" in result.output
