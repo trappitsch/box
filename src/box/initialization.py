@@ -11,10 +11,7 @@ import box.utils as ut
 
 
 class InitializeProject:
-    """Initialize a new project.
-
-    # todo: allow for custom build command, custom dist folder
-    """
+    """Initialize a new project."""
 
     def __init__(
         self,
@@ -22,6 +19,7 @@ class InitializeProject:
         builder: str = None,
         optional_deps: str = None,
         app_entry: str = None,
+        app_entry_type: str = None,
         python_version: str = None,
         opt_pyapp_vars: str = None,
     ):
@@ -31,6 +29,7 @@ class InitializeProject:
         :param builder: Builder tool to use.
         :param optional_deps: Optional dependencies for the project.
         :param app_entry: App entry for the project.
+        :param app_entry_type: Entry type for the project in PyApp.
         :param python_version: Python version for the project.
         :param opt_pyapp_vars: Optional PyApp variables to set.
         """
@@ -39,6 +38,7 @@ class InitializeProject:
         self._optional_deps = optional_deps
         self._opt_paypp_vars = opt_pyapp_vars
         self._app_entry = app_entry
+        self._app_entry_type = app_entry_type
         self._python_version = python_version
 
         self.app_entry = None
@@ -54,6 +54,7 @@ class InitializeProject:
         self._set_builder()
         self._set_optional_deps()
         self._set_app_entry()
+        self._set_app_entry_type()
         self._set_python_version()
         self._set_optional_pyapp_variables()
 
@@ -107,6 +108,28 @@ class InitializeProject:
                     query_app_entry(query_text, options)
 
         pyproject_writer("app_entry", self.app_entry)
+
+    def _set_app_entry_type(self):
+        """Set the app entry type for the PyApp packaging. Defaults to `spec`."""
+        if self._app_entry_type:
+            if self._app_entry_type.lower() not in ut.PYAPP_APP_ENTRY_TYPES:
+                raise click.ClickException(
+                    f"Invalid entry type. "
+                    f"Please choose from {ut.PYAPP_APP_ENTRY_TYPES}."
+                )
+            else:
+                entry_type = self._app_entry_type.lower()
+        else:
+            if self._quiet:
+                entry_type = "spec"
+            else:
+                entry_type = click.prompt(
+                    "Choose an entry type for the project in PyApp.",
+                    type=click.Choice(ut.PYAPP_APP_ENTRY_TYPES),
+                    default="spec",
+                )
+
+        pyproject_writer("entry_type", entry_type)
 
     def _set_builder(self):
         """Set the builder for the project (defaults to rye)."""

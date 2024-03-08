@@ -230,9 +230,10 @@ def test_package_pyapp_cargo_and_move(rye_project, mocker, binary_extensions):
     assert exp_binary.read_text() == "not really a binary"
 
 
+@pytest.mark.parametrize("app_entry_type", ut.PYAPP_APP_ENTRY_TYPES)
 @pytest.mark.parametrize("opt_deps", ["gui", None])
 @pytest.mark.parametrize("opt_pyapp_vars", ["PYAPP_SOMETHING 2", None])
-def test_set_env(rye_project, opt_deps, opt_pyapp_vars, mocker):
+def test_set_env(rye_project, mocker, app_entry_type, opt_deps, opt_pyapp_vars):
     """Set environment for `PyApp` packaging."""
     config = PyProjectParser()
     exec_spec = config.app_entry
@@ -244,6 +245,7 @@ def test_set_env(rye_project, opt_deps, opt_pyapp_vars, mocker):
     dist_file.touch()
 
     # write optional deps to the pyproject.toml
+    pyproject_writer("entry_type", app_entry_type)
     if opt_deps:
         pyproject_writer("optional_deps", opt_deps)
     if opt_pyapp_vars:
@@ -259,7 +261,7 @@ def test_set_env(rye_project, opt_deps, opt_pyapp_vars, mocker):
     assert os.environ["PYAPP_PROJECT_NAME"] == package_name
     assert os.environ["PYAPP_PROJECT_VERSION"] == "0.1.0"
     assert os.environ["PYAPP_PROJECT_PATH"] == str(dist_file)
-    assert os.environ["PYAPP_EXEC_SPEC"] == exec_spec
+    assert os.environ[f"PYAPP_EXEC_{app_entry_type.upper()}"] == exec_spec
     assert os.environ["PYAPP_PYTHON_VERSION"] == ut.PYAPP_PYTHON_VERSIONS[-1]
     if opt_deps:
         assert os.environ["PYAPP_PIP_OPTIONAL_DEPS"] == opt_deps
@@ -267,7 +269,7 @@ def test_set_env(rye_project, opt_deps, opt_pyapp_vars, mocker):
         assert os.environ["PYAPP_SOMETHING"] == "2"
 
 
-def test_set_env_delete_existing(rye_project, mocker):
+def test_set_env_delete_existing(rye_project):
     """Delete existing `PYAPP` environmental variables."""
     var_name = "PYAPP_BLA_VARIABLE"
     var_value = "test"
