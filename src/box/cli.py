@@ -46,7 +46,9 @@ def cli():
 @click.option(
     "-et",
     "--entry-type",
-    help="Set the app entry type to pass to PyApp for the project.",
+    help=(
+        "Set the app entry type (X) to pass to PyApp (`PYAPP_ENTRY_X`) for the project."
+    ),
 )
 @click.option(
     "-py",

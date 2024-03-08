@@ -53,6 +53,7 @@ def rye_project(tmp_path):
     os.chdir(tmp_path)
     pyproject_writer("builder", "rye")
     pyproject_writer("app_entry", "pkg:run")
+    pyproject_writer("entry_type", "spec")
     pyproject_writer("python_version", "3.12")
 
     yield tmp_path

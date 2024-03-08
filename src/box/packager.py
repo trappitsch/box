@@ -218,12 +218,15 @@ class PackageApp:
         # get the python version or set to default
         py_version = self.config.python_version or ut.PYAPP_PYTHON_VERSIONS[-1]
 
+        # set variable name for app_entry
+        app_entry_type = self.config.app_entry_type
+        var_app_entry = f"PYAPP_EXEC_{app_entry_type.upper()}"
+
         # set variables
         os.environ["PYAPP_PROJECT_NAME"] = self.config.name_pkg
         os.environ["PYAPP_PROJECT_VERSION"] = self.config.version
         os.environ["PYAPP_PROJECT_PATH"] = str(dist_file)
-        # fixme: this whole thing is a hack. give options for entry, see PyApp docs
-        os.environ["PYAPP_EXEC_SPEC"] = self.config.app_entry
+        os.environ[var_app_entry] = self.config.app_entry
         os.environ["PYAPP_PYTHON_VERSION"] = py_version
         if value := self.config.optional_dependencies:
             os.environ["PYAPP_PIP_OPTIONAL_DEPS"] = value
