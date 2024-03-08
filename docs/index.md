@@ -29,7 +29,7 @@ Instructions to do so can be found
 
 !!! failure
 
-    The installation from `pypi`, as described below, is currently not available.
+    The installation from `pypi` (top part from given options below) is currently not available.
     If you want to test this project, please use the installation from github.
 
 !!! abstract "Installation Instructions"
