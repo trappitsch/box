@@ -14,7 +14,7 @@
     pipx install git+https://github.com/trappitsch/box.git
     ```
 
-=== "Rye"
+=== "rye"
 
     To install box as a `rye` tool, type:
 

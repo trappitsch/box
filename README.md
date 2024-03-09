@@ -1,8 +1,9 @@
 # box
 
-[![Rye](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/mitsuhiko/rye/main/artwork/badge.json)](https://rye-up.com)
+[![Docs](https://readthedocs.org/projects/box/badge/?version=latest)](https://box.readthedocs.io/en/latest/?badge=latest)
 [![tests](https://github.com/trappitsch/box/actions/workflows/tests.yml/badge.svg)](https://github.com/trappitsch/box/actions/workflows/tests.yml)
 [![codecov](https://codecov.io/gh/trappitsch/box/graph/badge.svg?token=CED96ANLRR)](https://codecov.io/gh/trappitsch/box)
+[![Rye](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/mitsuhiko/rye/main/artwork/badge.json)](https://rye-up.com)
 
 The goal of this package is
 to provide a command line interface
