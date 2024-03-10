@@ -49,6 +49,7 @@ def cli():
     help=(
         "Set the app entry type (X) to pass to PyApp (`PYAPP_ENTRY_X`) for the project."
     ),
+    type=click.Choice(ut.PYAPP_APP_ENTRY_TYPES),
 )
 @click.option(
     "-py",
