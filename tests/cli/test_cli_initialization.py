@@ -119,6 +119,46 @@ def test_initialize_with_options(rye_project_no_box):
     assert pyproj.optional_pyapp_variables == {"PYAPP_FULL_ISOLATION": "1"}
 
 
+def test_initialize_project_again(rye_project_no_box):
+    """Initialization of a previous project sets defaults from previous config."""
+    builder = "build"
+    entry_point = "myapp:entry"
+    entry_type = "module"
+    optional_deps = "gui"
+    py_version = "3.8"
+    pyapp_vars = "PYAPP_FULL_ISOLATION 1"
+
+    runner = CliRunner()
+    runner.invoke(
+        cli,
+        [
+            "init",
+            "-e",
+            entry_point,
+            "-et",
+            entry_type,
+            "-py",
+            py_version,
+            "-opt",
+            optional_deps,
+            "-b",
+            builder,
+            "--opt-pyapp-vars",
+            pyapp_vars,
+        ],
+    )
+
+    # now re-initialize with quiet and assure that the same options are set
+    runner.invoke(cli, ["init", "-q"])
+
+    pyproj = PyProjectParser()
+    assert pyproj.builder == builder
+    assert pyproj.python_version == py_version
+    assert pyproj.optional_dependencies == optional_deps
+    assert pyproj.app_entry == entry_point
+    assert pyproj.app_entry_type == entry_type
+
+
 def test_initialize_project_quiet(rye_project_no_box):
     """Initialize a new project quietly."""
     runner = CliRunner()

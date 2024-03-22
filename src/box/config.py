@@ -1,5 +1,6 @@
 # Parse the pyproject.toml file
 
+from collections import OrderedDict
 from pathlib import Path
 from typing import Any, Dict, Union
 
@@ -70,7 +71,7 @@ class PyProjectParser:
             return {}
 
     @property
-    def possible_app_entries(self) -> Dict:
+    def possible_app_entries(self) -> OrderedDict:
         """Return [project.gui-scripts] or [project.scripts] entry if available.
 
         If no entry is available, return None. If more than one entry available,
@@ -78,7 +79,11 @@ class PyProjectParser:
 
         :return: A list of possible entry points or None.
         """
-        possible_entries = {}
+        possible_entries = OrderedDict()
+        try:
+            possible_entries["current-default"] = {"current": self.app_entry}
+        except KeyError:
+            pass
         try:
             possible_entries["gui-scripts"] = self._project["gui-scripts"]
         except KeyError:
@@ -87,6 +92,7 @@ class PyProjectParser:
             possible_entries["scripts"] = self._project["scripts"]
         except KeyError:
             pass
+        print(possible_entries)
         return possible_entries
 
     @property
