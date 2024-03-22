@@ -36,6 +36,10 @@ If you provided all the answers, your project should have been successfully init
     To still specify variables, just set them using the arguments discussed in the table above.
     And if you are happy with all the defaults, you should be good to do.
 
+!!! note
+    If you re-initalize a project, `box` will use the already set values as proposed default values.
+    If you re-initialize in quiet mode and just give one new option, all other options will stay the same.
+
 ## Packaging
 
 To package your project, simply run:

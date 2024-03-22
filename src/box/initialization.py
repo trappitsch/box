@@ -64,6 +64,7 @@ class InitializeProject:
     def _set_app_entry(self):
         """Set the app entry for the project."""
         possible_entries = self.pyproj.possible_app_entries
+
         # create a list of possible entries
         options = []
         sup_keys = possible_entries.keys()  # outside keys
@@ -111,6 +112,12 @@ class InitializeProject:
 
     def _set_app_entry_type(self):
         """Set the app entry type for the PyApp packaging. Defaults to `spec`."""
+        default_entry_type = "spec"
+        try:
+            default_entry_type = self.pyproj.app_entry_type
+        except KeyError:
+            pass
+
         if self._app_entry_type:
             if self._app_entry_type.lower() not in ut.PYAPP_APP_ENTRY_TYPES:
                 raise click.ClickException(
@@ -121,12 +128,12 @@ class InitializeProject:
                 entry_type = self._app_entry_type.lower()
         else:
             if self._quiet:
-                entry_type = "spec"
+                entry_type = default_entry_type
             else:
                 entry_type = click.prompt(
                     "Choose an entry type for the project in PyApp.",
                     type=click.Choice(ut.PYAPP_APP_ENTRY_TYPES),
-                    default="spec",
+                    default=default_entry_type,
                 )
 
         pyproject_writer("entry_type", entry_type)
@@ -135,16 +142,22 @@ class InitializeProject:
         """Set the builder for the project (defaults to rye)."""
         possible_builders = PackageApp().builders
 
+        default_builder = "rye"
+        try:
+            default_builder = self.pyproj.builder
+        except KeyError:
+            pass
+
         if self._builder:
             builder = self._builder
         else:
             if self._quiet:
-                builder = "rye"
+                builder = default_builder
             else:
                 builder = click.prompt(
                     "Choose a builder tool for the project.",
                     type=click.Choice(possible_builders),
-                    default="rye",
+                    default=default_builder,
                 )
 
         pyproject_writer("builder", builder)
@@ -153,16 +166,21 @@ class InitializeProject:
 
     def _set_optional_deps(self):
         """Set optional dependencies for the project (if any)."""
+        if (tmp := self.pyproj.optional_dependencies) is not None:
+            default_optional_deps = tmp
+        else:
+            default_optional_deps = ""
+
         if self._optional_deps:
             opt_deps = self._optional_deps
         else:
             if self._quiet:
-                opt_deps = ""
+                opt_deps = default_optional_deps
             else:
                 opt_deps = click.prompt(
                     "Provide any optional dependencies for the project.",
                     type=str,
-                    default="",
+                    default=default_optional_deps,
                 )
 
         if opt_deps != "":
@@ -170,6 +188,14 @@ class InitializeProject:
 
     def _set_optional_pyapp_variables(self):
         """Set optional environmental variables for PyApp."""
+        default_opt_vars = ""
+        try:
+            tmp = self.pyproj.optional_pyapp_variables
+            for key, value in tmp.items():
+                default_opt_vars += f"{key} {value} "
+        except KeyError:
+            pass
+
         opt_vars = None
         if self._opt_paypp_vars:
             opt_vars = self._opt_paypp_vars
@@ -178,11 +204,13 @@ class InitializeProject:
                 "Please enter optional PyApp variables to set. "
                 "Example: `PYAPP_SKIP_INSTALL 1 PYAPP_FULL_ISOLATION 1",
                 type=str,
-                default="",
+                default=default_opt_vars,
             )
 
             if opt_vars == "":
                 opt_vars = None
+        else:
+            opt_vars = None if default_opt_vars == "" else default_opt_vars
 
         if opt_vars:
             opt_vars = opt_vars.split()
@@ -215,16 +243,21 @@ class InitializeProject:
         Ask the user what python version to use. If none is provided (or quiet),
         set the default to the latest python version.
         """
+        if (tmp := self.pyproj.python_version) is not None:
+            default_py_version = tmp
+        else:
+            default_py_version = ut.PYAPP_PYTHON_VERSIONS[-1]
+
         if self._python_version:
             py_version = self._python_version
         else:
             if self._quiet:
-                py_version = ut.PYAPP_PYTHON_VERSIONS[-1]
+                py_version = default_py_version
             else:
                 py_version = click.prompt(
                     "Choose a python version for packaging the project with PyApp.",
                     type=click.Choice(ut.PYAPP_PYTHON_VERSIONS),
-                    default=ut.PYAPP_PYTHON_VERSIONS[-1],
+                    default=default_py_version,
                 )
 
         pyproject_writer("python_version", py_version)
