@@ -1,4 +1,4 @@
-name: unit_tests
+name: integration_tests
 
 on:
   push:
@@ -10,7 +10,7 @@ env:
   MAIN_PYTHON_VERSION: "3.12"
 
 jobs:
-  unit_tests:
+  integration_tests:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
