@@ -67,6 +67,7 @@ def test_pyproject_parser_rye_project(rye_project):
     assert isinstance(parser.name, str)
     assert isinstance(parser.version, str)
     assert isinstance(parser.rye, dict)
+    assert isinstance(parser.is_gui, bool)
 
 
 def test_pyproject_writer_set_entry(tmp_path_chdir):

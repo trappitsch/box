@@ -18,6 +18,7 @@ class InitializeProject:
         quiet: bool = False,
         builder: str = None,
         optional_deps: str = None,
+        is_gui: bool = None,
         app_entry: str = None,
         app_entry_type: str = None,
         python_version: str = None,
@@ -28,6 +29,7 @@ class InitializeProject:
         :param quiet: Flag to suppress output
         :param builder: Builder tool to use.
         :param optional_deps: Optional dependencies for the project.
+        :param is_gui: Flag to set the project as a GUI project.
         :param app_entry: App entry for the project.
         :param app_entry_type: Entry type for the project in PyApp.
         :param python_version: Python version for the project.
@@ -36,6 +38,7 @@ class InitializeProject:
         self._quiet = quiet
         self._builder = builder
         self._optional_deps = optional_deps
+        self._is_gui = is_gui
         self._opt_paypp_vars = opt_pyapp_vars
         self._app_entry = app_entry
         self._app_entry_type = app_entry_type
@@ -53,6 +56,7 @@ class InitializeProject:
         """
         self._set_builder()
         self._set_optional_deps()
+        self._set_is_gui()
         self._set_app_entry()
         self._set_app_entry_type()
         self._set_python_version()
@@ -163,6 +167,21 @@ class InitializeProject:
         pyproject_writer("builder", builder)
         # reload
         self._set_pyproj()
+
+    def _set_is_gui(self):
+        """Set if the project is a GUI project or not."""
+        if self._is_gui is not None:
+            is_gui = self._is_gui
+        else:
+            if self._quiet:
+                try:
+                    is_gui = self.pyproj.is_gui
+                except KeyError:
+                    is_gui = False
+            else:
+                is_gui = click.confirm("Is this a GUI project?", default=False)
+
+        pyproject_writer("is_gui", is_gui)
 
     def _set_optional_deps(self):
         """Set optional dependencies for the project (if any)."""

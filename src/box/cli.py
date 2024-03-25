@@ -35,6 +35,12 @@ def cli():
     "-opt", "--optional-deps", help="Set optional dependencies for the project."
 )
 @click.option(
+    "--gui",
+    is_flag=True,
+    default=None,
+    help="Set the project as a GUI project. In quiet mode, this will default to `False`.",
+)
+@click.option(
     "--opt-pyapp-vars",
     help=(
         "Set optional PyApp variables for the project. "
@@ -58,7 +64,14 @@ def cli():
     help="Set the python version to use with PyApp.",
 )
 def init(
-    quiet, builder, optional_deps, entry, entry_type, python_version, opt_pyapp_vars
+    quiet,
+    builder,
+    optional_deps,
+    gui,
+    entry,
+    entry_type,
+    python_version,
+    opt_pyapp_vars,
 ):
     """Initialize a new project in the current folder."""
     ut.check_pyproject()
@@ -66,6 +79,7 @@ def init(
         quiet=quiet,
         builder=builder,
         optional_deps=optional_deps,
+        is_gui=gui,
         app_entry=entry,
         app_entry_type=entry_type,
         python_version=python_version,
