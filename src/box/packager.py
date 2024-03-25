@@ -233,6 +233,8 @@ class PackageApp:
         optional_pyapp_vars = self.config.optional_pyapp_variables
         for key, value in optional_pyapp_vars.items():
             os.environ[key] = value
+        if self.config.is_gui:
+            os.environ["PYAPP_IS_GUI"] = "1"
 
     # STATIC METHODS #
     @staticmethod

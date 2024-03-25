@@ -11,7 +11,7 @@ import box.utils as ut
 
 @pytest.mark.parametrize(
     "app_entry",
-    ["\n\nhello\n\n3.8\nPYAPP_FULL_ISOLATION 1", "\ngui\n127\nhello\nmodule\n\n"],
+    ["\n\n\nhello\n\n3.8\nPYAPP_FULL_ISOLATION 1", "\ngui\n\n127\nhello\nmodule\n\n"],
 )
 def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     """Initialize a new project."""
@@ -59,6 +59,9 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     # assert that default builder is set to rye
     assert pyproj.builder == "rye"
 
+    # assert not a gui project
+    assert not pyproj.is_gui
+
     # assert default python version
     if py_version_exp == "":
         py_version_exp = ut.PYAPP_PYTHON_VERSIONS[-1]
@@ -75,7 +78,8 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     assert pyproj.optional_pyapp_variables == exp_dict
 
 
-def test_initialize_with_options(rye_project_no_box):
+@pytest.mark.parametrize("gui", [True, False])
+def test_initialize_with_options(rye_project_no_box, gui):
     """Initialize a new project with options."""
     py_version = "3.8"
     entry_point = "myapp:entry"
@@ -83,25 +87,26 @@ def test_initialize_with_options(rye_project_no_box):
     optional_deps = "gui"
     builder = "hatch"
 
+    args = [
+        "init",
+        "-e",
+        entry_point,
+        "-et",
+        entry_type,
+        "-py",
+        py_version,
+        "-opt",
+        optional_deps,
+        "-b",
+        builder,
+        "--opt-pyapp-vars",
+        "PYAPP_FULL_ISOLATION 1",
+    ]
+    if gui:
+        args.append("--gui")
+
     runner = CliRunner()
-    result = runner.invoke(
-        cli,
-        [
-            "init",
-            "-e",
-            entry_point,
-            "-et",
-            entry_type,
-            "-py",
-            py_version,
-            "-opt",
-            optional_deps,
-            "-b",
-            builder,
-            "--opt-pyapp-vars",
-            "PYAPP_FULL_ISOLATION 1",
-        ],
-    )
+    result = runner.invoke(cli, args)
 
     assert result.exit_code == 0
     assert "Project initialized." in result.output
@@ -114,6 +119,7 @@ def test_initialize_with_options(rye_project_no_box):
     assert pyproj.builder == builder
     assert pyproj.python_version == py_version
     assert pyproj.optional_dependencies == optional_deps
+    assert pyproj.is_gui == gui
     assert pyproj.app_entry == entry_point
     assert pyproj.app_entry_type == entry_type
     assert pyproj.optional_pyapp_variables == {"PYAPP_FULL_ISOLATION": "1"}
@@ -145,6 +151,7 @@ def test_initialize_project_again(rye_project_no_box):
             builder,
             "--opt-pyapp-vars",
             pyapp_vars,
+            "--gui",
         ],
     )
 
@@ -155,6 +162,7 @@ def test_initialize_project_again(rye_project_no_box):
     assert pyproj.builder == builder
     assert pyproj.python_version == py_version
     assert pyproj.optional_dependencies == optional_deps
+    assert pyproj.is_gui
     assert pyproj.app_entry == entry_point
     assert pyproj.app_entry_type == entry_type
 
@@ -177,7 +185,7 @@ def test_initialize_project_quiet(rye_project_no_box):
 def test_initialize_project_builders(rye_project_no_box, builder):
     """Initialize a new project with a specific builder."""
     runner = CliRunner()
-    result = runner.invoke(cli, ["init"], input=f"{builder}\n\nsome_entry")
+    result = runner.invoke(cli, ["init"], input=f"{builder}\n\n\nsome_entry")
     assert result.exit_code == 0
 
     # assert that default builder is set to rye
@@ -191,7 +199,7 @@ def test_initialize_project_wrong_number_of_pyapp_vars(rye_project_no_box):
     result = runner.invoke(
         cli,
         ["init"],
-        input="\n\nhello\n\n\nPYAPP_FULL_ISOLATION 1 2\nPYAPP_FULL_ISOLATION 1",
+        input="\n\n\nhello\n\n\nPYAPP_FULL_ISOLATION 1 2\nPYAPP_FULL_ISOLATION 1",
     )
     assert result.exit_code == 0
 

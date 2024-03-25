@@ -45,6 +45,11 @@ class PyProjectParser:
             return False
 
     @property
+    def is_gui(self) -> bool:
+        """Return if the project is a GUI project."""
+        return self._pyproject["tool"]["box"]["is_gui"]
+
+    @property
     def name(self) -> str:
         """Return the name of the project."""
         return self._project["name"]
