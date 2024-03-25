@@ -233,7 +233,8 @@ def test_package_pyapp_cargo_and_move(rye_project, mocker, binary_extensions):
 @pytest.mark.parametrize("app_entry_type", ut.PYAPP_APP_ENTRY_TYPES)
 @pytest.mark.parametrize("opt_deps", ["gui", None])
 @pytest.mark.parametrize("opt_pyapp_vars", ["PYAPP_SOMETHING 2", None])
-def test_set_env(rye_project, mocker, app_entry_type, opt_deps, opt_pyapp_vars):
+@pytest.mark.parametrize("gui", [True, False])
+def test_set_env(rye_project, mocker, app_entry_type, opt_deps, opt_pyapp_vars, gui):
     """Set environment for `PyApp` packaging."""
     config = PyProjectParser()
     exec_spec = config.app_entry
@@ -252,6 +253,7 @@ def test_set_env(rye_project, mocker, app_entry_type, opt_deps, opt_pyapp_vars):
         tmp_split = opt_pyapp_vars.split()
         opt_pyapp_vars = {tmp_split[0]: tmp_split[1]}
         pyproject_writer("optional_pyapp_vars", opt_pyapp_vars)
+    pyproject_writer("is_gui", gui)
 
     packager = PackageApp()
     packager.build()
@@ -267,6 +269,11 @@ def test_set_env(rye_project, mocker, app_entry_type, opt_deps, opt_pyapp_vars):
         assert os.environ["PYAPP_PIP_OPTIONAL_DEPS"] == opt_deps
     if opt_pyapp_vars:
         assert os.environ["PYAPP_SOMETHING"] == "2"
+    if gui:
+        assert os.environ["PYAPP_IS_GUI"] == "1"
+    else:  # no such variable should be set!
+        with pytest.raises(KeyError):
+            _ = os.environ["PYAPP_IS_GUI"]
 
 
 def test_set_env_delete_existing(rye_project):
