@@ -68,6 +68,17 @@ The following steps will be executed:
 
     This will put tye `.tar.gz` file of your project, which will then be packaged with `PyApp` into the `dist` folder.
 
+### Specify `PyApp` version
+
+If you would like to use a specific version of `PyApp` to package with,
+you can provide the version number with the `-pv`/`--pyapp-version` argument.
+Make sure that the version number corresponds to the correct tag on the
+[GitHub release page of PyApp](https://github.com/ofek/pyapp/releases).
+
+!!! note
+    If you have a newer version of `PyApp` already downloaded,
+    make sure to clean the project first with `box clean`.
+
 ### Local `PyApp` source
 
 If you would like to provide a local `PyApp` source,

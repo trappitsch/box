@@ -15,7 +15,9 @@ from box.config import PyProjectParser
 import box.formatters as fmt
 import box.utils as ut
 
-PYAPP_SOURCE = "https://github.com/ofek/pyapp/releases/latest/download/source.tar.gz"
+PYAPP_SOURCE_URL = "https://github.com/ofek/pyapp/releases/"
+PYAPP_SOURCE_NAME = "source.tar.gz"
+PYAPP_SOURCE_LATEST = f"{PYAPP_SOURCE_URL}latest/download/{PYAPP_SOURCE_NAME}"
 
 
 class PackageApp:
@@ -85,23 +87,27 @@ class PackageApp:
 
         fmt.success(f"Project built with {builder}.")
 
-    def package(self, local_source: Union[Path, str] = None):
+    def package(self, pyapp_version="latest", local_source: Union[Path, str] = None):
         """Package the project with PyApp.
 
+        :param pyapp_version: PyApp version to download.
         :param local_source: Path to the local source. Can be folder or .tar.gz archive.
         """
         fmt.info("Hold on, packaging the project with PyApp...")
         self._build_dir.mkdir(exist_ok=True)
         self._release_dir.mkdir(parents=True, exist_ok=True)
-        self._get_pyapp(local_source=local_source)
+        self._get_pyapp(pyapp_version, local_source=local_source)
         self._set_env()
         self._package_pyapp()
 
-    def _get_pyapp(self, local_source: Union[Path, str] = None):
+    def _get_pyapp(
+        self, pyapp_version: str = "latest", local_source: Union[Path, str] = None
+    ):
         """Download the PyApp source code and extract to `build/pyapp-latest` folder.
 
         Download and or extraction are skipped if folder already exists.
 
+        :param pyapp_version: PyApp version to download.
         :param local_source: Path to the local source. Can be folder or .tar.gz archive.
 
         :raises: `click.ClickException` if no pyapp source code is found
@@ -139,12 +145,20 @@ class PackageApp:
                     local_source_exists = True
                     fmt.info("Using existing local pyapp source.")
                 elif not tar_name.is_file():
-                    urllib.request.urlretrieve(PYAPP_SOURCE, tar_name)
+                    if pyapp_version == "latest":
+                        pyapp_source = PYAPP_SOURCE_LATEST
+                    else:
+                        pyapp_source = (
+                            f"{PYAPP_SOURCE_URL}download/{pyapp_version}/"
+                            f"{PYAPP_SOURCE_NAME}"
+                        )
+                    urllib.request.urlretrieve(pyapp_source, tar_name)
 
                     if not tar_name.is_file():
                         raise click.ClickException(
-                            "Error: no pyapp source code found. "
-                            "Please check your internet connection and try again."
+                            f"Error: no pyapp source code found. "
+                            f"Check if version {pyapp_version} exists and if your "
+                            f"internet connection is working."
                         )
 
             # check if pyapp source code is already extracted

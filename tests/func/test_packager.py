@@ -8,7 +8,7 @@ import urllib.request
 import rich_click as click
 import pytest
 
-from box.packager import PackageApp, PYAPP_SOURCE
+from box.packager import PackageApp, PYAPP_SOURCE_LATEST
 from box.config import PyProjectParser, pyproject_writer
 import box.utils as ut
 
@@ -133,7 +133,7 @@ def test_get_pyapp_no_file_found(rye_project, mocker):
         packager._get_pyapp()
 
     assert "Error: no pyapp source code found" in e.value.args[0]
-    url_mock.assert_called_with(PYAPP_SOURCE, Path("pyapp-source.tar.gz"))
+    url_mock.assert_called_with(PYAPP_SOURCE_LATEST, Path("pyapp-source.tar.gz"))
 
 
 def test_get_pyapp_source_exists(rye_project, mocker):
