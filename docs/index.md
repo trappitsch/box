@@ -15,9 +15,13 @@ See [here](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
 for details.
 
 !!! warning
-    This package is still in a very early
+    - This package is still in a very early
     development phase! Please report your findings and issues,
     so that we can improve this tool together.
+    - `box` is not yet production ready
+    and breaking changes may occur with new releases.
+    These will be noted in the release notes
+    and in the [changelog](changelog.md).
 
 ## Issues, comments, contributions,...
 

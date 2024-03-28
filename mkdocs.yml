@@ -50,3 +50,4 @@ nav:
   - Home: index.md
   - CLI: cli.md
   - Usage guide: guide.md
+  - Changelog: changelog.md
