@@ -107,6 +107,7 @@ class PackageApp:
         :raises: `click.ClickException` if no pyapp source code is found
         """
         tar_name = Path("pyapp-source.tar.gz")
+        local_source_destination = "pyapp-local"
 
         if isinstance(local_source, str):
             local_source = Path(local_source)
@@ -116,9 +117,16 @@ class PackageApp:
                 if local_source.suffix == ".gz" and local_source.is_file():
                     shutil.copy(local_source, tar_name)
                 elif local_source.is_dir():
-                    shutil.copytree(
-                        local_source, self._build_dir.joinpath(local_source.name)
-                    )
+                    if Path(local_source_destination).is_dir():
+                        fmt.warning(
+                            "Local source folder already copied. "
+                            "If you want to copy again, please clean the project first."
+                        )
+                    else:
+                        shutil.copytree(
+                            local_source,
+                            self._build_dir.joinpath(local_source_destination),
+                        )
                 else:
                     raise click.ClickException(
                         "Error: invalid local pyapp source code. "
@@ -146,11 +154,14 @@ class PackageApp:
                 with tarfile.open(tar_name, "r:gz") as tar:
                     tarfile_members = tar.getmembers()
 
-                    # only extract if the folder in archive does not already exist
+                    # only extract if not existing and no local source!
                     folder_exists = False
                     new_folder = tarfile_members[0].name
                     for folder in all_pyapp_folders:
-                        if folder.name == new_folder:
+                        if (
+                            folder.name == new_folder
+                            or folder.name == local_source_destination
+                        ):
                             folder_exists = True
                             break
 
@@ -160,12 +171,24 @@ class PackageApp:
                         if "pyapp-" in new_folder:
                             all_pyapp_folders.append(Path(new_folder))
 
+                    # if local source, rename the extracted folder
+                    if local_source:
+                        shutil.move(
+                            new_folder,
+                            local_source_destination,
+                        )
+
             # find the name of the pyapp folder and return it
             if len(all_pyapp_folders) == 1:
                 self._pyapp_path = all_pyapp_folders[0].absolute()
             elif len(all_pyapp_folders) > 1:
                 all_pyapp_folders.sort(key=lambda x: x.stem)
-                self._pyapp_path = all_pyapp_folders[-1].absolute()
+                if Path(local_source_destination).is_dir():
+                    self._pyapp_path = self._build_dir.joinpath(
+                        local_source_destination
+                    )
+                else:
+                    self._pyapp_path = all_pyapp_folders[-1].absolute()
                 fmt.warning(
                     "Multiple pyapp versions were. "
                     f"Using {self._pyapp_path.name}. "
