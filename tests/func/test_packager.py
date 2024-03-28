@@ -176,6 +176,25 @@ def test_get_pyapp_wrong_no_pyapp_folder(rye_project, mocker):
     assert "Error: no pyapp source code folder found." in e.value.args[0]
 
 
+def test_get_pyapp_use_local_folder(rye_project, mocker):
+    """Use local source code if it already exists provided."""
+    urlretrieve_mock = mocker.patch.object(urllib.request, "urlretrieve")
+    tar_mock = mocker.patch("tarfile.open")
+
+    # create a fake source code file - tarfile is mocked
+    rye_project.joinpath("build/").mkdir()
+    local_source = rye_project.joinpath("build/pyapp-local")
+    local_source.mkdir(parents=True)
+
+    packager = PackageApp()
+    packager._get_pyapp()
+
+    urlretrieve_mock.assert_not_called()
+    tar_mock.assert_not_called()
+
+    assert local_source == packager._pyapp_path
+
+
 def test_get_pyapp_local_wrong_file(rye_project):
     """Raise an error if local file is not a .tar.gz."""
     rye_project.joinpath("build/").mkdir()

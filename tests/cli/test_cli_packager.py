@@ -83,7 +83,32 @@ def test_package_project_local_pyapp(rye_project, mocker, data_dir, pyapp_source
     assert result.exit_code == 0
     urllib_mock.assert_not_called()
 
-    # assert rye_project.joinpath("build/pyapp-v0.14.0/source.txt").is_file()
+    assert rye_project.joinpath("build/pyapp-local/source.txt").is_file()
+
+
+def test_package_project_do_not_copy_local_folder_twice(rye_project, data_dir, mocker):
+    """Re-copying local folder echos a warning and does nothing."""
+    pyapp_source_name = "pyapp-v0.14.0"
+
+    mocker.patch("box.packager.PackageApp._package_pyapp")
+    mocker.patch("box.packager.PackageApp.binary_name", return_value="pyapp")
+
+    # create dist folder and package
+    dist_folder = rye_project.joinpath("dist")
+    dist_folder.mkdir()
+    dist_folder.joinpath(f"{rye_project.name.replace('-', '_')}-v0.1.0.tar.gz").touch()
+
+    runner = CliRunner()
+    result = runner.invoke(cli, ["package", "-p", data_dir.joinpath(pyapp_source_name)])
+    result2 = runner.invoke(
+        cli, ["package", "-p", data_dir.joinpath(pyapp_source_name)]
+    )
+
+    assert result.exit_code == 0
+
+    assert rye_project.joinpath("build/pyapp-local/source.txt").is_file()
+
+    assert "Local source folder already copied." in result2.output
 
 
 def test_cargo_not_found(rye_project, mocker):

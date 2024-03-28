@@ -74,7 +74,15 @@ If you would like to provide a local `PyApp` source,
 you can do so by providing either the path to the local `.tar.gz` source
 or to a local folder using the `-p`/`--pyapp-source` argument.
 The local source will then be used instead of the latest release from GitHub.
-It will be copied into the `build` folder before packaging.
+It will be copied into the `build` folder before packaging in the `pyapp-local` folder.
+Running only `box package` when a local folder is present will always use this local folder
+and not download any releases.
+An information about this will be printed.
+
+To re-copy the local source into the `build` folder,
+the `box` project needs to be cleaned first.
+Then run `box package -p LOCAL_SOURCE` again,
+where `LOCAL_SOURCE` is the path to the local source as described above.
 
 ## Cleaning your project
 
