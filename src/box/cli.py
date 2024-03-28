@@ -105,7 +105,13 @@ def init(
         "Provide path to the folder or the .tar.gz archive."
     ),
 )
-def package(verbose, pyapp_source):
+@click.option(
+    "-pv",
+    "--pyapp-version",
+    default="latest",
+    help="Specify the PyApp version to use. See release page on PyApp GitHub.",
+)
+def package(verbose, pyapp_source, pyapp_version):
     """Build the project, then package it with PyApp.
 
     Note that if the pyapp source is already in the `build` directory,
@@ -117,7 +123,7 @@ def package(verbose, pyapp_source):
     my_packager = PackageApp(verbose=verbose)
     my_packager.check_requirements()
     my_packager.build()
-    my_packager.package(local_source=pyapp_source)
+    my_packager.package(pyapp_version, local_source=pyapp_source)
     binary_file = my_packager.binary_name
     fmt.success(
         f"Project successfully packaged.\n"
