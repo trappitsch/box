@@ -86,8 +86,8 @@ def test_package_project_local_pyapp(rye_project, mocker, data_dir, pyapp_source
     assert rye_project.joinpath("build/pyapp-local/source.txt").is_file()
 
 
-def test_package_project_copy_local_folder_twice(rye_project, data_dir, mocker):
-    """Re-copying local folder raises a warning and does nothing."""
+def test_package_project_do_not_copy_local_folder_twice(rye_project, data_dir, mocker):
+    """Re-copying local folder echos a warning and does nothing."""
     pyapp_source_name = "pyapp-v0.14.0"
 
     mocker.patch("box.packager.PackageApp._package_pyapp")

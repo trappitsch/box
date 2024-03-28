@@ -108,6 +108,7 @@ class PackageApp:
         """
         tar_name = Path("pyapp-source.tar.gz")
         local_source_destination = "pyapp-local"
+        local_source_exists = False
 
         if isinstance(local_source, str):
             local_source = Path(local_source)
@@ -134,14 +135,17 @@ class PackageApp:
                     )
 
             else:  # no local source
-                if not tar_name.is_file():
+                if Path(local_source_destination).is_dir():
+                    local_source_exists = True
+                    fmt.info("Using existing local pyapp source.")
+                elif not tar_name.is_file():
                     urllib.request.urlretrieve(PYAPP_SOURCE, tar_name)
 
-                if not tar_name.is_file():
-                    raise click.ClickException(
-                        "Error: no pyapp source code found. "
-                        "Please check your internet connection and try again."
-                    )
+                    if not tar_name.is_file():
+                        raise click.ClickException(
+                            "Error: no pyapp source code found. "
+                            "Please check your internet connection and try again."
+                        )
 
             # check if pyapp source code is already extracted
             all_pyapp_folders = []
@@ -150,33 +154,34 @@ class PackageApp:
                     all_pyapp_folders.append(file)
 
             # extract the source code if we didn't just copy a local folder
-            if not local_source or local_source.suffix == ".gz":
-                with tarfile.open(tar_name, "r:gz") as tar:
-                    tarfile_members = tar.getmembers()
+            if not local_source_exists:
+                if not local_source or local_source.suffix == ".gz":
+                    with tarfile.open(tar_name, "r:gz") as tar:
+                        tarfile_members = tar.getmembers()
 
-                    # only extract if not existing and no local source!
-                    folder_exists = False
-                    new_folder = tarfile_members[0].name
-                    for folder in all_pyapp_folders:
-                        if (
-                            folder.name == new_folder
-                            or folder.name == local_source_destination
-                        ):
-                            folder_exists = True
-                            break
+                        # only extract if not existing and no local source!
+                        folder_exists = False
+                        new_folder = tarfile_members[0].name
+                        for folder in all_pyapp_folders:
+                            if (
+                                folder.name == new_folder
+                                or folder.name == local_source_destination
+                            ):
+                                folder_exists = True
+                                break
 
-                    # extract the source with tarfile package
-                    if not folder_exists:
-                        tar.extractall()
-                        if "pyapp-" in new_folder:
-                            all_pyapp_folders.append(Path(new_folder))
+                        # extract the source with tarfile package
+                        if not folder_exists:
+                            tar.extractall()
+                            if "pyapp-" in new_folder:
+                                all_pyapp_folders.append(Path(new_folder))
 
-                    # if local source, rename the extracted folder
-                    if local_source:
-                        shutil.move(
-                            new_folder,
-                            local_source_destination,
-                        )
+                        # if local source, rename the extracted folder
+                        if local_source:
+                            shutil.move(
+                                new_folder,
+                                local_source_destination,
+                            )
 
             # find the name of the pyapp folder and return it
             if len(all_pyapp_folders) == 1:
