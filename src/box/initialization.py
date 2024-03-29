@@ -202,12 +202,10 @@ class InitializeProject:
     def _set_optional_pyapp_variables(self):
         """Set optional environmental variables for PyApp."""
         default_opt_vars = ""
-        try:
-            tmp = self.pyproj.optional_pyapp_variables
-            for key, value in tmp.items():
-                default_opt_vars += f"{key} {value} "
-        except KeyError:
-            pass
+
+        tmp = self.pyproj.optional_pyapp_variables
+        for key, value in tmp.items():
+            default_opt_vars += f"{key} {value} "
 
         opt_vars = None
         if self._opt_paypp_vars:
