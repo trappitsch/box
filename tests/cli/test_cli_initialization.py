@@ -125,34 +125,37 @@ def test_initialize_with_options(rye_project_no_box, gui):
     assert pyproj.optional_pyapp_variables == {"PYAPP_FULL_ISOLATION": "1"}
 
 
-def test_initialize_project_again(rye_project_no_box):
+@pytest.mark.parametrize("pyapp_extra_vars", ["PYAPP_FULL_ISOLATION 1", None])
+def test_initialize_project_again(rye_project_no_box, pyapp_extra_vars):
     """Initialization of a previous project sets defaults from previous config."""
     builder = "build"
     entry_point = "myapp:entry"
     entry_type = "module"
     optional_deps = "gui"
     py_version = "3.8"
-    pyapp_vars = "PYAPP_FULL_ISOLATION 1"
+
+    args = [
+        "init",
+        "-e",
+        entry_point,
+        "-et",
+        entry_type,
+        "-py",
+        py_version,
+        "-opt",
+        optional_deps,
+        "-b",
+        builder,
+        "--gui",
+    ]
+    if pyapp_extra_vars:
+        args.append("--opt-pyapp-vars")
+        args.append(pyapp_extra_vars)
 
     runner = CliRunner()
     runner.invoke(
         cli,
-        [
-            "init",
-            "-e",
-            entry_point,
-            "-et",
-            entry_type,
-            "-py",
-            py_version,
-            "-opt",
-            optional_deps,
-            "-b",
-            builder,
-            "--opt-pyapp-vars",
-            pyapp_vars,
-            "--gui",
-        ],
+        args,
     )
 
     # now re-initialize with quiet and assure that the same options are set
