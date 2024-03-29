@@ -123,13 +123,7 @@ class InitializeProject:
             pass
 
         if self._app_entry_type:
-            if self._app_entry_type.lower() not in ut.PYAPP_APP_ENTRY_TYPES:
-                raise click.ClickException(
-                    f"Invalid entry type. "
-                    f"Please choose from {ut.PYAPP_APP_ENTRY_TYPES}."
-                )
-            else:
-                entry_type = self._app_entry_type.lower()
+            entry_type = self._app_entry_type.lower()
         else:
             if self._quiet:
                 entry_type = default_entry_type
@@ -208,14 +202,11 @@ class InitializeProject:
     def _set_optional_pyapp_variables(self):
         """Set optional environmental variables for PyApp."""
         default_opt_vars = ""
-        try:
-            tmp = self.pyproj.optional_pyapp_variables
-            for key, value in tmp.items():
-                default_opt_vars += f"{key} {value} "
-        except KeyError:
-            pass
 
-        opt_vars = None
+        tmp = self.pyproj.optional_pyapp_variables
+        for key, value in tmp.items():
+            default_opt_vars += f"{key} {value} "
+
         if self._opt_paypp_vars:
             opt_vars = self._opt_paypp_vars
         elif not self._quiet:
@@ -246,10 +237,6 @@ class InitializeProject:
         """Check if the pyproject.toml file is valid."""
         try:
             self.pyproj = PyProjectParser()
-        except FileNotFoundError:
-            raise click.ClickException(
-                "No `pyproject.toml` file found in current folder."
-            )
         except KeyError:
             raise click.ClickException(
                 "Invalid `pyproject.toml` file. Missing `project` table."

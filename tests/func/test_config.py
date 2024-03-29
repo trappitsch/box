@@ -113,3 +113,9 @@ def test_pyproject_writer_called_with_newline(tmp_path_chdir, mocker):
     print(tmp_path_chdir.absolute())
 
     mock_open.assert_called_with(Path(fname), "w", newline="\n")
+
+
+def test_pyproject_writer_no_pyproject_toml_file(tmp_path_chdir):
+    """Raise FileNotFound error if no pyproject.toml file in folder."""
+    with pytest.raises(FileNotFoundError):
+        pyproject_writer("builder", "rye")

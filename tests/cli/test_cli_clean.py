@@ -124,6 +124,13 @@ def test_clean_no_pyproject(tmp_path_chdir, rye_project_no_box, init_folder):
     assert "This is not a box project." in result.output
 
 
+def test_clean_nothing_to_do(rye_project):
+    """State nothing to clean if already clean."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ["clean"])
+    assert "Nothing to clean." in result.output
+
+
 @pytest.mark.parametrize(
     "option", ["-p", "--pyapp-folder", "-s", "--source-pyapp", "-ps"]
 )
