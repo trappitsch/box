@@ -40,6 +40,19 @@ def create_pyapp_source(project_path: Path) -> Path:
 # TESTS #
 
 
+def test_builder_invalid(rye_project):
+    """Raise an error if an invalid builder is given."""
+    builder = "invalid"  # can only happen in user-modified pyproject.toml
+    pyproject_writer("builder", builder)
+
+    packager = PackageApp()
+
+    with pytest.raises(KeyError) as e:
+        packager.build()
+
+    assert f"Unknown {builder=}" in e.value.args[0]
+
+
 @pytest.mark.parametrize("builder", ["rye", "hatch", "build", "flit", "pdm"])
 def test_builders(min_proj_no_box, mocker, builder):
     """Test all builders are called correctly."""
@@ -176,15 +189,21 @@ def test_get_pyapp_wrong_no_pyapp_folder(rye_project, mocker):
     assert "Error: no pyapp source code folder found." in e.value.args[0]
 
 
-def test_get_pyapp_use_local_folder(rye_project, mocker):
+@pytest.mark.parametrize("extra_source", [True, False])
+def test_get_pyapp_use_local_folder(rye_project, mocker, extra_source):
     """Use local source code if it already exists provided."""
     urlretrieve_mock = mocker.patch.object(urllib.request, "urlretrieve")
     tar_mock = mocker.patch("tarfile.open")
 
     # create a fake source code file - tarfile is mocked
-    rye_project.joinpath("build/").mkdir()
+    build_dir = rye_project.joinpath("build/")
+    build_dir.mkdir()
     local_source = rye_project.joinpath("build/pyapp-local")
     local_source.mkdir(parents=True)
+
+    # extra source folder already there - use local
+    if extra_source:
+        build_dir.joinpath("pyapp-0.1.0").mkdir()
 
     packager = PackageApp()
     packager._get_pyapp()
