@@ -123,13 +123,7 @@ class InitializeProject:
             pass
 
         if self._app_entry_type:
-            if self._app_entry_type.lower() not in ut.PYAPP_APP_ENTRY_TYPES:
-                raise click.ClickException(
-                    f"Invalid entry type. "
-                    f"Please choose from {ut.PYAPP_APP_ENTRY_TYPES}."
-                )
-            else:
-                entry_type = self._app_entry_type.lower()
+            entry_type = self._app_entry_type.lower()
         else:
             if self._quiet:
                 entry_type = default_entry_type
