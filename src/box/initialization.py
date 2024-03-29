@@ -240,10 +240,6 @@ class InitializeProject:
         """Check if the pyproject.toml file is valid."""
         try:
             self.pyproj = PyProjectParser()
-        except FileNotFoundError:
-            raise click.ClickException(
-                "No `pyproject.toml` file found in current folder."
-            )
         except KeyError:
             raise click.ClickException(
                 "Invalid `pyproject.toml` file. Missing `project` table."
