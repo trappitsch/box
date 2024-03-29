@@ -207,7 +207,6 @@ class InitializeProject:
         for key, value in tmp.items():
             default_opt_vars += f"{key} {value} "
 
-        opt_vars = None
         if self._opt_paypp_vars:
             opt_vars = self._opt_paypp_vars
         elif not self._quiet:
