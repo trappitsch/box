@@ -11,7 +11,7 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
-@click.version_option()
+@click.version_option(package_name="box_packager")
 def cli():
     """Automatic packaging and installers of your GUI with PyApp."""
     pass

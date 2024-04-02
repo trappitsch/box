@@ -13,4 +13,6 @@ def test_version():
         result = runner.invoke(cli, ["--version"])
         assert result.exit_code == 0
         assert result.output.startswith("cli, version ")
-        assert result.output.rstrip().endswith(importlib.metadata.version("box"))
+        assert result.output.rstrip().endswith(
+            importlib.metadata.version("box_packager")
+        )
