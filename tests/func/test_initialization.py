@@ -3,8 +3,8 @@
 Only functions that are not tested within the CLI are tested here.
 """
 
-from box.config import PyProjectParser
-from box.initialization import InitializeProject
+from boxer.config import PyProjectParser
+from boxer.initialization import InitializeProject
 
 
 def test_quiet_init(rye_project_no_box):

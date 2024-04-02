@@ -8,9 +8,9 @@ import urllib.request
 import rich_click as click
 import pytest
 
-from box.packager import PackageApp, PYAPP_SOURCE_LATEST
-from box.config import PyProjectParser, pyproject_writer
-import box.utils as ut
+from boxer.packager import PackageApp, PYAPP_SOURCE_LATEST
+from boxer.config import PyProjectParser, pyproject_writer
+import boxer.utils as ut
 
 # HELPER FUNCTIONS #
 
@@ -92,7 +92,7 @@ def test_get_pyapp_extraction_multiple_folders(rye_project, mocker):
     """Raise a warning if multiple pyapp folders are found."""
     mocker.patch.object(urllib.request, "urlretrieve")
     mocker.patch("tarfile.open")
-    echo_mock = mocker.patch("box.formatters.warning")
+    echo_mock = mocker.patch("boxer.formatters.warning")
 
     # create two pyapp folders in the build folder
     rye_project.joinpath("build/pyapp-v1.2.3").mkdir(parents=True)

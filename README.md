@@ -1,4 +1,4 @@
-# box
+# boxer
 
 [![Docs](https://readthedocs.org/projects/box/badge/?version=latest)](https://box.readthedocs.io/en/latest/?badge=latest)
 [![tests](https://github.com/trappitsch/box/actions/workflows/tests.yml/badge.svg)](https://github.com/trappitsch/box/actions/workflows/tests.yml)
@@ -10,7 +10,7 @@ to provide a command line interface
 that allows you to easily package your existing python project
 with [`PyApp`](https://ofek.dev/pyapp/).
 
-Currently, `box` only support python projects that have their metadata stored in a `pyproject.toml` file.
+Currently, `boxer` only support python projects that have their metadata stored in a `pyproject.toml` file.
 See [here](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#writing-pyproject-toml)
 for details.
 

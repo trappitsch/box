@@ -10,10 +10,10 @@ import urllib.request
 
 import rich_click as click
 
-from box import BUILD_DIR_NAME, RELEASE_DIR_NAME
-from box.config import PyProjectParser
-import box.formatters as fmt
-import box.utils as ut
+from boxer import BUILD_DIR_NAME, RELEASE_DIR_NAME
+from boxer.config import PyProjectParser
+import boxer.formatters as fmt
+import boxer.utils as ut
 
 PYAPP_SOURCE_URL = "https://github.com/ofek/pyapp/releases/"
 PYAPP_SOURCE_NAME = "source.tar.gz"

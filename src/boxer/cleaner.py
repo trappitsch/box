@@ -3,7 +3,7 @@
 from pathlib import Path
 import shutil
 
-import box.formatters as fmt
+import boxer.formatters as fmt
 
 
 class CleanProject:

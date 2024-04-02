@@ -1,11 +1,11 @@
 import rich_click as click
 
-from box.cleaner import CleanProject
-from box.config import uninitialize
-from box.initialization import InitializeProject
-import box.formatters as fmt
-from box.packager import PackageApp
-import box.utils as ut
+from boxer.cleaner import CleanProject
+from boxer.config import uninitialize
+from boxer.initialization import InitializeProject
+import boxer.formatters as fmt
+from boxer.packager import PackageApp
+import boxer.utils as ut
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 

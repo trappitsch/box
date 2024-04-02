@@ -7,7 +7,7 @@ from pathlib import Path
 from click.testing import CliRunner
 import pytest
 
-from box.cli import cli
+from boxer.cli import cli
 
 
 def setup_folders(project_folder: Path) -> List[Path]:

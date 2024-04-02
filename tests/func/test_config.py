@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from box.config import PyProjectParser, pyproject_writer
+from boxer.config import PyProjectParser, pyproject_writer
 
 TOML_BASIC_FILE = """[project]
 name = "my-app"

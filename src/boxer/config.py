@@ -22,24 +22,24 @@ class PyProjectParser:
 
     @property
     def app_entry(self):
-        """Return the box-saved app entry point."""
-        return self._pyproject["tool"]["box"]["app_entry"]
+        """Return the boxer-saved app entry point."""
+        return self._pyproject["tool"]["boxer"]["app_entry"]
 
     @property
     def app_entry_type(self):
         """Return the entry type of the project for PyApp."""
-        return self._pyproject["tool"]["box"]["entry_type"]
+        return self._pyproject["tool"]["boxer"]["entry_type"]
 
     @property
     def builder(self) -> str:
         """Return the builder of the project."""
-        return self._pyproject["tool"]["box"]["builder"]
+        return self._pyproject["tool"]["boxer"]["builder"]
 
     @property
     def is_box_project(self):
-        """Return if this folder is a box project or not."""
+        """Return if this folder is a boxer project or not."""
         try:
-            _ = self._pyproject["tool"]["box"]
+            _ = self._pyproject["tool"]["boxer"]
             return True
         except KeyError:
             return False
@@ -47,7 +47,7 @@ class PyProjectParser:
     @property
     def is_gui(self) -> bool:
         """Return if the project is a GUI project."""
-        return self._pyproject["tool"]["box"]["is_gui"]
+        return self._pyproject["tool"]["boxer"]["is_gui"]
 
     @property
     def name(self) -> str:
@@ -63,7 +63,7 @@ class PyProjectParser:
     def optional_dependencies(self) -> Union[str, None]:
         """Return optional dependencies for the project, or `None` if no key found."""
         try:
-            return self._pyproject["tool"]["box"]["optional_deps"]
+            return self._pyproject["tool"]["boxer"]["optional_deps"]
         except KeyError:
             return None
 
@@ -71,7 +71,7 @@ class PyProjectParser:
     def optional_pyapp_variables(self) -> Dict:
         """Return optional pyapp variables as list (if set), otherwise empty dict."""
         try:
-            return self._pyproject["tool"]["box"]["optional_pyapp_vars"]
+            return self._pyproject["tool"]["boxer"]["optional_pyapp_vars"]
         except KeyError:
             return {}
 
@@ -104,7 +104,7 @@ class PyProjectParser:
     def python_version(self):
         """Get the python version to package the project with. If unset, return None."""
         try:
-            return self._pyproject["tool"]["box"]["python_version"]
+            return self._pyproject["tool"]["boxer"]["python_version"]
         except KeyError:
             return None
 
@@ -122,7 +122,7 @@ class PyProjectParser:
 def pyproject_writer(key: str, value: Any) -> None:
     """Modify the existing `pyproject.toml` file using `tomlkit`.
 
-    Project specific, the table [tools.box] is used. If the table does not exist,
+    Project specific, the table [tools.boxer] is used. If the table does not exist,
     it is created. If the key does not exist, it is created. If the key exists,
     it is overwritten.
     """
@@ -135,7 +135,7 @@ def pyproject_writer(key: str, value: Any) -> None:
 
     key_box_present = False
     try:
-        _ = doc["tool"]["box"]
+        _ = doc["tool"]["boxer"]
         key_box_present = True
     except KeyError:
         pass
@@ -148,12 +148,12 @@ def pyproject_writer(key: str, value: Any) -> None:
             doc.add(tomlkit.nl())
 
     if key_box_present:
-        box_table = doc["tool"]["box"]
+        box_table = doc["tool"]["boxer"]
     else:
         tool_table = tomlkit.table(True)
         tool_table.add(tomlkit.nl())
         box_table = tomlkit.table()
-        tool_table.append("box", box_table)
+        tool_table.append("boxer", box_table)
         doc.add("tool", tool_table)
 
     box_table.update({key: value})
@@ -163,13 +163,13 @@ def pyproject_writer(key: str, value: Any) -> None:
 
 
 def uninitialize() -> None:
-    """Un-initialize a box project."""
+    """Un-initialize a boxer project."""
     pyproject_file = Path("pyproject.toml")
 
     with open(pyproject_file, "rb") as f:
         doc = tomlkit.load(f)
 
-    doc["tool"].remove("box")
+    doc["tool"].remove("boxer")
 
     with open(pyproject_file, "w", newline="\n") as f:
         tomlkit.dump(doc, f)

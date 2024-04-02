@@ -18,12 +18,12 @@ certifi==2024.2.2
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
-    # via box
+    # via boxer
     # via mkdocs
     # via mkdocs-click
     # via rich-click
 colorama==0.4.6
-    # via box
+    # via boxer
     # via mkdocs-material
 coverage==7.4.3
     # via pytest-cov
@@ -54,15 +54,15 @@ mdurl==0.1.2
 mergedeep==1.3.4
     # via mkdocs
 mkdocs==1.5.3
-    # via box
+    # via boxer
     # via mkdocs-include-markdown-plugin
     # via mkdocs-material
 mkdocs-click==0.8.1
-    # via box
+    # via boxer
 mkdocs-include-markdown-plugin==6.0.4
-    # via box
+    # via boxer
 mkdocs-material==9.5.13
-    # via box
+    # via boxer
 mkdocs-material-extensions==1.3.1
     # via mkdocs-material
 packaging==23.2
@@ -102,17 +102,17 @@ regex==2023.12.25
 requests==2.31.0
     # via mkdocs-material
 rich==13.7.0
-    # via box
+    # via boxer
     # via rich-click
 rich-click==1.7.3
-    # via box
+    # via boxer
 ruff==0.2.2
 six==1.16.0
     # via python-dateutil
 smmap==5.0.1
     # via gitdb
 tomlkit==0.12.4
-    # via box
+    # via boxer
 typing-extensions==4.10.0
     # via rich-click
 urllib3==2.2.1

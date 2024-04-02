@@ -2,8 +2,8 @@
 
 from click.testing import CliRunner
 
-from box.cli import cli
-from box.config import PyProjectParser
+from boxer.cli import cli
+from boxer.config import PyProjectParser
 
 
 def test_uninitialize(rye_project):
@@ -21,7 +21,7 @@ def test_uninitialize(rye_project):
 
 def test_uninitialize_clean(rye_project, mocker):
     """Assure a full clean is called if option `-c` is given."""
-    clean_mock = mocker.patch("box.cli.clean")
+    clean_mock = mocker.patch("boxer.cli.clean")
 
     runner = CliRunner()
     result = runner.invoke(cli, ["uninit", "-c"])
@@ -29,7 +29,7 @@ def test_uninitialize_clean(rye_project, mocker):
     assert result.exit_code == 0
     assert "Project un-initialized." in result.output
 
-    # assert it's not a box project
+    # assert it's not a boxer project
     pyproj = PyProjectParser()
     assert not pyproj.is_box_project
 

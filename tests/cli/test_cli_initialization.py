@@ -3,10 +3,10 @@
 from click.testing import CliRunner
 import pytest
 
-from box.cli import cli
-from box.config import PyProjectParser
-from box.packager import PackageApp
-import box.utils as ut
+from boxer.cli import cli
+from boxer.config import PyProjectParser
+from boxer.packager import PackageApp
+import boxer.utils as ut
 
 
 @pytest.mark.parametrize(

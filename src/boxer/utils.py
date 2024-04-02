@@ -6,7 +6,7 @@ from pathlib import Path
 
 from rich_click import ClickException
 
-from box.config import PyProjectParser
+from boxer.config import PyProjectParser
 
 # available app entry types that are used in box
 PYAPP_APP_ENTRY_TYPES = ["spec", "module", "script", "notebook"]

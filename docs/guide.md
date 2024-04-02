@@ -1,12 +1,12 @@
-# Detailed usage guide for `box`
+# Detailed usage guide for `boxer`
 
-Below are some detailed information on how to use `box`.
+Below are some detailed information on how to use `boxer`.
 Note that you can always get help by typing `box -h` on the command line,
 or by typing `box COMMAND -h` to obtain help for a specific command.
 
 ## Initialization
 
-After you have installed `box`, navigate to the folder of your project.
+After you have installed `boxer`, navigate to the folder of your project.
 Then, type
 
 ```
@@ -21,10 +21,10 @@ The following table shows a list of questions, their default values, their argum
 
 | Question                                                                   | Default                                                                                                                                                                                    | Argument                         | Explanation                                                                                                                                                                                                                                                                                                                                               |
 |----------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Choose a builder tool for the project                                      | `rye`                                                                                                                                                                                      | `-b`<br> `--builder`             | *Required:* The builder to use to package your pyproject file. Valid tools are `rye`, `hatch`, `pdm`, `build`, and `flit`. Ensure that the builder is available in the environment in which you run box.                                                                                                                                                  |
+| Choose a builder tool for the project                                      | `rye`                                                                                                                                                                                      | `-b`<br> `--builder`             | *Required:* The builder to use to package your pyproject file. Valid tools are `rye`, `hatch`, `pdm`, `build`, and `flit`. Ensure that the builder is available in the environment in which you run boxer.                                                                                                                                                |
 | Provide any optional dependencies for the project.                         | `None`                                                                                                                                                                                     | `--opt`<br>`--optional-deps`     | *Optional:* Set any optional dependencies for the project. These are the dependencies that you would install in square brackets, e.g., via `pip install package_name[optional]`. If there are no optional dependencies, just hit enter.                                                                                                                   |
 | Is this a GUI project?                                                     | `False`                                                                                                                                                                                    | `--gui` flag to toggle to `True` | Packaging a GUI project and a CLI project take place slightly differently in PyApp. If you package a GUI project without setting this option, a console will be shown in Windows and macos along with your GUI.                                                                                                                                           |                                                                                                                                          |
-| Please type an app entry for the project or choose one from the list below | First entry in `pyproject.toml` for `[project.gui-scripts]`, if not available, then for `[project.scripts]`. If no entry points are given, the default value is set to `package_name:run`. | `-e`<br>`--entry`                | *Required:* The entry point for the application. This is the command that will be used to start the application. If you have a `pyproject.toml` file, `box` will try and read potential entry points that you can select by passing it the digit of the list. You can also provide an entry point manually by typing it here.                             |
+| Please type an app entry for the project or choose one from the list below | First entry in `pyproject.toml` for `[project.gui-scripts]`, if not available, then for `[project.scripts]`. If no entry points are given, the default value is set to `package_name:run`. | `-e`<br>`--entry`                | *Required:* The entry point for the application. This is the command that will be used to start the application. If you have a `pyproject.toml` file, `boxer` will try and read potential entry points that you can select by passing it the digit of the list. You can also provide an entry point manually by typing it here.                           |
 | Choose an entry type for the project.                                      | `spec`                                                                                                                                                                                     | `-et`<br>`--entry-type`          | *Required:* This specifies the type of the entry point that `PyApp` will use. `spec` (default) is an object reference, `module` for a python module, `script` for a python script, and `notebook` for a jupyter notebook. Details can be found [here](https://ofek.dev/pyapp/latest/config/#execution-mode).                                              |
 | Choose a python version to package the project with.                       | `3.12`                                                                                                                                                                                     | `--py`<br>`--python-version`     | *Required:* The python version to package with your project. You can choose any python version from the list. More details can be found on the `PyApp` website [here](https://ofek.dev/pyapp/latest/config/#python-distribution).                                                                                                                         |
 | Optional PyApp variables                                                   | `None`                                                                                                                                                                                     | `--opt-pyapp-vars`               | *Optional:* Set any optional  environmental variables that you can use in `PyApp` here by giving a list of variable name followed by the value for that variable. Note that the total number of arguments must be even. See the [`PyApp` documentation](https://ofek.dev/pyapp) for more information. If there are no optional variables, just hit enter. |
@@ -32,13 +32,13 @@ The following table shows a list of questions, their default values, their argum
 If you provided all the answers, your project should have been successfully initialized and print an according message.
 
 !!! tip
-    While the recommended way to initialize a `box` project is simply to go through the questions that are asked
+    While the recommended way to initialize a `boxer` project is simply to go through the questions that are asked
     during a `box init`, you can go through initialization in `-q`/`--quiet` mode.
     To still specify variables, just set them using the arguments discussed in the table above.
     And if you are happy with all the defaults, you should be good to do.
 
 !!! note
-    If you re-initalize a project, `box` will use the already set values as proposed default values.
+    If you re-initalize a project, `boxer` will use the already set values as proposed default values.
     If you re-initialize in quiet mode and just give one new option, all other options will stay the same.
 
 ## Packaging
@@ -91,7 +91,7 @@ and not download any releases.
 An information about this will be printed.
 
 To re-copy the local source into the `build` folder,
-the `box` project needs to be cleaned first.
+the `boxer` project needs to be cleaned first.
 Then run `box package -p LOCAL_SOURCE` again,
 where `LOCAL_SOURCE` is the path to the local source as described above.
 
@@ -116,5 +116,5 @@ type:
 box uninit
 ```
 
-This will remove the `[tool.box]` section from your `pyproject.toml` file.
+This will remove the `[tool.boxer]` section from your `pyproject.toml` file.
 If you provide the `-c`/`--clean` flag as well, the `dist`, `build`, and `release` folders will be deleted prior to uninitializing.

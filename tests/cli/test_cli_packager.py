@@ -8,7 +8,7 @@ import urllib.request
 from click.testing import CliRunner
 import pytest
 
-from box.cli import cli
+from boxer.cli import cli
 
 
 @pytest.mark.parametrize("verbose", [True, False])
@@ -70,8 +70,8 @@ def test_package_project_local_pyapp(rye_project, mocker, data_dir, pyapp_source
     mocker.patch("subprocess.run")
     urllib_mock = mocker.patch.object(urllib.request, "urlretrieve")  # not called
 
-    mocker.patch("box.packager.PackageApp._package_pyapp")
-    mocker.patch("box.packager.PackageApp.binary_name", return_value="pyapp")
+    mocker.patch("boxer.packager.PackageApp._package_pyapp")
+    mocker.patch("boxer.packager.PackageApp.binary_name", return_value="pyapp")
 
     # create dist folder and package
     dist_folder = rye_project.joinpath("dist")
@@ -91,8 +91,8 @@ def test_package_project_do_not_copy_local_folder_twice(rye_project, data_dir, m
     """Re-copying local folder echos a warning and does nothing."""
     pyapp_source_name = "pyapp-v0.14.0"
 
-    mocker.patch("box.packager.PackageApp._package_pyapp")
-    mocker.patch("box.packager.PackageApp.binary_name", return_value="pyapp")
+    mocker.patch("boxer.packager.PackageApp._package_pyapp")
+    mocker.patch("boxer.packager.PackageApp.binary_name", return_value="pyapp")
     urllib_mock = mocker.patch.object(urllib.request, "urlretrieve")
 
     # create dist folder and package
@@ -127,8 +127,8 @@ def test_package_with_specific_pyapp_version(
     pyapp_dest = pyapp_dest_folder.joinpath("pyapp-source.tar.gz")
 
     mocker.patch("subprocess.run")
-    mocker.patch("box.packager.PackageApp._package_pyapp")
-    mocker.patch("box.packager.PackageApp.binary_name", return_value="pyapp")
+    mocker.patch("boxer.packager.PackageApp._package_pyapp")
+    mocker.patch("boxer.packager.PackageApp.binary_name", return_value="pyapp")
     urllib_retrieve_mock = mocker.patch.object(urllib.request, "urlretrieve")
     urllib_retrieve_mock.side_effect = lambda _1, _2: shutil.copy(pyapp_src, pyapp_dest)
 

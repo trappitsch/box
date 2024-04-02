@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 from rich_click import ClickException
 
-import box.utils as ut
+import boxer.utils as ut
 
 
 @pytest.mark.parametrize(

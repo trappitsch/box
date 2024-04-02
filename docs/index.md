@@ -1,8 +1,8 @@
-# Welcome to `box`
+# Welcome to `boxer`
 
-[![Docs](https://readthedocs.org/projects/box/badge/?version=latest)](https://box.readthedocs.io/en/latest/?badge=latest)
-[![tests](https://github.com/trappitsch/box/actions/workflows/tests.yml/badge.svg)](https://github.com/trappitsch/box/actions/workflows/tests.yml)
-[![codecov](https://codecov.io/gh/trappitsch/box/graph/badge.svg?token=CED96ANLRR)](https://codecov.io/gh/trappitsch/box)
+[![Docs](https://readthedocs.org/projects/boxer/badge/?version=latest)](https://boxer.readthedocs.io/en/latest/?badge=latest)
+[![tests](https://github.com/trappitsch/boxer/actions/workflows/tests.yml/badge.svg)](https://github.com/trappitsch/boxer/actions/workflows/tests.yml)
+[![codecov](https://codecov.io/gh/trappitsch/boxer/graph/badge.svg?token=CED96ANLRR)](https://codecov.io/gh/trappitsch/boxer)
 [![Rye](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/mitsuhiko/rye/main/artwork/badge.json)](https://rye-up.com)
 
 The goal of this package is
@@ -10,7 +10,7 @@ to provide a command line interface
 that allows you to easily package your existing python project
 with [`PyApp`](https://ofek.dev/pyapp/).
 
-Currently, `box` only support python projects that have their metadata stored in a `pyproject.toml` file.
+Currently, `boxer` only support python projects that have their metadata stored in a `pyproject.toml` file.
 See [here](https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#writing-pyproject-toml)
 for details.
 
@@ -18,7 +18,7 @@ for details.
     - This package is still in a very early
     development phase! Please report your findings and issues,
     so that we can improve this tool together.
-    - `box` is not yet production ready
+    - `boxer` is not yet production ready
     and breaking changes may occur with new releases.
     These will be noted in the release notes
     and in the [changelog](changelog.md).
@@ -27,12 +27,12 @@ for details.
 
 We welcome contributions to this project.
 If you run into any problem, want to suggest a feature, want to contribute, or just want to say hi,
-please feel free to open an issue on [GitHub](https://github.com/trappitsch/box/issues)
-or to start a new [discussion](https://github.com/trappitsch/box/discussions).
+please feel free to open an issue on [GitHub](https://github.com/trappitsch/boxer/issues)
+or to start a new [discussion](https://github.com/trappitsch/boxer/discussions).
 
 ## Pre-requisites
 
-In order to run `box`, you must have `cargo` installed.
+In order to run `boxer`, you must have `cargo` installed.
 Instructions to do so can be found
 [here](https://doc.rust-lang.org/cargo/getting-started/installation.html).
 

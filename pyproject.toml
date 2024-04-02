@@ -1,6 +1,6 @@
 [project]
-name = "box"
-version = "0.1.0.dev0"
+name = "boxer"
+version = "0.1.0"
 description = "Automatic packaging and installers of your GUI with PyApp"
 readme = "README.md"
 authors = [
@@ -17,14 +17,14 @@ requires-python = ">= 3.8"
 license = { text = "MIT" }
 
 [project.scripts]
-box = "box.cli:cli"
+box = "boxer.cli:cli"
 
 [project.urls]
-Homepage = "https://github.com/trappitsc/box"
-Documentation = "https://box.readthedocs.io/"
-Changelog = "https://github.com/trappitsc/box/releases"
-Issues = "https://github.com/trappitsc/box/issues"
-CI = "https://github.com/trappitsc/box/actions"
+Homepage = "https://github.com/trappitsc/boxer"
+Documentation = "https://boxer.readthedocs.io/"
+Changelog = "https://github.com/trappitsc/boxer/releases"
+Issues = "https://github.com/trappitsc/boxer/issues"
+CI = "https://github.com/trappitsc/boxer/actions"
 
 [project.optional-dependencies]
 docs = [
@@ -57,10 +57,10 @@ test_cov = "pytest -m 'not unit' --cov --cov-report xml"
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/box"]
+packages = ["src/boxer"]
 
 [tool.pytest]
-addopts = "--cov=box -v"
+addopts = "--cov=boxer -v"
 testpaths = "tests"
 
 [tool.pytest.ini_options]
@@ -68,7 +68,3 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "unit: marks unit tests, which build a full PyApp with cargo (deselect with '-m \"not unit\"')",
 ]
-
-[tool.box]
-builder = "rye"
-app_entry = "box.cli:cli"
