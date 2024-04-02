@@ -12,6 +12,7 @@ dependencies = [
     "rich-click>=1.7.3",
     "rich>=13.7.0",
     "colorama>=0.4.6",
+    "box-packager>=0.1.0",
 ]
 requires-python = ">= 3.8"
 license = { text = "MIT" }
