@@ -111,7 +111,7 @@ def test_initialize_with_options(rye_project_no_box, gui):
     assert result.exit_code == 0
     assert "Project initialized." in result.output
 
-    # assert it's now a box project
+    # assert it's now a boxer project
     pyproj = PyProjectParser()
     assert pyproj.is_box_project
 
@@ -177,7 +177,7 @@ def test_initialize_project_quiet(rye_project_no_box):
     assert result.exit_code == 0
     assert "Project initialized." not in result.output
 
-    # assert it's now a box project
+    # assert it's now a boxer project
     pyproj = PyProjectParser()
     assert pyproj.is_box_project
 
@@ -218,7 +218,7 @@ def test_initialize_project_quiet_no_project_script(rye_project_no_box):
     assert result.exit_code == 0
     assert "Project initialized." not in result.output
 
-    # assert it's now a box project
+    # assert it's now a boxer project
     pyproj = PyProjectParser()
     assert pyproj.is_box_project
 

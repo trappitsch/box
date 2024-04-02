@@ -3,7 +3,7 @@
     To install with `pipx`, type:
 
     ```
-    pipx install box
+    pipx install boxer
     ```
 
     Alternatively, you can install the latest version directly from the GitHub repo.
@@ -11,15 +11,15 @@
     For a production environment, please use the official releases.
 
     ```
-    pipx install git+https://github.com/trappitsch/box.git
+    pipx install git+https://github.com/trappitsch/boxer.git
     ```
 
 === "rye"
 
-    To install box as a `rye` tool, type:
+    To install boxer as a `rye` tool, type:
 
     ```
-    rye install box
+    rye install boxer
     ```
 
     Alternatively, you can install the latest version directly from the GitHub repo.
@@ -27,17 +27,17 @@
     For a production environment, please use the official releases.
 
     ```
-    rye install --git https://github.com/trappitsch/box.git box
+    rye install --git https://github.com/trappitsch/boxer.git boxer
     ```
 
 === "pip"
 
-    We do not recommend installing `box` with `pip`,
+    We do not recommend installing `boxer` with `pip`,
     however, if have to do so for some reason,
     install it via:
 
     ```
-    pip install box
+    pip install boxer
     ```
 
     Alternatively, you can install the latest version directly from the GitHub repo.
@@ -45,5 +45,5 @@
     For a production environment, please use the official releases.
 
     ```
-    pip install git+https://github.com/trappitsch/box.git
+    pip install git+https://github.com/trappitsch/boxer.git
     ```

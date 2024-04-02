@@ -176,7 +176,7 @@ def clean(dist, build, target, source_pyapp, pyapp_folder):
     """Clean the whole project.
 
     By default, the `dist`, `build`, and `target` folders are deleted.
-    The cleaner will ensure that you are in an initialized `box` project folder.
+    The cleaner will ensure that you are in an initialized `boxer` project folder.
     """
     ut.check_boxproject()
     my_cleaner = CleanProject(
@@ -200,7 +200,7 @@ def clean(dist, build, target, source_pyapp, pyapp_folder):
 def uninit(clean_project):
     """Uninitialize the project.
 
-    All references to `box` will be removed from the `pyproject.toml` file.
+    All references to `boxer` will be removed from the `pyproject.toml` file.
     """
     ut.check_pyproject()
     if clean_project:

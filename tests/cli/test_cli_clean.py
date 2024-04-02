@@ -111,7 +111,7 @@ def test_clean_multiple_folders(rye_project):
 
 @pytest.mark.parametrize("init_folder", [True, False])
 def test_clean_no_pyproject(tmp_path_chdir, rye_project_no_box, init_folder):
-    """Display a message that not in a box folder and do nothing."""
+    """Display a message that not in a boxer folder and do nothing."""
     proj_folder = rye_project_no_box if init_folder else tmp_path_chdir
     dist_dir = proj_folder.joinpath("dist")
     dist_dir.mkdir()
@@ -121,7 +121,7 @@ def test_clean_no_pyproject(tmp_path_chdir, rye_project_no_box, init_folder):
 
     assert dist_dir.exists()
     assert result.exit_code == 1
-    assert "This is not a box project." in result.output
+    assert "This is not a boxer project." in result.output
 
 
 def test_clean_nothing_to_do(rye_project):

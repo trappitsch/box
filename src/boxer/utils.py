@@ -8,7 +8,7 @@ from rich_click import ClickException
 
 from boxer.config import PyProjectParser
 
-# available app entry types that are used in box
+# available app entry types that are used in boxer
 PYAPP_APP_ENTRY_TYPES = ["spec", "module", "script", "notebook"]
 
 
@@ -27,11 +27,11 @@ PYAPP_PYTHON_VERSIONS = (
 
 
 def check_boxproject() -> None:
-    """Check if the box project is already initialized."""
+    """Check if the boxer project is already initialized."""
     check_pyproject()
     pyproj = PyProjectParser()
     if not pyproj.is_box_project:
-        raise ClickException("This is not a box project. Initialize with `box init`.")
+        raise ClickException("This is not a boxer project. Initialize with `box init`.")
 
 
 def check_pyproject() -> None:

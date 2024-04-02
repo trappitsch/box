@@ -20,12 +20,12 @@ def test_cmd_python(mocker, os_python):
 
 
 def test_check_boxproject(rye_project):
-    """Check if the box project is already initialized."""
+    """Check if the boxer project is already initialized."""
     ut.check_boxproject()
 
 
 def test_check_boxproject_error(rye_project_no_box):
-    """Raise a click exception if the box project is not found."""
+    """Raise a click exception if the boxer project is not found."""
     with pytest.raises(ClickException):
         ut.check_boxproject()
 

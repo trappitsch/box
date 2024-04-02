@@ -1,4 +1,4 @@
-site_name: "box"
+site_name: "boxer"
 
 theme:
   name: material
@@ -18,8 +18,8 @@ theme:
         icon: material/brightness-7
         name: Switch to dark mode
 
-site_url: https://box.readthedocs.io
-repo_url: https://github.com/trappitsch/box
+site_url: https://boxer.readthedocs.io
+repo_url: https://github.com/trappitsch/boxer
 site_author: Reto Trappitsch
 
 markdown_extensions:

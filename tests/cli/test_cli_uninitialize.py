@@ -7,14 +7,14 @@ from boxer.config import PyProjectParser
 
 
 def test_uninitialize(rye_project):
-    """Assure project is not a box project after un-initialization."""
+    """Assure project is not a boxer project after un-initialization."""
     runner = CliRunner()
     result = runner.invoke(cli, ["uninit"])
 
     assert result.exit_code == 0
     assert "Project un-initialized." in result.output
 
-    # assert it's not a box project
+    # assert it's not a boxer project
     pyproj = PyProjectParser()
     assert not pyproj.is_box_project
 

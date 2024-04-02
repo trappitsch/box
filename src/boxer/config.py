@@ -140,7 +140,7 @@ def pyproject_writer(key: str, value: Any) -> None:
     except KeyError:
         pass
 
-    # add new line for tool if box table is not present
+    # add new line for tool if boxer table is not present
     if not key_box_present:
         try:
             doc["tool"].add(tomlkit.nl())
