@@ -3,7 +3,7 @@
     To install with `pipx`, type:
 
     ```
-    pipx install box
+    pipx install box-packager
     ```
 
     Alternatively, you can install the latest version directly from the GitHub repo.
@@ -19,7 +19,7 @@
     To install box as a `rye` tool, type:
 
     ```
-    rye install box
+    rye install box-packager
     ```
 
     Alternatively, you can install the latest version directly from the GitHub repo.
@@ -37,7 +37,7 @@
     install it via:
 
     ```
-    pip install box
+    pip install box-packager
     ```
 
     Alternatively, you can install the latest version directly from the GitHub repo.
