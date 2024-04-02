@@ -14,7 +14,7 @@ We will use [`qtcowsay`](https://github.com/trappitsch/qtcowsay),
 a simple PyQt6 wrapper around
 [`cowsay`](https://github.com/VaasuDevanS/cowsay-python), as an example.
 
-![GIF showing box in action using qtcowsay](/assets/ex_qtcowsay.gif)
+![GIF showing box in action using qtcowsay](assets/ex_qtcowsay.gif)
 
 ### Step-by-step instructions
 
