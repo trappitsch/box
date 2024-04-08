@@ -69,7 +69,3 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "unit: marks unit tests, which build a full PyApp with cargo (deselect with '-m \"not unit\"')",
 ]
-
-[tool.box]
-builder = "rye"
-app_entry = "box.cli:cli"

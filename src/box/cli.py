@@ -3,6 +3,7 @@ import rich_click as click
 from box.cleaner import CleanProject
 from box.config import uninitialize
 from box.initialization import InitializeProject
+from box.installer import CreateInstaller
 import box.formatters as fmt
 from box.packager import PackageApp
 import box.utils as ut
@@ -130,6 +131,13 @@ def package(verbose, pyapp_source, pyapp_version):
         f"You can find the executable file {binary_file.name} "
         f"in the `target/release` folder."
     )
+
+
+@cli.command(name="installer")
+def installer():
+    """Create an installer for the project."""
+    ut.check_boxproject()
+    _ = CreateInstaller()
 
 
 @cli.command(name="clean")
