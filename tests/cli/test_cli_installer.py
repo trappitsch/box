@@ -48,7 +48,7 @@ def test_installer_cli_linux(rye_project):
     assert os.stat(installer_file).st_mode & stat.S_IXUSR != 0
 
 
-@pytest.mark.parametrize("platform", ["win32", "darwin"])
+@pytest.mark.parametrize("platform", ["win32", "darwin", "aix"])
 def test_not_implemented_installers(rye_project, mocker, platform):
     """Present a warning but exit gracefully when installer is not implemented."""
     # mock the platform to return with sys.platform
