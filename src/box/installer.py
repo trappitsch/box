@@ -84,6 +84,11 @@ if [ -f "$INSTALL_FILE" ]; then
     fi
 fi
 
+if ! [[ ":$PATH:" == *":$INSTALL_DIR:"* ]]; then\
+  echo "$INSTALL_DIR is not on your PATH. Please add it."
+fi
+
+
 sed -e '1,/^#__PROGRAM_BINARY__$/d' "$0" > $INSTALL_FILE
 chmod +x $INSTALL_FILE
 
