@@ -113,6 +113,10 @@ box installer
 This will create an installer based on the platform and type of project for you
 in the `target/release` folder.
 
+!!! note
+    A packaged binary must already be present in the `target/release` folder.
+    If it isn't, you will be prompted to package the project first.
+
 ### CLIs
 
 {% include-markdown ".includes/installer_cli.md" %}
