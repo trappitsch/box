@@ -95,6 +95,32 @@ the `box` project needs to be cleaned first.
 Then run `box package -p LOCAL_SOURCE` again,
 where `LOCAL_SOURCE` is the path to the local source as described above.
 
+
+## Installer
+
+!!! warning
+    Installer creation is currently in active development and is not yet available in the `pypi` release.
+    If you want to test what is available, please install from the GitHub main branch.
+
+Your packaged project is simply a file.
+However, you might want to distribute an installer to your users.
+Installers can be created simply in box by typing:
+
+```
+box installer
+```
+
+This will create an installer based on the platform and type of project for you
+in the `target/release` folder.
+
+### CLIs
+
+{% include-markdown ".includes/installer_cli.md" %}
+
+### GUIs
+
+{% include-markdown ".includes/installer_gui.md" %}
+
 ## Cleaning your project
 
 If you want to clean the project, run:
