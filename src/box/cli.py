@@ -137,7 +137,13 @@ def package(verbose, pyapp_source, pyapp_version):
 def installer():
     """Create an installer for the project."""
     ut.check_boxproject()
-    _ = CreateInstaller()
+    my_installer = CreateInstaller()
+    if (inst_name := my_installer.installer_name) is not None:
+        fmt.success(
+            f"Installer successfully created.\n"
+            f"You can find the installer file {inst_name} "
+            f"in the `target/release` folder."
+        )
 
 
 @cli.command(name="clean")
