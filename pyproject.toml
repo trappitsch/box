@@ -47,7 +47,7 @@ dev-dependencies = [
     "pytest-cov>=4.1.0",
     "pytest-mock>=3.12.0",
     "gitpython>=3.1.42",
-    "build>=1.0.3",
+    "build>=1.2.1",
 ]
 
 [tool.rye.scripts]
@@ -69,7 +69,3 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "unit: marks unit tests, which build a full PyApp with cargo (deselect with '-m \"not unit\"')",
 ]
-
-[tool.box]
-builder = "rye"
-app_entry = "box.cli:cli"

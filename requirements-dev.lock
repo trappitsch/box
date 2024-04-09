@@ -12,7 +12,7 @@ babel==2.14.0
     # via mkdocs-material
 bracex==2.4
     # via wcmatch
-build==1.0.3
+build==1.2.1
 certifi==2024.2.2
     # via requests
 charset-normalizer==3.3.2
