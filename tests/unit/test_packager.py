@@ -271,6 +271,23 @@ def test_package_pyapp_cargo_and_move(rye_project, mocker, binary_extensions):
     assert exp_binary.read_text() == "not really a binary"
 
 
+def test_package_pyapp_no_binary_created(rye_project, mocker):
+    """Raise click exception if no binary was created by cargo."""
+    pyapp_path = rye_project.joinpath("build/pyapp-vx.y.z")
+    cargo_binary_folder = pyapp_path.joinpath("target/release")
+    cargo_binary_folder.mkdir(parents=True)
+
+    # mock subprocess.run
+    mocker.patch("subprocess.run")
+    mocker.patch("subprocess.DEVNULL")
+
+    packager = PackageApp()
+    packager._pyapp_path = pyapp_path
+    with pytest.raises(click.ClickException) as e:
+        packager._package_pyapp()
+    assert "box package -v" in e.value.args[0]  # some useful help on error
+
+
 @pytest.mark.parametrize("app_entry_type", ut.PYAPP_APP_ENTRY_TYPES)
 @pytest.mark.parametrize("opt_deps", ["gui", None])
 @pytest.mark.parametrize("opt_pyapp_vars", ["PYAPP_SOMETHING 2", None])
