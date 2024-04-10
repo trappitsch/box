@@ -5,7 +5,7 @@
     It can be run - like any other bash script - as following:
 
     ```
-    ./projectname-v1.2.3-installer.sh
+    ./projectname-v1.2.3-linux.sh
     ```
 
     The installer will ask the user for the target directory (defaults to `/usr/local/bin`)

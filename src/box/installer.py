@@ -7,6 +7,7 @@ import sys
 import rich_click as click
 
 from box import RELEASE_DIR_NAME
+from box.installer_utils import linux_cli, linux_gui
 from box.config import PyProjectParser
 import box.formatters as fmt
 
@@ -34,6 +35,8 @@ class CreateInstaller:
 
         if self._os == "Linux" and self._mode == "CLI":
             self.linux_cli()
+        elif self._os == "Linux" and self._mode == "GUI":
+            self.linux_gui()
         else:
             self.unsupported_os_or_mode()
 
@@ -47,55 +50,8 @@ class CreateInstaller:
         name_pkg = self._config.name_pkg
         version = self._config.version
 
-        # Bash part of the release file
-        bash_part = rf"""#!/bin/bash
-# This is a generated installer for {name_pkg} v{version}
+        bash_part = linux_cli.create_bash_installer(name_pkg, version)
 
-# Default installation name and folder
-INSTALL_NAME={name_pkg}
-INSTALL_DIR=/usr/local/bin
-
-# Check if user has a better path:
-read -p "Enter the installation path (default: $INSTALL_DIR): " USER_INSTALL_DIR
-if [ ! -z "$USER_INSTALL_DIR" ]; then
-    INSTALL_DIR=$USER_INSTALL_DIR
-fi
-
-# Check if installation folder exists
-if [ ! -d "$INSTALL_DIR" ]; then
-    echo "Error: Installation folder does not exist."
-    exit 1
-fi
-
-# Check if installation folder requires root access
-if [ ! -w "$INSTALL_DIR" ]; then
-    echo "Error: Installation folder requires root access. Please run with sudo."
-    exit 1
-fi
-
-INSTALL_FILE=$INSTALL_DIR/$INSTALL_NAME
-
-# check if installation file already exist and if it does, ask if overwrite is ok
-if [ -f "$INSTALL_FILE" ]; then
-    read -p "File already exists. Overwrite? (y/n): " OVERWRITE
-    if [ "$OVERWRITE" != "y" ]; then
-        echo "Installation aborted."
-        exit 1
-    fi
-fi
-
-if ! [[ ":$PATH:" == *":$INSTALL_DIR:"* ]]; then\
-  echo "$INSTALL_DIR is not on your PATH. Please add it."
-fi
-
-
-sed -e '1,/^#__PROGRAM_BINARY__$/d' "$0" > $INSTALL_FILE
-chmod +x $INSTALL_FILE
-
-echo "Successfully installed $INSTALL_NAME to $INSTALL_DIR"
-exit 0
-#__PROGRAM_BINARY__
-"""
         with open(self.release_file, "rb") as f:
             binary_part = f.read()
 
@@ -106,6 +62,37 @@ exit 0
         with open(installer_file, "wb") as f:
             f.write(bash_part.encode("utf-8"))
             f.write(binary_part)
+
+        self._installer_name = installer_file.name
+
+        # make installer executable
+        mode = os.stat(installer_file).st_mode
+        mode |= (mode & 0o444) >> 2
+        os.chmod(installer_file, mode)
+
+    def linux_gui(self) -> None:
+        """Create a Linux GUI installer."""
+        name_pkg = self._config.name_pkg
+        version = self._config.version
+        icon = get_icon()
+        icon_name = icon.name
+
+        bash_part = linux_gui.create_bash_installer(name_pkg, version, icon_name)
+
+        with open(self.release_file, "rb") as f:
+            binary_part = f.read()
+
+        with open(icon, "rb") as f:
+            icon_part = f.read()
+
+        installer_file = Path(RELEASE_DIR_NAME).joinpath(
+            f"{name_pkg}-v{version}-linux.sh"
+        )
+        with open(installer_file, "wb") as f:
+            f.write(bash_part.encode("utf-8"))
+            f.write(binary_part)
+            f.write(b"\n#__ICON_BINARY__\n")
+            f.write(icon_part)
 
         self._installer_name = installer_file.name
 
@@ -130,3 +117,38 @@ exit 0
         if not release_file.exists():
             raise click.ClickException("No release found. Run `box package` first.")
         return release_file
+
+
+def get_icon(suffix: str = None) -> Path:
+    """Return the icon file path.
+
+    If no suffix is provided, the following priorites will be returned (depending
+    on file availability):
+    - icon.svg
+    - icon.png
+    - icon.jpg
+    - icon.jpeg
+
+    Note: Windows `.ico` files must be called out explicitly.
+
+    :param suffix: The suffix of the icon file.
+
+    :return: The path to the icon file.
+
+    :raises ClickException: If no icon file is found.
+    """
+    icon_file = Path.cwd().joinpath("assets/icon")
+
+    suffixes = ["svg", "png", "jpg", "jpeg"]
+    if suffix:
+        suffixes = [suffix]  # overwrite exisiting and only check this.
+
+    for suffix in suffixes:
+        icon_file = icon_file.with_suffix(f".{suffix}")
+        if icon_file.exists():
+            return icon_file
+
+    raise click.ClickException(
+        f"No icon file found. Please provide an icon file. "
+        f"Valid formats are {', '.join(suffixes)}."
+    )

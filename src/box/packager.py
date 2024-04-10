@@ -1,6 +1,7 @@
 # Build the project with PyApp
 
 import os
+import sys
 from pathlib import Path
 import shutil
 import subprocess
@@ -234,13 +235,17 @@ class PackageApp:
 
         # move package to dev folder and rename it to module_name
         binary_path = self._pyapp_path.joinpath("target/release/pyapp")
-        suffix = ""
+        if sys.platform == "win32":
+            binary_path = binary_path.with_suffix(".exe")
+
         if not binary_path.is_file():
-            binary_path = binary_path.with_suffix(".exe")  # we are probably on windows!
-            suffix = ".exe"
+            raise click.ClickException(
+                "No binary created. Please check build process with `box package -v`."
+            )
+
         self._binary_name = self._release_dir.joinpath(
             self.config.name_pkg
-        ).with_suffix(suffix)
+        ).with_suffix(binary_path.suffix)
         shutil.move(binary_path, self._binary_name)
 
     def _set_env(self):
@@ -271,7 +276,7 @@ class PackageApp:
         os.environ[var_app_entry] = self.config.app_entry
         os.environ["PYAPP_PYTHON_VERSION"] = py_version
         if value := self.config.optional_dependencies:
-            os.environ["PYAPP_PIP_OPTIONAL_DEPS"] = value
+            os.environ["PYAPP_PROJECT_FEATURES"] = value
         optional_pyapp_vars = self.config.optional_pyapp_variables
         for key, value in optional_pyapp_vars.items():
             os.environ[key] = value

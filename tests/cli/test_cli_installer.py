@@ -8,6 +8,7 @@ from click.testing import CliRunner
 import pytest
 
 from box.cli import cli
+from box import config
 
 
 def setup_mock_target_binary(path: Path) -> str:
@@ -18,6 +19,16 @@ def setup_mock_target_binary(path: Path) -> str:
     target_file_content = "This is the content of the mock binary file..."
     target_file.write_text(target_file_content)
     return target_file_content
+
+
+def setup_mock_icon(path: Path) -> str:
+    """Set up a mock icon in the assets folder of the given path."""
+    assets_dir = path.joinpath("assets")
+    assets_dir.mkdir(parents=True)
+    icon_file = assets_dir.joinpath("icon.svg")
+    icon_file_content = "This is the content of the mock icon file..."
+    icon_file.write_text(icon_file_content)
+    return icon_file_content
 
 
 def test_installer_no_binary(rye_project):
@@ -46,6 +57,42 @@ def test_installer_cli_linux(rye_project):
     assert installer_file.exists()
     assert target_file_content in installer_file.read_text()
     assert os.stat(installer_file).st_mode & stat.S_IXUSR != 0
+
+    assert installer_file.name in result.output
+
+
+def test_installer_gui_linux(rye_project):
+    """Create installer for linux GUI."""
+    installer_fname_exp = f"{rye_project.name}-v0.1.0-linux.sh"
+    target_file_content = setup_mock_target_binary(rye_project)
+    icon_file_content = setup_mock_icon(rye_project)
+
+    # make it a GUI project
+    config.pyproject_writer("is_gui", True)
+
+    # run the CLI
+    runner = CliRunner()
+    result = runner.invoke(cli, ["installer"])
+
+    assert result.exit_code == 0
+
+    # assert the installer file was created
+    installer_file = rye_project.joinpath(f"target/release/{installer_fname_exp}")
+    assert installer_file.exists()
+
+    with open(installer_file, "rb") as f:
+        file_content = f.read().decode("utf-8")
+
+    start_successful_exec = file_content.find(
+        'echo "Successfully installed $INSTALL_NAME to $INSTALL_DIR"'
+    )
+    binary_start = file_content.find("#__PROGRAM_BINARY__", start_successful_exec)
+    icon_start = file_content.find("#__ICON_BINARY__", start_successful_exec)
+    assert file_content.find(target_file_content, binary_start, icon_start) != -1
+    assert file_content.find(icon_file_content, icon_start) != -1
+    assert os.stat(installer_file).st_mode & stat.S_IXUSR != 0
+
+    assert installer_file.name in result.output
 
 
 @pytest.mark.parametrize("platform", ["win32", "darwin", "aix"])

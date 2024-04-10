@@ -240,6 +240,9 @@ def test_get_pyapp_local_invalid_file(rye_project):
 @pytest.mark.parametrize("binary_extensions", [".exe", ""])
 def test_package_pyapp_cargo_and_move(rye_project, mocker, binary_extensions):
     """Ensure cargo is called correctly and final binary moved to the right folder."""
+    # mock sys.platform based on binary extension
+    mocker.patch("sys.platform", "win32" if binary_extensions == ".exe" else "linux")
+
     pyapp_path = rye_project.joinpath("build/pyapp-vx.y.z")
     cargo_binary_folder = pyapp_path.joinpath("target/release")
     cargo_binary_folder.mkdir(parents=True)
@@ -266,6 +269,23 @@ def test_package_pyapp_cargo_and_move(rye_project, mocker, binary_extensions):
     )
     assert exp_binary.is_file()
     assert exp_binary.read_text() == "not really a binary"
+
+
+def test_package_pyapp_no_binary_created(rye_project, mocker):
+    """Raise click exception if no binary was created by cargo."""
+    pyapp_path = rye_project.joinpath("build/pyapp-vx.y.z")
+    cargo_binary_folder = pyapp_path.joinpath("target/release")
+    cargo_binary_folder.mkdir(parents=True)
+
+    # mock subprocess.run
+    mocker.patch("subprocess.run")
+    mocker.patch("subprocess.DEVNULL")
+
+    packager = PackageApp()
+    packager._pyapp_path = pyapp_path
+    with pytest.raises(click.ClickException) as e:
+        packager._package_pyapp()
+    assert "box package -v" in e.value.args[0]  # some useful help on error
 
 
 @pytest.mark.parametrize("app_entry_type", ut.PYAPP_APP_ENTRY_TYPES)
@@ -304,7 +324,7 @@ def test_set_env(rye_project, mocker, app_entry_type, opt_deps, opt_pyapp_vars, 
     assert os.environ[f"PYAPP_EXEC_{app_entry_type.upper()}"] == exec_spec
     assert os.environ["PYAPP_PYTHON_VERSION"] == ut.PYAPP_PYTHON_VERSIONS[-1]
     if opt_deps:
-        assert os.environ["PYAPP_PIP_OPTIONAL_DEPS"] == opt_deps
+        assert os.environ["PYAPP_PROJECT_FEATURES"] == opt_deps
     if opt_pyapp_vars:
         assert os.environ["PYAPP_SOMETHING"] == "2"
     if gui:
