@@ -240,6 +240,9 @@ def test_get_pyapp_local_invalid_file(rye_project):
 @pytest.mark.parametrize("binary_extensions", [".exe", ""])
 def test_package_pyapp_cargo_and_move(rye_project, mocker, binary_extensions):
     """Ensure cargo is called correctly and final binary moved to the right folder."""
+    # mock sys.platform based on binary extension
+    mocker.patch("sys.platform", "win32" if binary_extensions == ".exe" else "linux")
+
     pyapp_path = rye_project.joinpath("build/pyapp-vx.y.z")
     cargo_binary_folder = pyapp_path.joinpath("target/release")
     cargo_binary_folder.mkdir(parents=True)
@@ -304,7 +307,7 @@ def test_set_env(rye_project, mocker, app_entry_type, opt_deps, opt_pyapp_vars, 
     assert os.environ[f"PYAPP_EXEC_{app_entry_type.upper()}"] == exec_spec
     assert os.environ["PYAPP_PYTHON_VERSION"] == ut.PYAPP_PYTHON_VERSIONS[-1]
     if opt_deps:
-        assert os.environ["PYAPP_PIP_OPTIONAL_DEPS"] == opt_deps
+        assert os.environ["PYAPP_PROJECT_FEATURES"] == opt_deps
     if opt_pyapp_vars:
         assert os.environ["PYAPP_SOMETHING"] == "2"
     if gui:
