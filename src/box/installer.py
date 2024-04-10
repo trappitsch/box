@@ -7,6 +7,7 @@ import sys
 import rich_click as click
 
 from box import RELEASE_DIR_NAME
+from box.installer_utils import linux_cli
 from box.config import PyProjectParser
 import box.formatters as fmt
 
@@ -47,55 +48,8 @@ class CreateInstaller:
         name_pkg = self._config.name_pkg
         version = self._config.version
 
-        # Bash part of the release file
-        bash_part = rf"""#!/bin/bash
-# This is a generated installer for {name_pkg} v{version}
+        bash_part = linux_cli.create_bash_installer(name_pkg, version)
 
-# Default installation name and folder
-INSTALL_NAME={name_pkg}
-INSTALL_DIR=/usr/local/bin
-
-# Check if user has a better path:
-read -p "Enter the installation path (default: $INSTALL_DIR): " USER_INSTALL_DIR
-if [ ! -z "$USER_INSTALL_DIR" ]; then
-    INSTALL_DIR=$USER_INSTALL_DIR
-fi
-
-# Check if installation folder exists
-if [ ! -d "$INSTALL_DIR" ]; then
-    echo "Error: Installation folder does not exist."
-    exit 1
-fi
-
-# Check if installation folder requires root access
-if [ ! -w "$INSTALL_DIR" ]; then
-    echo "Error: Installation folder requires root access. Please run with sudo."
-    exit 1
-fi
-
-INSTALL_FILE=$INSTALL_DIR/$INSTALL_NAME
-
-# check if installation file already exist and if it does, ask if overwrite is ok
-if [ -f "$INSTALL_FILE" ]; then
-    read -p "File already exists. Overwrite? (y/n): " OVERWRITE
-    if [ "$OVERWRITE" != "y" ]; then
-        echo "Installation aborted."
-        exit 1
-    fi
-fi
-
-if ! [[ ":$PATH:" == *":$INSTALL_DIR:"* ]]; then\
-  echo "$INSTALL_DIR is not on your PATH. Please add it."
-fi
-
-
-sed -e '1,/^#__PROGRAM_BINARY__$/d' "$0" > $INSTALL_FILE
-chmod +x $INSTALL_FILE
-
-echo "Successfully installed $INSTALL_NAME to $INSTALL_DIR"
-exit 0
-#__PROGRAM_BINARY__
-"""
         with open(self.release_file, "rb") as f:
             binary_part = f.read()
 
