@@ -37,7 +37,17 @@
 
 === "Windows"
 
-    GUI installers on Windows are currently not supported.
+    Windows installers are created using
+    [NSIS](https://nsis.sourceforge.io/Main_Page).
+    You must ensure that NSIS is installed and available on the system path.
+    The installer is an executable in `target/release/projectname-v1.2.3-win.exe`
+    that can be run by double-clicking it.
+
+    The installer will ask the user for the target directory and if
+    a startmenu entry should be created.
+    It will then create the startmenu entry and copy the binary to the target directory. An uninstaller is created as well.
+
+    When using the uninstaller that is created with NSIS, all PyApp data from this project will be removed as well in order to provide the user with a clean uninstallation.
 
 === "macOS"
 

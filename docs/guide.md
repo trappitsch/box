@@ -110,6 +110,9 @@ Installers can be created simply in box by typing:
 box installer
 ```
 
+Optionally, you can run the installer with the `-v`/`--verbose` flag.
+This will provide you with more information on the process, if available.
+
 This will create an installer based on the platform and type of project for you
 in the `target/release` folder.
 
@@ -131,6 +134,12 @@ In either case, the icon file(s) must be named `icon.<ext>`,
 where `<ext>` is the file extension.
 If multiple icons are available,
 order of preference is `svg`, `png`, `jpg`, `jpeg`.
+
+!!! note
+    Creating an installer will associate the GUI with the PyApp executable, not with the actual Python process.
+    Please read up on what you need to do in order to have the icon show up in the taskbar or dock.
+    For `PyQt`, some information can, e.g., be found
+    [here](https://www.geeksforgeeks.org/how-to-set-icon-to-a-window-in-pyqt5/).
 
 {% include-markdown ".includes/installer_gui.md" %}
 

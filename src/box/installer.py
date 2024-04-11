@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+import subprocess
 import sys
 
 import rich_click as click
@@ -10,15 +11,24 @@ from box import RELEASE_DIR_NAME
 from box.installer_utils import linux_cli, linux_gui
 from box.config import PyProjectParser
 import box.formatters as fmt
+import box.utils as ut
 
 
 class CreateInstaller:
     """Create an installer specific for the OS and depending on if GUI or CLI."""
 
-    def __init__(self):
-        """Initialize the installer creator."""
+    def __init__(self, verbose: bool = False):
+        """Initialize the installer creator.
+
+        :param verbose: If True, print verbose output.
+        """
         self._config = PyProjectParser()
         self._installer_name = None
+
+        self.subp_kwargs = {}
+        if not verbose:
+            self.subp_kwargs["stdout"] = subprocess.DEVNULL
+            self.subp_kwargs["stderr"] = subprocess.DEVNULL
 
         if sys.platform.startswith("linux"):
             self._os = "Linux"
@@ -29,21 +39,28 @@ class CreateInstaller:
         else:
             self._os = sys.platform
 
-        self.release_file = self._check_release()
-
+        self._release_file = None
         self._mode = "GUI" if self._config.is_gui else "CLI"
-
-        if self._os == "Linux" and self._mode == "CLI":
-            self.linux_cli()
-        elif self._os == "Linux" and self._mode == "GUI":
-            self.linux_gui()
-        else:
-            self.unsupported_os_or_mode()
 
     @property
     def installer_name(self) -> str:
         """Return the name of the installer."""
         return self._installer_name
+
+    def create_installer(self):
+        """Create the actual installer based on the OS and mode."""
+        self._release_file = self._check_release()
+
+        if self._os == "Linux" and self._mode == "CLI":
+            self.linux_cli()
+        elif self._os == "Linux" and self._mode == "GUI":
+            self.linux_gui()
+        # elif self._os == "Windows" and self._mode == "CLI":
+        #     self.unsupported_os_or_mode()
+        elif self._os == "Windows" and self._mode == "GUI":
+            self.windows_gui()
+        else:
+            self.unsupported_os_or_mode()
 
     def linux_cli(self) -> None:
         """Create a Linux CLI installer."""
@@ -52,7 +69,7 @@ class CreateInstaller:
 
         bash_part = linux_cli.create_bash_installer(name_pkg, version)
 
-        with open(self.release_file, "rb") as f:
+        with open(self._release_file, "rb") as f:
             binary_part = f.read()
 
         # Write the installer file
@@ -79,7 +96,7 @@ class CreateInstaller:
 
         bash_part = linux_gui.create_bash_installer(name_pkg, version, icon_name)
 
-        with open(self.release_file, "rb") as f:
+        with open(self._release_file, "rb") as f:
             binary_part = f.read()
 
         with open(icon, "rb") as f:
@@ -108,12 +125,58 @@ class CreateInstaller:
             currently not supported on {self._os}."
         )
 
+    def windows_gui(self):
+        """Create a Windows GUI installer."""
+        self._check_makensis()
+
+        from box.installer_utils.windows_hlp import nsis_gui_script
+
+        name_pkg = self._config.name_pkg
+        version = self._config.version
+        icon = get_icon("ico")
+
+        installer_name = f"{name_pkg}-v{version}-win.exe"
+
+        with ut.set_dir(RELEASE_DIR_NAME):
+            nsis_script_name = Path("make_installer.nsi")
+            with open(nsis_script_name, "w") as f:
+                f.write(
+                    nsis_gui_script(name_pkg, installer_name, self._release_file, icon)
+                )
+
+            # make the installer
+            subprocess.run(["makensis", nsis_script_name], **self.subp_kwargs)
+
+            nsis_script_name.unlink()
+
+        self._installer_name = installer_name
+
+    @staticmethod
+    def _check_makensis():
+        """Check if NSIS is installed correctly and available on the path."""
+        try:
+            subprocess.run(
+                ["makensis", "-VERSION"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+        except FileNotFoundError:
+            raise click.ClickException(
+                "NSIS is not installed or not available on the PATH. "
+                "Please install NSIS and try again. "
+                "For mor info, go to https://nsis.sourceforge.io"
+            )
+
     def _check_release(self) -> Path:
         """Check if release exists, if not, throw error.
 
         :return: Path to the release.
         """
         release_file = Path(RELEASE_DIR_NAME).joinpath(self._config.name_pkg)
+
+        if sys.platform == "win32":
+            release_file = release_file.with_suffix(".exe")
+
         if not release_file.exists():
             raise click.ClickException("No release found. Run `box package` first.")
         return release_file

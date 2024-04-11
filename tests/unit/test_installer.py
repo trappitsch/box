@@ -1,5 +1,6 @@
 """Unit tests for the installer module."""
 
+import os
 from pathlib import Path
 
 import pytest
@@ -18,6 +19,18 @@ def create_icon(suffix: str, path: Path) -> None:
     assets.mkdir()
     icon_file = assets.joinpath(f"icon.{suffix}")
     icon_file.touch()
+
+
+def test_create_installer_check_makensis(rye_project, mocker):
+    """Create an installer file."""
+    mocker.patch.dict(os.environ, {"PATH": ""})
+
+    cri = inst.CreateInstaller()
+
+    with pytest.raises(click.ClickException) as e:
+        cri._check_makensis()
+
+    assert "NSIS is not installed or not available on the PATH." in str(e.value)
 
 
 @pytest.mark.parametrize("suffix", ["svg", "png", "jpg", "jpeg"])
