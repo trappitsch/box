@@ -145,6 +145,7 @@ def installer(verbose):
     """Create an installer for the project."""
     ut.check_boxproject()
     my_installer = CreateInstaller(verbose=verbose)
+    my_installer.create_installer()
     if (inst_name := my_installer.installer_name) is not None:
         fmt.success(
             f"Installer successfully created.\n"

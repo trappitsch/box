@@ -39,25 +39,28 @@ class CreateInstaller:
         else:
             self._os = sys.platform
 
-        self.release_file = self._check_release()
-
+        self._release_file = None
         self._mode = "GUI" if self._config.is_gui else "CLI"
-
-        if self._os == "Linux" and self._mode == "CLI":
-            self.linux_cli()
-        elif self._os == "Linux" and self._mode == "GUI":
-            self.linux_gui()
-        elif self._os == "Windows" and self._mode == "CLI":
-            self.unsupported_os_or_mode()
-        elif self._os == "Windows" and self._mode == "GUI":
-            self.windows_gui()
-        else:
-            self.unsupported_os_or_mode()
 
     @property
     def installer_name(self) -> str:
         """Return the name of the installer."""
         return self._installer_name
+
+    def create_installer(self):
+        """Create the actual installer based on the OS and mode."""
+        self._release_file = self._check_release()
+
+        if self._os == "Linux" and self._mode == "CLI":
+            self.linux_cli()
+        elif self._os == "Linux" and self._mode == "GUI":
+            self.linux_gui()
+        # elif self._os == "Windows" and self._mode == "CLI":
+        #     self.unsupported_os_or_mode()
+        elif self._os == "Windows" and self._mode == "GUI":
+            self.windows_gui()
+        else:
+            self.unsupported_os_or_mode()
 
     def linux_cli(self) -> None:
         """Create a Linux CLI installer."""
@@ -66,7 +69,7 @@ class CreateInstaller:
 
         bash_part = linux_cli.create_bash_installer(name_pkg, version)
 
-        with open(self.release_file, "rb") as f:
+        with open(self._release_file, "rb") as f:
             binary_part = f.read()
 
         # Write the installer file
@@ -93,7 +96,7 @@ class CreateInstaller:
 
         bash_part = linux_gui.create_bash_installer(name_pkg, version, icon_name)
 
-        with open(self.release_file, "rb") as f:
+        with open(self._release_file, "rb") as f:
             binary_part = f.read()
 
         with open(icon, "rb") as f:
@@ -138,7 +141,7 @@ class CreateInstaller:
             nsis_script_name = Path("make_installer.nsi")
             with open(nsis_script_name, "w") as f:
                 f.write(
-                    nsis_gui_script(name_pkg, installer_name, self.release_file, icon)
+                    nsis_gui_script(name_pkg, installer_name, self._release_file, icon)
                 )
 
             # make the installer

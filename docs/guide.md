@@ -132,6 +132,12 @@ where `<ext>` is the file extension.
 If multiple icons are available,
 order of preference is `svg`, `png`, `jpg`, `jpeg`.
 
+!!! note
+    Creating an installer will associate the GUI with the PyApp executable, not with the actual Python process.
+    Please read up on what you need to do in order to have the icon show up in the taskbar or dock.
+    For `PyQt`, some information can, e.g., be found
+    [here](https://www.geeksforgeeks.org/how-to-set-icon-to-a-window-in-pyqt5/).
+
 {% include-markdown ".includes/installer_gui.md" %}
 
 ## Cleaning your project
