@@ -41,6 +41,7 @@ def test_installer_no_binary(rye_project):
     assert "No release found." in result.output
 
 
+@pytest.mark.skipif("sys.platform == 'win32'", reason="Not supported on Windows")
 def test_installer_cli_linux(rye_project):
     """Create installer for linux CLI."""
     installer_fname_exp = f"{rye_project.name}-v0.1.0-linux.sh"
@@ -61,6 +62,7 @@ def test_installer_cli_linux(rye_project):
     assert installer_file.name in result.output
 
 
+@pytest.mark.skipif("sys.platform == 'win32'", reason="Not supported on Windows")
 def test_installer_gui_linux(rye_project):
     """Create installer for linux GUI."""
     installer_fname_exp = f"{rye_project.name}-v0.1.0-linux.sh"
