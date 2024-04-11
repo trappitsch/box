@@ -2,6 +2,7 @@
 
 import os
 import shutil
+import sys
 from pathlib import Path
 import urllib.request
 
@@ -47,7 +48,8 @@ def test_package_project(rye_project, mocker, verbose):
     # create fake binary
     cargo_target = build_dir.joinpath("pyapp-v1.2.3/target/release")
     cargo_target.mkdir(parents=True)
-    cargo_target.joinpath("pyapp").touch()
+    exename = "pyapp.exe" if sys.platform == "win32" else "pyapp"
+    cargo_target.joinpath(exename).touch()
 
     runner = CliRunner()
     result = runner.invoke(cli, cmd)
