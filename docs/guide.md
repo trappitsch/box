@@ -110,6 +110,9 @@ Installers can be created simply in box by typing:
 box installer
 ```
 
+Optionally, you can run the installer with the `-v`/`--verbose` flag.
+This will provide you with more information on the process, if available.
+
 This will create an installer based on the platform and type of project for you
 in the `target/release` folder.
 
