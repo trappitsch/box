@@ -134,10 +134,17 @@ def package(verbose, pyapp_source, pyapp_version):
 
 
 @cli.command(name="installer")
-def installer():
+@click.option(
+    "-v",
+    "--verbose",
+    default=False,
+    is_flag=True,
+    help="Flag to enable verbose mode.",
+)
+def installer(verbose):
     """Create an installer for the project."""
     ut.check_boxproject()
-    my_installer = CreateInstaller()
+    my_installer = CreateInstaller(verbose=verbose)
     if (inst_name := my_installer.installer_name) is not None:
         fmt.success(
             f"Installer successfully created.\n"
