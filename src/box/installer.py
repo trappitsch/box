@@ -55,8 +55,8 @@ class CreateInstaller:
             self.linux_cli()
         elif self._os == "Linux" and self._mode == "GUI":
             self.linux_gui()
-        # elif self._os == "Windows" and self._mode == "CLI":
-        #     self.unsupported_os_or_mode()
+        elif self._os == "Windows" and self._mode == "CLI":
+            self.windows_cli()
         elif self._os == "Windows" and self._mode == "GUI":
             self.windows_gui()
         else:
@@ -121,9 +121,32 @@ class CreateInstaller:
     def unsupported_os_or_mode(self):
         """Print a message for unsupported OS or mode."""
         fmt.warning(
-            f"Creating an installer for a {self._mode} is \
-            currently not supported on {self._os}."
+            f"Creating an installer for a {self._mode} is "
+            f"currently not supported on {self._os}."
         )
+
+    def windows_cli(self):
+        """Create a Windows CLI installer."""
+        self._check_makensis()
+
+        from box.installer_utils.windows_hlp import nsis_cli_script
+
+        name_pkg = self._config.name_pkg
+        version = self._config.version
+
+        installer_name = f"{name_pkg}-v{version}-win.exe"
+
+        with ut.set_dir(RELEASE_DIR_NAME):
+            nsis_script_name = Path("make_installer.nsi")
+            with open(nsis_script_name, "w") as f:
+                f.write(nsis_cli_script(name_pkg, installer_name, self._release_file))
+
+            # make the installer
+            subprocess.run(["makensis", nsis_script_name], **self.subp_kwargs)
+
+            # nsis_script_name.unlink()
+
+        self._installer_name = installer_name
 
     def windows_gui(self):
         """Create a Windows GUI installer."""
