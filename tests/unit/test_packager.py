@@ -264,9 +264,8 @@ def test_package_pyapp_cargo_and_move(rye_project, mocker, binary_extensions):
         stdout=sp_devnull_mock,
         stderr=sp_devnull_mock,
     )
-    exp_binary = rye_project.joinpath(
-        f"target/release/{rye_project.name}{binary_extensions}"
-    )
+    conf = PyProjectParser()
+    exp_binary = rye_project.joinpath(f"target/release/{conf.name}{binary_extensions}")
     assert exp_binary.is_file()
     assert exp_binary.read_text() == "not really a binary"
 
