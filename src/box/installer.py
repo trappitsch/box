@@ -8,7 +8,6 @@ import sys
 import rich_click as click
 
 from box import RELEASE_DIR_NAME
-from box.installer_utils import linux_cli, linux_gui
 from box.config import PyProjectParser
 import box.formatters as fmt
 import box.utils as ut
@@ -64,18 +63,18 @@ class CreateInstaller:
 
     def linux_cli(self) -> None:
         """Create a Linux CLI installer."""
-        name_pkg = self._config.name_pkg
+        from box.installer_utils.linux_hlp import create_bash_installer_cli
+
+        name = self._config.name
         version = self._config.version
 
-        bash_part = linux_cli.create_bash_installer(name_pkg, version)
+        bash_part = create_bash_installer_cli(name, version)
 
         with open(self._release_file, "rb") as f:
             binary_part = f.read()
 
         # Write the installer file
-        installer_file = Path(RELEASE_DIR_NAME).joinpath(
-            f"{name_pkg}-v{version}-linux.sh"
-        )
+        installer_file = Path(RELEASE_DIR_NAME).joinpath(f"{name}-v{version}-linux.sh")
         with open(installer_file, "wb") as f:
             f.write(bash_part.encode("utf-8"))
             f.write(binary_part)
@@ -89,12 +88,14 @@ class CreateInstaller:
 
     def linux_gui(self) -> None:
         """Create a Linux GUI installer."""
+        from box.installer_utils.linux_hlp import create_bash_installer_gui
+
         name = self._config.name
         version = self._config.version
         icon = get_icon()
         icon_name = icon.name
 
-        bash_part = linux_gui.create_bash_installer(name, version, icon_name)
+        bash_part = create_bash_installer_gui(name, version, icon_name)
 
         with open(self._release_file, "rb") as f:
             binary_part = f.read()
@@ -208,7 +209,7 @@ class CreateInstaller:
 
         :return: Path to the release.
         """
-        release_file = Path(RELEASE_DIR_NAME).joinpath(self._config.name_pkg)
+        release_file = Path(RELEASE_DIR_NAME).joinpath(self._config.name)
 
         if sys.platform == "win32":
             release_file = release_file.with_suffix(".exe")

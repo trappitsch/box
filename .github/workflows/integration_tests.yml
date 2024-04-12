@@ -36,6 +36,7 @@ jobs:
         cd qtcowsay
         box init -q -b build
         box package
+        box installer
     - name: Checkout cowsay-python
       uses: actions/checkout@v4
       with:
@@ -47,3 +48,4 @@ jobs:
         git checkout 3db622cefd8b11620ece7386d4151b5e734b078b
         box init -q -b build
         box package
+        box installer

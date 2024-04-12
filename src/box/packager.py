@@ -243,9 +243,9 @@ class PackageApp:
                 "No binary created. Please check build process with `box package -v`."
             )
 
-        self._binary_name = self._release_dir.joinpath(
-            self.config.name_pkg
-        ).with_suffix(binary_path.suffix)
+        self._binary_name = self._release_dir.joinpath(self.config.name).with_suffix(
+            binary_path.suffix
+        )
         shutil.move(binary_path, self._binary_name)
 
     def _set_env(self):
