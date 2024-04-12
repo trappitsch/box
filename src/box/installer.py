@@ -64,18 +64,16 @@ class CreateInstaller:
 
     def linux_cli(self) -> None:
         """Create a Linux CLI installer."""
-        name_pkg = self._config.name_pkg
+        name = self._config.name
         version = self._config.version
 
-        bash_part = linux_cli.create_bash_installer(name_pkg, version)
+        bash_part = linux_cli.create_bash_installer(name, version)
 
         with open(self._release_file, "rb") as f:
             binary_part = f.read()
 
         # Write the installer file
-        installer_file = Path(RELEASE_DIR_NAME).joinpath(
-            f"{name_pkg}-v{version}-linux.sh"
-        )
+        installer_file = Path(RELEASE_DIR_NAME).joinpath(f"{name}-v{version}-linux.sh")
         with open(installer_file, "wb") as f:
             f.write(bash_part.encode("utf-8"))
             f.write(binary_part)
@@ -208,7 +206,7 @@ class CreateInstaller:
 
         :return: Path to the release.
         """
-        release_file = Path(RELEASE_DIR_NAME).joinpath(self._config.name_pkg)
+        release_file = Path(RELEASE_DIR_NAME).joinpath(self._config.name)
 
         if sys.platform == "win32":
             release_file = release_file.with_suffix(".exe")
