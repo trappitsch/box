@@ -16,7 +16,15 @@ def test_cmd_python(mocker, os_python):
     """Get python on mulitple operating systems."""
     # mock os.name
     mocker.patch("os.name", os_python[0])
+    mocker.patch("subprocess.run")
     assert ut.cmd_python() == os_python[1]
+
+
+def test_cmd_python_py_not_found(mocker):
+    """Default to python on windows if py not found."""
+    mocker.patch("os.name", "nt")
+    mocker.patch("subprocess.run", side_effect=FileNotFoundError)
+    assert ut.cmd_python() == "python"
 
 
 def test_check_boxproject(rye_project):

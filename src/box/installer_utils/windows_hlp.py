@@ -3,6 +3,126 @@
 from pathlib import Path
 
 
+def nsis_cli_script(
+    project_name: str, installer_name: str, author: str, version: str, binary_path: Path
+):
+    """Create NSIS script for CLI installer.
+
+    :param project_name: Name of the project
+    :param installer_name: Name of the installer to be produced by NSIS
+    :param author: Author of the project
+    :param version: Version of the project
+    :param binary_path: Path to the binary to be installed
+    """
+    return rf"""; NSIS script to create installer for {project_name}
+
+;--------------------------------
+;Include Modern UI
+
+  !include "MUI2.nsh"
+
+;--------------------------------
+;General
+
+  ;Name and file
+  Name "{project_name}"
+  OutFile "{installer_name}"
+  Unicode True
+
+  ;Default installation folder
+  InstallDir "$LOCALAPPDATA\{project_name}"
+
+  ;Get installation folder from registry if available
+  InstallDirRegKey HKCU "Software\{project_name}" ""
+
+  ;Request application privileges
+  RequestExecutionLevel user
+
+
+;--------------------------------
+;Interface Settings
+
+  !define MUI_ABORTWARNING
+
+;--------------------------------
+;Pages
+
+  !insertmacro MUI_PAGE_COMPONENTS
+  !insertmacro MUI_PAGE_DIRECTORY
+
+  !insertmacro MUI_PAGE_INSTFILES
+
+  !define MUI_FINISHPAGE_TITLE "Successfully installed {project_name}"
+  !define MUI_FINISHPAGE_TITLE_3LINES
+  !define MUI_FINISHPAGE_TEXT "Your command line interface CLI has been successfully installed. However, the installer did not modify your PATH variable.$\r$\nPlease add the installation folder$\r$\n$INSTDIR$\r$\nto your PATH variable manually."
+  !insertmacro MUI_PAGE_FINISH
+
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
+
+;--------------------------------
+;Languages
+
+  !insertmacro MUI_LANGUAGE "English"
+
+;--------------------------------
+;Installer Sections
+
+Section "{project_name}" SecInst
+
+  SetOutPath "$INSTDIR"
+
+  ; Files for {project_name}
+  File "{binary_path.name}"
+
+  ;Store installation folder
+  WriteRegStr HKCU "Software\{project_name}" "" $INSTDIR
+
+  ;Create uninstaller
+  WriteUninstaller "$INSTDIR\Uninstall-{project_name}.exe"
+
+  ; Add uninstaller key information for add/remove software entry
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "DisplayName" "{project_name}"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "UninstallString" "$INSTDIR\Uninstall-{project_name}.exe"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "Publisher" "{author}"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "DisplayVersion" "{version}"
+
+SectionEnd
+
+;--------------------------------
+;Descriptions
+
+  ;Language strings
+  LangString DESC_SecInst ${{LANG_ENGLISH}} "Selection."
+
+  ;Assign language strings to sections
+  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${{SecInst}} $(DESC_SecInst)
+  !insertmacro MUI_FUNCTION_DESCRIPTION_END
+
+;--------------------------------
+;Uninstaller Section
+
+Section "Uninstall"
+
+
+  ; Delete {project_name} folder
+  Delete "$INSTDIR\{binary_path.name}"
+  Delete "$INSTDIR\Uninstall-{project_name}.exe"
+
+  RMDir "$INSTDIR"
+
+  ; Delete PyApp virtual environment
+  RMDir /r "$LOCALAPPDATA\pyapp\data\{project_name}"
+
+  ; Delete registry key
+  DeleteRegKey HKCU "Software\{project_name}"
+  DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}"
+
+SectionEnd
+"""
+
+
 def nsis_gui_script(
     project_name: str,
     installer_name: str,

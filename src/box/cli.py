@@ -1,5 +1,10 @@
+"""CLI for box-packager."""
+
+from pathlib import Path
+
 import rich_click as click
 
+import box
 from box.cleaner import CleanProject
 from box.config import uninitialize
 from box.initialization import InitializeProject
@@ -146,12 +151,19 @@ def installer(verbose):
     ut.check_boxproject()
     my_installer = CreateInstaller(verbose=verbose)
     my_installer.create_installer()
-    if (inst_name := my_installer.installer_name) is not None:
-        fmt.success(
-            f"Installer successfully created.\n"
-            f"You can find the installer file {inst_name} "
-            f"in the `target/release` folder."
-        )
+    inst_name = my_installer.installer_name
+    if inst_name is not None:
+        if Path(box.RELEASE_DIR_NAME).joinpath(inst_name).exists():
+            fmt.success(
+                f"Installer successfully created.\n"
+                f"You can find the installer file {inst_name} "
+                f"in the `target/release` folder."
+            )
+        else:
+            raise click.ClickException(
+                "Installer was not created. "
+                "Run with `box installer -v` to get verbose feedback."
+            )
 
 
 @cli.command(name="clean")

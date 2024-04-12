@@ -3,6 +3,7 @@
 from contextlib import contextmanager
 import os
 from pathlib import Path
+import subprocess
 
 from rich_click import ClickException
 
@@ -10,7 +11,6 @@ from box.config import PyProjectParser
 
 # available app entry types that are used in box
 PYAPP_APP_ENTRY_TYPES = ["spec", "module", "script", "notebook"]
-
 
 # supported Python versions. Default will be set to last entry (latest).
 PYAPP_PYTHON_VERSIONS = (
@@ -45,7 +45,17 @@ def cmd_python() -> str:
 
     :return: Command to run Python
     """
-    return "py" if is_windows() else "python"
+    if is_windows():
+        try:
+            subprocess.run(
+                ["py", "--version"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+            return "py"
+        except FileNotFoundError:
+            pass
+    return "python"
 
 
 def is_windows() -> bool:
