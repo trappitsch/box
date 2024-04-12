@@ -154,7 +154,7 @@ class CreateInstaller:
             # make the installer
             subprocess.run(["makensis", nsis_script_name], **self.subp_kwargs)
 
-            # nsis_script_name.unlink()
+            nsis_script_name.unlink()
 
         self._installer_name = installer_name
 
