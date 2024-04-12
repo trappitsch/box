@@ -47,3 +47,4 @@ jobs:
         git checkout 3db622cefd8b11620ece7386d4151b5e734b078b
         box init -q -b build
         box package
+        box installer
