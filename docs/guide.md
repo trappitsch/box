@@ -98,10 +98,6 @@ where `LOCAL_SOURCE` is the path to the local source as described above.
 
 ## Installer
 
-!!! warning
-    Installer creation is currently in active development and is not yet available in the `pypi` release.
-    If you want to test what is available, please install from the GitHub main branch.
-
 Your packaged project is simply a file.
 However, you might want to distribute an installer to your users.
 Installers can be created simply in box by typing:
