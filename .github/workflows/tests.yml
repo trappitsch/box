@@ -23,10 +23,9 @@ jobs:
       uses: eifinger/setup-rye@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-    - name: Test rye
+    - name: Setup rye config - required for tests
       run: |
-        rye init asdf
-        cat asdf/pyproject.toml
+        rye config --set default.author="Firstname Lastname <email@domain.com>"
     - name: Sync Rye
       run: |
         rye pin ${{ matrix.python-version }}
