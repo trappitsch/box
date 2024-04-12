@@ -89,12 +89,12 @@ class CreateInstaller:
 
     def linux_gui(self) -> None:
         """Create a Linux GUI installer."""
-        name_pkg = self._config.name_pkg
+        name = self._config.name
         version = self._config.version
         icon = get_icon()
         icon_name = icon.name
 
-        bash_part = linux_gui.create_bash_installer(name_pkg, version, icon_name)
+        bash_part = linux_gui.create_bash_installer(name, version, icon_name)
 
         with open(self._release_file, "rb") as f:
             binary_part = f.read()
@@ -102,9 +102,7 @@ class CreateInstaller:
         with open(icon, "rb") as f:
             icon_part = f.read()
 
-        installer_file = Path(RELEASE_DIR_NAME).joinpath(
-            f"{name_pkg}-v{version}-linux.sh"
-        )
+        installer_file = Path(RELEASE_DIR_NAME).joinpath(f"{name}-v{version}-linux.sh")
         with open(installer_file, "wb") as f:
             f.write(bash_part.encode("utf-8"))
             f.write(binary_part)
@@ -131,20 +129,28 @@ class CreateInstaller:
 
         from box.installer_utils.windows_hlp import nsis_cli_script
 
-        name_pkg = self._config.name_pkg
+        name = self._config.name
         version = self._config.version
 
-        installer_name = f"{name_pkg}-v{version}-win.exe"
+        installer_name = f"{name}-v{version}-win.exe"
 
         with ut.set_dir(RELEASE_DIR_NAME):
             nsis_script_name = Path("make_installer.nsi")
             with open(nsis_script_name, "w") as f:
-                f.write(nsis_cli_script(name_pkg, installer_name, self._release_file))
+                f.write(
+                    nsis_cli_script(
+                        name,
+                        installer_name,
+                        self._config.author,
+                        self._config.version,
+                        self._release_file,
+                    )
+                )
 
             # make the installer
             subprocess.run(["makensis", nsis_script_name], **self.subp_kwargs)
 
-            # nsis_script_name.unlink()
+            nsis_script_name.unlink()
 
         self._installer_name = installer_name
 

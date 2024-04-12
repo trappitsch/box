@@ -3,11 +3,15 @@
 from pathlib import Path
 
 
-def nsis_cli_script(project_name: str, installer_name: str, binary_path: Path):
+def nsis_cli_script(
+    project_name: str, installer_name: str, author: str, version: str, binary_path: Path
+):
     """Create NSIS script for CLI installer.
 
     :param project_name: Name of the project
     :param installer_name: Name of the installer to be produced by NSIS
+    :param author: Author of the project
+    :param version: Version of the project
     :param binary_path: Path to the binary to be installed
     """
     return rf"""; NSIS script to create installer for {project_name}
@@ -48,6 +52,11 @@ def nsis_cli_script(project_name: str, installer_name: str, binary_path: Path):
 
   !insertmacro MUI_PAGE_INSTFILES
 
+  !define MUI_FINISHPAGE_TITLE "Successfully installed {project_name}"
+  !define MUI_FINISHPAGE_TITLE_3LINES
+  !define MUI_FINISHPAGE_TEXT "Your command line interface CLI has been successfully installed. However, the installer did not modify your PATH variable.$\r$\nPlease add the installation folder$\r$\n$INSTDIR$\r$\nto your PATH variable manually."
+  !insertmacro MUI_PAGE_FINISH
+
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_INSTFILES
 
@@ -68,19 +77,15 @@ Section "{project_name}" SecInst
 
   ;Store installation folder
   WriteRegStr HKCU "Software\{project_name}" "" $INSTDIR
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "DisplayName" "{project_name}"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "UninstallString" '"$INSTDIR\Uninstall-{project_name}.exe"'
 
   ;Create uninstaller
-  WriteUninstaller "$INSTDIR\Uninstall-{project_name}.exe"\
+  WriteUninstaller "$INSTDIR\Uninstall-{project_name}.exe"
 
-  ; Add the binary path to the PATH environment variable
-  nsExec::Exec 'echo %PATH% | find "$INSTDIR"'
-  Pop $0   ; gets result code
-
-  ${{If}} $0 = 0
-    nsExec::Exec 'setx PATH=%PATH%;$INSTDIR'
-  ${{EndIf}}
+  ; Add uninstaller key information for add/remove software entry
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "DisplayName" "{project_name}"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "UninstallString" "$INSTDIR\Uninstall-{project_name}.exe"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "Publisher" "{author}"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "DisplayVersion" "{version}"
 
 SectionEnd
 
@@ -111,8 +116,8 @@ Section "Uninstall"
   RMDir /r "$LOCALAPPDATA\pyapp\data\{project_name}"
 
   ; Delete registry key
-  DeleteRegKey /ifempty HKCU "Software\{project_name}"
-  DeleteRegKey /ifempty HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}"
+  DeleteRegKey HKCU "Software\{project_name}"
+  DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}"
 
 SectionEnd
 """
