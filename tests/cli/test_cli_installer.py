@@ -111,6 +111,57 @@ def test_installer_gui_linux(rye_project):
 
 
 @pytest.mark.parametrize("verbose", [True, False])
+def test_installer_cli_windows(rye_project, mocker, verbose):
+    """Create an installer with NSIS for a CLI on Windows."""
+    mocker.patch("sys.platform", "win32")
+    subp_mock = mocker.patch("subprocess.run")
+    sp_devnull_mock = mocker.patch("subprocess.DEVNULL")
+
+    subp_kwargs = {}
+    if not verbose:
+        subp_kwargs["stdout"] = subp_kwargs["stderr"] = sp_devnull_mock
+
+    conf = config.PyProjectParser()
+    installer_fname_exp = f"{conf.name}-v0.1.0-win.exe"
+    _ = setup_mock_target_binary(rye_project)
+    # create the installer binary
+    installer_binary = rye_project.joinpath(f"target/release/{installer_fname_exp}")
+    installer_binary.touch()
+
+    # run the CLI
+    runner = CliRunner()
+    if verbose:
+        args = ["installer", "-v"]
+    else:
+        args = ["installer"]
+    result = runner.invoke(cli, args)
+
+    assert result.exit_code == 0
+
+    make_installer_pth = rye_project.joinpath("target/release/make_installer.nsi")
+    release_path = rye_project.joinpath("target/release")
+    subp_mock.assert_called_with(
+        ["makensis", make_installer_pth.relative_to(release_path)], **subp_kwargs
+    )
+    assert installer_fname_exp in result.output
+
+
+def test_installer_cli_windows_not_created(rye_project, mocker):
+    """Raise ClickException if the installer was not created."""
+    mocker.patch("sys.platform", "win32")
+    mocker.patch("subprocess.run")
+
+    _ = setup_mock_target_binary(rye_project)
+
+    runner = CliRunner()
+    result = runner.invoke(cli, ["installer"])
+
+    assert result.exit_code != 0
+    assert result.exception
+    assert "Installer was not created" in result.output
+
+
+@pytest.mark.parametrize("verbose", [True, False])
 def test_installer_gui_windows(rye_project, mocker, verbose):
     """Create an installer with NSIS on Windows."""
     mocker.patch("sys.platform", "win32")
