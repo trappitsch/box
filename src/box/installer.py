@@ -141,13 +141,20 @@ class CreateInstaller:
             nsis_script_name = Path("make_installer.nsi")
             with open(nsis_script_name, "w") as f:
                 f.write(
-                    nsis_gui_script(name_pkg, installer_name, self._release_file, icon)
+                    nsis_gui_script(
+                        name_pkg,
+                        installer_name,
+                        self._config.author,
+                        self._config.version,
+                        self._release_file,
+                        icon,
+                    )
                 )
 
             # make the installer
             subprocess.run(["makensis", nsis_script_name], **self.subp_kwargs)
 
-            nsis_script_name.unlink()
+            # nsis_script_name.unlink()
 
         self._installer_name = installer_name
 
