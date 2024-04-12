@@ -23,6 +23,10 @@ jobs:
       uses: eifinger/setup-rye@v2
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Test rye
+      run: |
+        rye init asdf
+        cat asdf/pyproject.toml
     - name: Sync Rye
       run: |
         rye pin ${{ matrix.python-version }}
