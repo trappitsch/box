@@ -28,6 +28,7 @@ class CreateInstaller:
         if not verbose:
             self.subp_kwargs["stdout"] = subprocess.DEVNULL
             self.subp_kwargs["stderr"] = subprocess.DEVNULL
+        self._verbose = verbose
 
         if sys.platform.startswith("linux"):
             self._os = "Linux"
@@ -116,6 +117,32 @@ class CreateInstaller:
         mode = os.stat(installer_file).st_mode
         mode |= (mode & 0o444) >> 2
         os.chmod(installer_file, mode)
+
+    def macos_cli(self):
+        """Create a macOS CLI installer using applecrate."""
+        from applecrate import build_installer
+
+        name = self._config.name
+        version = self._config.version
+        installer_file = Path(RELEASE_DIR_NAME).joinpath(f"{name}-v{version}-macos.pkg")
+
+        kwargs = {}
+        if self._verbose:
+            kwargs["verbose"] = click.secho
+        build_installer(
+            app=name,
+            version=version,
+            install=[
+                (
+                    self._release_file,
+                    f"/usr/local/bin/{self._release_file.name}",
+                )
+            ],
+            output=installer_file,
+            **kwargs,
+        )
+
+        self._installer_name = installer_file.name
 
     def unsupported_os_or_mode(self):
         """Print a message for unsupported OS or mode."""

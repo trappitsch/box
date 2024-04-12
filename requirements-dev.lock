@@ -8,6 +8,7 @@
 #   with-sources: false
 
 -e file:.
+applecrate==0.2.0
 babel==2.14.0
     # via mkdocs-material
 bracex==2.4
@@ -18,6 +19,7 @@ certifi==2024.2.2
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
+    # via applecrate
     # via box-packager
     # via mkdocs
     # via mkdocs-click
@@ -37,6 +39,7 @@ idna==3.6
 iniconfig==2.0.0
     # via pytest
 jinja2==3.1.3
+    # via applecrate
     # via mkdocs
     # via mkdocs-material
 markdown==3.5.2
@@ -46,6 +49,8 @@ markdown==3.5.2
     # via pymdown-extensions
 markdown-it-py==3.0.0
     # via rich
+markdown2==2.4.13
+    # via applecrate
 markupsafe==2.1.5
     # via jinja2
     # via mkdocs
@@ -66,6 +71,7 @@ mkdocs-material==9.5.13
 mkdocs-material-extensions==1.3.1
     # via mkdocs-material
 packaging==23.2
+    # via applecrate
     # via build
     # via mkdocs
     # via pytest
@@ -73,6 +79,8 @@ paginate==0.5.6
     # via mkdocs-material
 pathspec==0.12.1
     # via mkdocs
+pip==24.0
+    # via applecrate
 platformdirs==4.2.0
     # via mkdocs
 pluggy==1.4.0
@@ -111,6 +119,8 @@ six==1.16.0
     # via python-dateutil
 smmap==5.0.1
     # via gitdb
+toml==0.10.2
+    # via applecrate
 tomlkit==0.12.4
     # via box-packager
 typing-extensions==4.10.0
