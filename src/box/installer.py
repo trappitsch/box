@@ -59,6 +59,10 @@ class CreateInstaller:
             self.windows_cli()
         elif self._os == "Windows" and self._mode == "GUI":
             self.windows_gui()
+        elif self._os == "macOS" and self._mode == "CLI":
+            self.macos_cli()
+        elif self._os == "macOS" and self._mode == "GUI":
+            self.macos_gui()
         else:
             self.unsupported_os_or_mode()
 
@@ -143,6 +147,15 @@ class CreateInstaller:
         )
 
         self._installer_name = installer_file.name
+
+    def macos_gui(self):
+        """Create a macOS GUI installer using applecrate."""
+        pass
+        # seems like two steps:
+        # 1. create the .app bundle by just creating a proper folder
+        # 2. create the dmg from the app using create-dmg (https://github.com/create-dmg/create-dmg/blob/master/create-dmg)
+        #    this is actually the same program others use
+        #    since it's a command line tool, we can probably do the same
 
     def unsupported_os_or_mode(self):
         """Print a message for unsupported OS or mode."""

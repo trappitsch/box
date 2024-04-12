@@ -207,15 +207,11 @@ def test_installer_gui_windows(rye_project, mocker, verbose):
     assert installer_fname_exp in result.output
 
 
-@pytest.mark.parametrize("platform", ["darwin", "aix"])
-def test_not_implemented_installers(rye_project, mocker, platform):
+def test_not_implemented_installers(rye_project, mocker):
     """Present a warning but exit gracefully when installer is not implemented."""
+    platform = "aix"
     # mock the platform to return with sys.platform
     mocker.patch("sys.platform", platform)
-
-    os_exp = ""
-    if platform == "darwin":
-        os_exp = "macOS"
 
     conf = config.PyProjectParser()
     _ = setup_mock_target_binary(rye_project, conf.name)
@@ -225,4 +221,4 @@ def test_not_implemented_installers(rye_project, mocker, platform):
 
     assert result.exit_code == 0
     assert "currently not supported" in result.output
-    assert os_exp in result.output
+    assert platform in result.output
