@@ -1,3 +1,5 @@
+## v0.2.0
+
 - Released binary is now named after the project name, not after the python package name
 - Improvements to packaging: If PyApp fails and no binary exists, are more useful error message is provided.
 - Add command `box installer` to create an installer for the packaged program.
