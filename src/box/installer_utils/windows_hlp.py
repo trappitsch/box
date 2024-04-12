@@ -119,12 +119,19 @@ SectionEnd
 
 
 def nsis_gui_script(
-    project_name: str, installer_name: str, binary_path: Path, icon_path: Path
+    project_name: str,
+    installer_name: str,
+    author: str,
+    version: str,
+    binary_path: Path,
+    icon_path: Path,
 ):
     """Create NSIS script for GUI installer.
 
     :param project_name: Name of the project
     :param installer_name: Name of the installer to be produced by NSIS
+    :param author: Author of the project
+    :param version: Version of the project
     :param binary_path: Path to the binary to be installed
     :param icon_path: Path to the icon file to be used in the installer
     """
@@ -134,6 +141,8 @@ def nsis_gui_script(
 ;Include Modern UI
 
   !include "MUI2.nsh"
+  !define MUI_ICON "{icon_path.absolute()}"
+  !define MUI_UNICON "{icon_path.absolute()}"
 
 ;--------------------------------
 ;General
@@ -201,33 +210,39 @@ Section "{project_name}" SecInst
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall-{project_name}.exe"
 
+  ; Add uninstaller key information for add/remove software entry
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "DisplayName" "{project_name}"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "UninstallString" "$INSTDIR\Uninstall-{project_name}.exe"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "Publisher" "{author}"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "DisplayIcon" "$INSTDIR\Uninstall-{project_name}.exe"
+  WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}" "DisplayVersion" "{version}"
+
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 
-    ;Create shortcuts - if icon file is empty, leave that part away
-    CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
-    CreateShortcut "$SMPROGRAMS\$StartMenuFolder\{project_name}.lnk" "$INSTDIR\{binary_path.name}" "" "{str(icon_path.absolute())}"
-    CreateShortcut "$SMPROGRAMS\$StartMenuFolder\Uninstall-{project_name}.lnk" "$INSTDIR\Uninstall-{project_name}.exe"
+  ;Create shortcuts - if icon file is empty, leave that part away
+  CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
+  CreateShortcut "$SMPROGRAMS\$StartMenuFolder\{project_name}.lnk" "$INSTDIR\{binary_path.name}" "" "{str(icon_path.absolute())}"
+  CreateShortcut "$SMPROGRAMS\$StartMenuFolder\Uninstall-{project_name}.lnk" "$INSTDIR\Uninstall-{project_name}.exe"
 
   !insertmacro MUI_STARTMENU_WRITE_END
 
 SectionEnd
-
-;--------------------------------
 ;Descriptions
 
-  ;Language strings
+
+
+;--------------------------------  ;Language strings
   LangString DESC_SecInst ${{LANG_ENGLISH}} "Selection."
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${{SecInst}} $(DESC_SecInst)
+  !insertmacro MUI_DESCRIPTION_TEXT ${{SecInst}} $(DESC_SecInst)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
 ;Uninstaller Section
 
 Section "Uninstall"
-
 
   ; Delete {project_name} folder
   Delete "$INSTDIR\{binary_path.name}"
@@ -246,7 +261,8 @@ Section "Uninstall"
   RMDir "$SMPROGRAMS\$StartMenuFolder"
 
   ; Delete registry key
-  DeleteRegKey /ifempty HKCU "Software\{project_name}"
+  DeleteRegKey HKCU "Software\{project_name}"
+  DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\{project_name}"
 
 SectionEnd
 """

@@ -31,6 +31,11 @@ class PyProjectParser:
         return self._pyproject["tool"]["box"]["entry_type"]
 
     @property
+    def author(self) -> str:
+        """Return the (first) author of the project."""
+        return self._project["authors"][0]["name"]
+
+    @property
     def builder(self) -> str:
         """Return the builder of the project."""
         return self._pyproject["tool"]["box"]["builder"]
