@@ -77,7 +77,8 @@ def test_installer_cli_linux(rye_project):
 @pytest.mark.skipif("sys.platform == 'win32'", reason="Not supported on Windows")
 def test_installer_gui_linux(rye_project):
     """Create installer for linux GUI."""
-    installer_fname_exp = f"{rye_project.name}-v0.1.0-linux.sh"
+    conf = config.PyProjectParser()
+    installer_fname_exp = f"{conf.name}-v0.1.0-linux.sh"
     target_file_content = setup_mock_target_binary(rye_project)
     icon_file_content = setup_mock_icon(rye_project)
 
@@ -120,9 +121,13 @@ def test_installer_gui_windows(rye_project, mocker, verbose):
     if not verbose:
         subp_kwargs["stdout"] = subp_kwargs["stderr"] = sp_devnull_mock
 
-    installer_fname_exp = f"{rye_project.name.lower()}-v0.1.0-win.exe"
+    conf = config.PyProjectParser()
+    installer_fname_exp = f"{conf.name}-v0.1.0-win.exe"
     _ = setup_mock_target_binary(rye_project)
     _ = setup_mock_icon(rye_project, ico=True)
+    # create the installer binary
+    installer_binary = rye_project.joinpath(f"target/release/{installer_fname_exp}")
+    installer_binary.touch()
 
     # make it a GUI project
     config.pyproject_writer("is_gui", True)

@@ -160,18 +160,18 @@ class CreateInstaller:
 
         from box.installer_utils.windows_hlp import nsis_gui_script
 
-        name_pkg = self._config.name_pkg
+        name = self._config.name
         version = self._config.version
         icon = get_icon("ico")
 
-        installer_name = f"{name_pkg}-v{version}-win.exe"
+        installer_name = f"{name}-v{version}-win.exe"
 
         with ut.set_dir(RELEASE_DIR_NAME):
             nsis_script_name = Path("make_installer.nsi")
             with open(nsis_script_name, "w") as f:
                 f.write(
                     nsis_gui_script(
-                        name_pkg,
+                        name,
                         installer_name,
                         self._config.author,
                         self._config.version,

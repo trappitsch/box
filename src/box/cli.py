@@ -152,17 +152,18 @@ def installer(verbose):
     my_installer = CreateInstaller(verbose=verbose)
     my_installer.create_installer()
     inst_name = my_installer.installer_name
-    if Path(box.RELEASE_DIR_NAME).joinpath(inst_name).exists():
-        fmt.success(
-            f"Installer successfully created.\n"
-            f"You can find the installer file {inst_name} "
-            f"in the `target/release` folder."
-        )
-    else:
-        raise click.ClickException(
-            "Installer was not created. "
-            "Run with `box installer -v` to get verbose feedback."
-        )
+    if inst_name is not None:
+        if Path(box.RELEASE_DIR_NAME).joinpath(inst_name).exists():
+            fmt.success(
+                f"Installer successfully created.\n"
+                f"You can find the installer file {inst_name} "
+                f"in the `target/release` folder."
+            )
+        else:
+            raise click.ClickException(
+                "Installer was not created. "
+                "Run with `box installer -v` to get verbose feedback."
+            )
 
 
 @cli.command(name="clean")
