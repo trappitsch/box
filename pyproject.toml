@@ -12,7 +12,8 @@ dependencies = [
     "rich-click>=1.7.3",
     "rich>=13.7.0",
     "colorama>=0.4.6",
-    "applecrate; sys_platform=='darwin'",
+    "applecrate>=0.2.0; sys_platform=='darwin'",
+    "dmgbuild>=1.6.1; sys_platform=='darwin'",
 ]
 requires-python = ">= 3.8"
 license = { text = "MIT" }

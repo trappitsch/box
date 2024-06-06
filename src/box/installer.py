@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 
@@ -150,12 +151,41 @@ class CreateInstaller:
 
     def macos_gui(self):
         """Create a macOS GUI installer using applecrate."""
-        pass
         # seems like two steps:
         # 1. create the .app bundle by just creating a proper folder
         # 2. create the dmg from the app using create-dmg (https://github.com/create-dmg/create-dmg/blob/master/create-dmg)
         #    this is actually the same program others use
         #    since it's a command line tool, we can probably do the same
+        #    we can also use applecrate, but it's not necessary
+        import dmgbuild
+
+        from box.installer_utils.mac_hlp import dmgbuild_settings, make_app
+
+        app_path = Path(RELEASE_DIR_NAME).joinpath(f"{self._config.name}.app")
+
+        # remove old app if it exists
+        if app_path.exists():
+            shutil.rmtree(app_path)
+
+        make_app(
+            Path(RELEASE_DIR_NAME),
+            self._config.name,
+            self._config.author,
+            self._config.version,
+            get_icon("icns"),
+        )
+
+        # create the dmg
+        settings = dmgbuild_settings(
+            Path(RELEASE_DIR_NAME), self._config.name, get_icon("icns")
+        )
+        with ut.set_dir(RELEASE_DIR_NAME):
+            dmgbuild.build_dmg(
+                self._config.name, f"{self._config.name}.dmg", settings=settings
+            )
+
+        # remove the app folder
+        shutil.rmtree(app_path)
 
     def unsupported_os_or_mode(self):
         """Print a message for unsupported OS or mode."""
@@ -269,7 +299,7 @@ def get_icon(suffix: str = None) -> Path:
     - icon.jpg
     - icon.jpeg
 
-    Note: Windows `.ico` files must be called out explicitly.
+    Note: Windows `.ico` files must be called out explicitly, same with MacOS `.icns` files.
 
     :param suffix: The suffix of the icon file.
 
