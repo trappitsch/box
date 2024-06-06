@@ -178,7 +178,7 @@ class CreateInstaller:
         )
         with ut.set_dir(RELEASE_DIR_NAME):
             dmgbuild.build_dmg(
-                filename=self._config.name,
+                filename=dmg_path.with_suffix("").name,
                 volume_name=f"{dmg_path.name}",
                 settings=settings,
             )
