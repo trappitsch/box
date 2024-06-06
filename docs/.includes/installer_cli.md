@@ -42,4 +42,13 @@
 
 === "macOS"
 
-    CLI installers on macOS are currently not supported.
+    MacOS CLI tool installers are created using
+    [applecrate](https://github.com/RhetTbull/applecrate).
+    The installer is an executable in
+    `target/release/projectname-v1.2.3-macos.pkg`
+    that can be run by double-clicking it.
+
+    !!! bug
+        The uninstaller does currently not remove the virtual environment
+        that is created by PyApp, but only removes the executable.
+        This will be fixed in a future release.
