@@ -151,17 +151,14 @@ class CreateInstaller:
 
     def macos_gui(self):
         """Create a macOS GUI installer using applecrate."""
-        # seems like two steps:
-        # 1. create the .app bundle by just creating a proper folder
-        # 2. create the dmg from the app using create-dmg (https://github.com/create-dmg/create-dmg/blob/master/create-dmg)
-        #    this is actually the same program others use
-        #    since it's a command line tool, we can probably do the same
-        #    we can also use applecrate, but it's not necessary
         import dmgbuild
 
         from box.installer_utils.mac_hlp import dmgbuild_settings, make_app
 
         app_path = Path(RELEASE_DIR_NAME).joinpath(f"{self._config.name}.app")
+        dmg_path = Path(RELEASE_DIR_NAME).joinpath(
+            f"{self._config.name}-v{self._config.version}-macos.dmg"
+        )
 
         # remove old app if it exists
         if app_path.exists():
@@ -181,11 +178,15 @@ class CreateInstaller:
         )
         with ut.set_dir(RELEASE_DIR_NAME):
             dmgbuild.build_dmg(
-                self._config.name, f"{self._config.name}.dmg", settings=settings
+                filename=self._config.name,
+                volume_name=f"{dmg_path.name}",
+                settings=settings,
             )
 
         # remove the app folder
         shutil.rmtree(app_path)
+
+        self._installer_name = dmg_path.name
 
     def unsupported_os_or_mode(self):
         """Print a message for unsupported OS or mode."""
