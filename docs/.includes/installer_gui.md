@@ -51,4 +51,18 @@
 
 === "macOS"
 
-    GUI installers on macOS are currently not supported.
+    A MacOS GUI is created by manually first putting together
+    a minimal `.app` directory structure.
+    This directory contains the binary, the icon, and a `Info.plist` file.
+
+    A `.dmg` file is then created using
+    [dmgbuild](https://github.com/dmgbuild/dmgbuild).
+
+    !!! note
+        The building process of the `.dmg` file can currently not yet
+        be customized.
+        We are using some default settings, however,
+        hopefully in the future we can make this more customizable.
+
+    In order for this to work, you must have an `icon.icns` file
+    in the `assets` folder of your project directory.
