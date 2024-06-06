@@ -287,7 +287,7 @@ def test_installer_gui_macos(rye_project, mocker):
             "background": "builtin-arrow",
         }
         call_args_exp = {
-            "filename": conf.name,
+            "filename": installer_binary.with_suffix("").name,
             "volume_name": installer_fname_exp,
             "settings": hlp_settings_exp,
         }
