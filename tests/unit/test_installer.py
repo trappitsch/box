@@ -81,6 +81,9 @@ def test_get_icon_no_icon_in_subfolders(tmp_path_chdir):
     venv = Path.cwd().joinpath("venv")
     venv.mkdir()
     create_icon("svg", venv)
+    hidden_src = Path.cwd().joinpath(".src")
+    hidden_src.mkdir()
+    create_icon("svg", hidden_src)
 
     with pytest.raises(click.ClickException):
         inst.get_icon()

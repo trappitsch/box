@@ -317,7 +317,9 @@ def get_icon(suffix: str = None) -> Path:
     for root, dirs, _ in os.walk("."):
         # excluded folders
         root_fld = root.split("/")
-        if len(root_fld) > 1 and root_fld[1] in excluded_folders:
+        if len(root_fld) > 1 and (
+            root_fld[1] in excluded_folders or root_fld[1].startswith(".")
+        ):
             continue
 
         for dir in dirs:
