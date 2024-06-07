@@ -1,5 +1,8 @@
+- Fix linux GUI uninstaller, such that it will only delete the installation folder if it is empty.
 - Allow icons to be stored in any folder that is named `assets`.
 - Finish installers for MacOS.
+    - CLI installer is created using [applecrate](https://github.com/RhetTbull/applecrate) and standard configuration.
+    - GUI installer is created by creating a minimal folder structure for an `.app` file, packing the executable and the icon into it, and then creating a `.dmg` file using [`dmgbuild`](https://github.com/dmgbuild/dmgbuild) (with standard configuration).
 
 ## v0.2.0
 
