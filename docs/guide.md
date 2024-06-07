@@ -123,7 +123,7 @@ in the `target/release` folder.
 ### GUIs
 
 In order to package a GUI,
-you should have an icon file in the `assets` folder in your project.
+you should have an icon file in an `assets` folder in your project.
 For Linux, the icon file should be a `svg`, `png`, `jpg`, or `jpeg` file.
 For Windows, the icon file should be a `ico` file.
 In either case, the icon file(s) must be named `icon.<ext>`,

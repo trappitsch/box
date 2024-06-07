@@ -1,3 +1,6 @@
+- Allow icons to be stored in any folder that is named `assets`.
+- Finish installers for MacOS.
+
 ## v0.2.0
 
 - Released binary is now named after the project name, not after the python package name
