@@ -182,7 +182,10 @@ echo "        echo \"Uninstaller aborted.\"" >> $UNINSTALL_FILE
 echo "        exit 1" >> $UNINSTALL_FILE
 echo "    fi" >> $UNINSTALL_FILE
 echo "" >> $UNINSTALL_FILE
-echo "rm -rf $INSTALL_DIR" >> $UNINSTALL_FILE
+echo "rm -f $INSTALL_DIR/$INSTALL_NAME" >> $UNINSTALL_FILE
+echo "rm -f $INSTALL_DIR/$ICON_NAME" >> $UNINSTALL_FILE
+echo "rm -f $UNINSTALL_FILE" >> $UNINSTALL_FILE
+echo "rmdir $INSTALL_DIR" >> $UNINSTALL_FILE
 echo "rm -f $DESKTOP_FILE" >> $UNINSTALL_FILE
 echo "rm -rf $HOME/.local/share/pyapp/$INSTALL_NAME" >> $UNINSTALL_FILE
 echo "" >> $UNINSTALL_FILE

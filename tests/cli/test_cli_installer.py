@@ -114,6 +114,9 @@ def test_installer_gui_linux(rye_project):
     assert file_content.find(icon_file_content, icon_start) != -1
     assert os.stat(installer_file).st_mode & stat.S_IXUSR != 0
 
+    # assure we only have one `rm -rf` in the install file (for pyapp folder)
+    assert file_content.count("rm -rf") == 1
+
     assert installer_file.name in result.output
 
 
