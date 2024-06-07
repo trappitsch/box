@@ -1,3 +1,5 @@
+## v0.3.0
+
 - Fix linux GUI uninstaller, such that it will only delete the installation folder if it is empty.
 - Allow icons to be stored in any folder that is named `assets`.
 - Finish installers for MacOS.
