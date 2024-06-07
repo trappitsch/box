@@ -293,6 +293,8 @@ class CreateInstaller:
 def get_icon(suffix: str = None) -> Path:
     """Return the icon file path.
 
+    Walks through all the assets folders and returns the first `icon.suffix` file found.
+
     If no suffix is provided, the following priorites will be returned (depending
     on file availability):
     - icon.svg
@@ -300,7 +302,8 @@ def get_icon(suffix: str = None) -> Path:
     - icon.jpg
     - icon.jpeg
 
-    Note: Windows `.ico` files must be called out explicitly, same with MacOS `.icns` files.
+    Note: Windows `.ico` files must be called out explicitly,
+    same with MacOS `.icns` files.
 
     :param suffix: The suffix of the icon file.
 
@@ -308,18 +311,30 @@ def get_icon(suffix: str = None) -> Path:
 
     :raises ClickException: If no icon file is found.
     """
-    icon_file = Path.cwd().joinpath("assets/icon")
-
+    excluded_folders = ["build", "dist", "target", "venv"]
     suffixes = ["svg", "png", "jpg", "jpeg"]
-    if suffix:
-        suffixes = [suffix]  # overwrite exisiting and only check this.
 
-    for suffix in suffixes:
-        icon_file = icon_file.with_suffix(f".{suffix}")
-        if icon_file.exists():
-            return icon_file
+    for root, dirs, _ in os.walk("."):
+        # excluded folders
+        root_fld = root.split("/")
+        if len(root_fld) > 1 and root_fld[1] in excluded_folders:
+            continue
+
+        for dir in dirs:
+            if dir != "assets":
+                continue
+
+            icon_file = Path.cwd().joinpath(f"{root}/{dir}/icon")
+
+            if suffix:
+                suffixes = [suffix]  # overwrite exisiting and only check this.
+
+            for suffix in suffixes:
+                icon_file = icon_file.with_suffix(f".{suffix}")
+                if icon_file.exists():
+                    return icon_file
 
     raise click.ClickException(
-        f"No icon file found. Please provide an icon file. "
+        f"No icon file found. Please provide an icon file in an `assets` folder. "
         f"Valid formats are {', '.join(suffixes)}."
     )
