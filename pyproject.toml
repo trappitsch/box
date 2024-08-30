@@ -1,6 +1,6 @@
 [project]
 name = "box-packager"
-version = "0.3.0"
+version = "0.4.0"
 description = "Automatic packaging and installers of your GUI with PyApp"
 readme = "README.md"
 authors = [
