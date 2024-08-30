@@ -5,6 +5,7 @@ from pathlib import Path
 import rich_click as click
 
 import box
+from box import env_vars
 from box.cleaner import CleanProject
 from box.config import uninitialize
 from box.initialization import InitializeProject
@@ -46,14 +47,6 @@ def cli():
     default=None,
     help="Set the project as a GUI project. In quiet mode, this will default to `False`.",
 )
-@click.option(
-    "--opt-pyapp-vars",
-    help=(
-        "Set optional PyApp variables for the project. "
-        "`Example: PYAPP_FULL_ISOLATION 1`"
-    ),
-    type=str,
-)
 @click.option("-e", "--entry", help="Set the app entry for the project.")
 @click.option(
     "-et",
@@ -77,7 +70,6 @@ def init(
     entry,
     entry_type,
     python_version,
-    opt_pyapp_vars,
 ):
     """Initialize a new project in the current folder."""
     ut.check_pyproject()
@@ -89,9 +81,52 @@ def init(
         app_entry=entry,
         app_entry_type=entry_type,
         python_version=python_version,
-        opt_pyapp_vars=opt_pyapp_vars,
     )
     my_init.initialize()
+
+
+@cli.command(name="env")
+@click.option(
+    "--get", "get_var", help="Get the value that is currently set to a variable."
+)
+@click.option("--list", "list_vars", is_flag=True, help="List all variables set.")
+@click.option(
+    "--set",
+    "set_string",
+    help=("Set a `key=value` environmental variable pair with a string value."),
+)
+@click.option(
+    "--set-bool",
+    help=(
+        "Set a `key=value` environmental variable pair with a boolean. "
+        "Valid boolean values are `0`, `1`, `True`, `False` (case insensitive)."
+    ),
+)
+@click.option(
+    "--set-int",
+    help=("Set a `key=value` environmental variable pair with an integer value."),
+)
+@click.option("--unset", help="Unset variable with a given name.")
+def env(get_var, list_vars, set_bool, set_int, set_string, unset):
+    """Manage the environmental variables.
+
+    All environmental variables will be set when packaging the app with PyApp.
+    Therefore, if you want to set specific PYAPP_X variables, set them here.
+    """
+    ut.check_boxproject()
+
+    if get_var:
+        env_vars.get_var(get_var)
+    if set_bool:
+        env_vars.set_bool(set_bool)
+    if set_int:
+        env_vars.set_int(set_int)
+    if set_string:
+        env_vars.set_string(set_string)
+    if unset:
+        env_vars.unset(unset)
+    if list_vars:
+        env_vars.get_list()
 
 
 @cli.command(name="package")
@@ -236,7 +271,7 @@ def uninit(clean_project):
 
     All references to `box` will be removed from the `pyproject.toml` file.
     """
-    ut.check_pyproject()
+    ut.check_boxproject()
     if clean_project:
         clean()
     uninitialize()

@@ -41,6 +41,14 @@ class PyProjectParser:
         return self._pyproject["tool"]["box"]["builder"]
 
     @property
+    def env_vars(self) -> Dict:
+        """Return optional pyapp variables as list (if set), otherwise empty dict."""
+        try:
+            return self._pyproject["tool"]["box"]["env-vars"]
+        except (KeyError, TypeError):
+            return dict()
+
+    @property
     def is_box_project(self):
         """Return if this folder is a box project or not."""
         try:
@@ -71,14 +79,6 @@ class PyProjectParser:
             return self._pyproject["tool"]["box"]["optional_deps"]
         except KeyError:
             return None
-
-    @property
-    def optional_pyapp_variables(self) -> Dict:
-        """Return optional pyapp variables as list (if set), otherwise empty dict."""
-        try:
-            return self._pyproject["tool"]["box"]["optional_pyapp_vars"]
-        except KeyError:
-            return {}
 
     @property
     def possible_app_entries(self) -> OrderedDict:
@@ -124,12 +124,17 @@ class PyProjectParser:
         return self._project["version"]
 
 
-def pyproject_writer(key: str, value: Any) -> None:
+def pyproject_writer(key: str, value: Any, category: str = None) -> None:
     """Modify the existing `pyproject.toml` file using `tomlkit`.
 
     Project specific, the table [tools.box] is used. If the table does not exist,
     it is created. If the key does not exist, it is created. If the key exists,
     it is overwritten.
+
+    :param key: Key to write to.
+    :param value: Value to write to key.
+    :param category: If given, will write to ["tool"]["box"]["category"]["key"]["value"]
+
     """
     pyproject_file = Path("pyproject.toml")
     if not pyproject_file.is_file():
@@ -161,7 +166,22 @@ def pyproject_writer(key: str, value: Any) -> None:
         tool_table.append("box", box_table)
         doc.add("tool", tool_table)
 
-    box_table.update({key: value})
+    if not category:
+        edit_table = box_table
+    else:
+        try:
+            edit_table = doc["tool"]["box"][category]
+        except KeyError:
+            doc.add(tomlkit.nl())
+            tool_table = tomlkit.table(True)
+            category_table = tomlkit.table(True)
+            tool_table.append("box", category_table)
+            category_table.add(tomlkit.nl())
+            edit_table = tomlkit.table()
+            category_table.append(category, edit_table)
+            doc.add("tool", tool_table)
+
+    edit_table.update({key: value})
 
     with open(pyproject_file, "w", newline="\n") as f:
         tomlkit.dump(doc, f)
@@ -178,3 +198,24 @@ def uninitialize() -> None:
 
     with open(pyproject_file, "w", newline="\n") as f:
         tomlkit.dump(doc, f)
+
+
+def unset_env_variable(var_name: str) -> bool:
+    """Unset a variable name and return status if done or not.
+
+    :param var_name: Variable name in ["tool.box.env-vars"]
+
+    :return: True if variable successfully unset, False if not found, otherwise.
+    """
+    pyproject_file = Path("pyproject.toml")
+
+    with open(pyproject_file, "rb") as f:
+        doc = tomlkit.load(f)
+
+    try:
+        doc["tool"]["box"]["env-vars"].remove(var_name)
+        with open(pyproject_file, "w", newline="\n") as f:
+            tomlkit.dump(doc, f)
+        return True
+    except:  # noqa: E722
+        return False

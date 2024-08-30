@@ -309,7 +309,7 @@ def test_set_env(rye_project, mocker, app_entry_type, opt_deps, opt_pyapp_vars, 
     if opt_pyapp_vars:
         tmp_split = opt_pyapp_vars.split()
         opt_pyapp_vars = {tmp_split[0]: tmp_split[1]}
-        pyproject_writer("optional_pyapp_vars", opt_pyapp_vars)
+        pyproject_writer("env-vars", opt_pyapp_vars)
     pyproject_writer("is_gui", gui)
 
     packager = PackageApp()

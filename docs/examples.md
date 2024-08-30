@@ -26,7 +26,6 @@ a simple PyQt6 wrapper around
     4. Provide the app entry point: The automatically selected point is correct, so we choose from the list - option 0.
     5. Choose the App entry type according to PyApp's options: Here we use `spec`.
     6. Provide the Python version to package with: Here we use the default `3.12`.
-    7. Provide additonal PyApp variables: Not required here (default).
 2. After successfull initialization, we package the project with `box package`. This first builds the package and then packages it with PyApp. Hold on...
 3. The executable is now in `target/release`.
 4. Run the executable!

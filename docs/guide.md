@@ -27,7 +27,6 @@ The following table shows a list of questions, their default values, their argum
 | Please type an app entry for the project or choose one from the list below | First entry in `pyproject.toml` for `[project.gui-scripts]`, if not available, then for `[project.scripts]`. If no entry points are given, the default value is set to `package_name:run`. | `-e`<br>`--entry`                | *Required:* The entry point for the application. This is the command that will be used to start the application. If you have a `pyproject.toml` file, `box` will try and read potential entry points that you can select by passing it the digit of the list. You can also provide an entry point manually by typing it here.                             |
 | Choose an entry type for the project.                                      | `spec`                                                                                                                                                                                     | `-et`<br>`--entry-type`          | *Required:* This specifies the type of the entry point that `PyApp` will use. `spec` (default) is an object reference, `module` for a python module, `script` for a python script, and `notebook` for a jupyter notebook. Details can be found [here](https://ofek.dev/pyapp/latest/config/#execution-mode).                                              |
 | Choose a python version to package the project with.                       | `3.12`                                                                                                                                                                                     | `--py`<br>`--python-version`     | *Required:* The python version to package with your project. You can choose any python version from the list. More details can be found on the `PyApp` website [here](https://ofek.dev/pyapp/latest/config/#python-distribution).                                                                                                                         |
-| Optional PyApp variables                                                   | `None`                                                                                                                                                                                     | `--opt-pyapp-vars`               | *Optional:* Set any optional  environmental variables that you can use in `PyApp` here by giving a list of variable name followed by the value for that variable. Note that the total number of arguments must be even. See the [`PyApp` documentation](https://ofek.dev/pyapp) for more information. If there are no optional variables, just hit enter. |
 
 If you provided all the answers, your project should have been successfully initialized and print an according message.
 
@@ -40,6 +39,50 @@ If you provided all the answers, your project should have been successfully init
 !!! note
     If you re-initalize a project, `box` will use the already set values as proposed default values.
     If you re-initialize in quiet mode and just give one new option, all other options will stay the same.
+
+## Manage environmental variables
+
+PyApp uses environmental variables for all configurations.
+While `box` includes the basics of PyApp configuration,
+you might want to set additional environmental variables.
+This is done with the `box env` command.
+
+### Set an environmental variable
+
+You can set three types of environmental variables:
+
+- `--set KEY=VALUE` to set a string variable.
+- `--set-int KEY=VALUE` to set an integer variable.
+- `--set-bool KEY=VALUE` to set a boolean variable.
+
+For example, to set a string variable `MY_VAR` to `my_value`, type:
+
+```
+box env --set MY_VAR=my_value
+```
+
+### Get an environmental variable
+
+Once set, you can simply get an environmental variable by typing:
+
+```
+box env --get VARIABLE_NAME
+```
+
+If not variable with this name is defined, a warning will be printed.
+To list all currently set variables, type:
+
+```
+box env --list
+```
+
+### Unset a variable
+
+To unset a variable, type:
+
+```
+box env --unset VARIABLE_NAME
+```
 
 ## Packaging
 

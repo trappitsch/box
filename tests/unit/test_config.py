@@ -70,6 +70,35 @@ def test_pyproject_parser_rye_project(rye_project):
     assert isinstance(parser.is_gui, bool)
 
 
+def test_pyproject_parser_env_vars(rye_project):
+    """Ensure that environment variables can get gotten after being set."""
+    env_vars = {"MY_INTVAR": 0, "MY_STRVAR": "asdf"}
+    with open("pyproject.toml") as fl:
+        toml = fl.read()
+    toml += """
+
+[tool.box.env-vars]
+"""
+    for key, value in env_vars.items():
+        if isinstance(value, str):
+            value = f'"{value}"'
+        toml += f"{key} = {value}\n"
+
+    with open("pyproject.toml", "w") as fl:
+        fl.write(toml)
+        fl.flush()
+
+    parser = PyProjectParser()
+    assert parser.env_vars == env_vars
+
+
+def test_pyproject_parser_env_vars_always_returns_dict(rye_project):
+    """Ensure that the environment variable parser returns empty dict if key not there."""
+    parser = PyProjectParser()
+    ret_val = parser.env_vars
+    assert ret_val == {}
+
+
 def test_pyproject_writer_set_entry(tmp_path_chdir):
     """Set the app entry in the pyproject.toml file."""
     fname = "pyproject.toml"
