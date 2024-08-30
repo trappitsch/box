@@ -1,11 +1,10 @@
 # CLI tests for cleaning the project folder
 
+from pathlib import Path
 from typing import List
 
-from pathlib import Path
-
-from click.testing import CliRunner
 import pytest
+from click.testing import CliRunner
 
 from box.cli import cli
 

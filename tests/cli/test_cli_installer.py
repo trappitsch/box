@@ -1,17 +1,17 @@
 ### CLI tests for the installer
 
 import os
+import stat
 import sys
 from pathlib import Path
-import stat
 from unittest.mock import MagicMock, patch
 
-from click.testing import CliRunner
-import rich_click as click
 import pytest
+import rich_click as click
+from click.testing import CliRunner
 
-from box.cli import cli
 from box import config
+from box.cli import cli
 
 
 def setup_mock_target_binary(path: Path, release_name: str) -> str:

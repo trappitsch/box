@@ -1,16 +1,16 @@
 # Test building a project with PyApp.
 
 import os
-from pathlib import Path
 import tarfile
 import urllib.request
+from pathlib import Path
 
-import rich_click as click
 import pytest
+import rich_click as click
 
-from box.packager import PackageApp, PYAPP_SOURCE_LATEST
-from box.config import PyProjectParser, pyproject_writer
 import box.utils as ut
+from box.config import PyProjectParser, pyproject_writer
+from box.packager import PYAPP_SOURCE_LATEST, PackageApp
 
 # HELPER FUNCTIONS #
 

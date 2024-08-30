@@ -38,7 +38,7 @@ def test_pyproject_parser_basic_project(tmp_path_chdir):
 
 def test_pyproject_parser_entry_point(tmp_path_chdir):
     """Try to get an entry point for the app from project.scripts."""
-    TOML_FILE = (
+    toml_file = (
         TOML_BASIC_FILE
         + """
 
@@ -56,7 +56,7 @@ run2 = "my-app.gui:run2"
         "scripts": {"run": "my-app.app:run"},
     }
 
-    tmp_path_chdir.joinpath("pyproject.toml").write_text(TOML_FILE)
+    tmp_path_chdir.joinpath("pyproject.toml").write_text(toml_file)
     parser = PyProjectParser()
     assert parser.possible_app_entries == possible_entries_exp
 
@@ -93,7 +93,7 @@ def test_pyproject_parser_env_vars(rye_project):
 
 
 def test_pyproject_parser_env_vars_always_returns_dict(rye_project):
-    """Ensure that the environment variable parser returns empty dict if key not there."""
+    """Return empty dict if no environment variables key not there."""
     parser = PyProjectParser()
     ret_val = parser.env_vars
     assert ret_val == {}

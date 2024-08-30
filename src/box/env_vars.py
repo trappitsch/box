@@ -1,4 +1,4 @@
-# Deal with setting and getting environmental variables. Getting all at once is handled in the `config.py`
+# Deal with environmental variables.
 
 from enum import Enum
 

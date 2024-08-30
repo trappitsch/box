@@ -1,12 +1,12 @@
 # Test initialization of a new project with CLI
 
-from click.testing import CliRunner
 import pytest
+from click.testing import CliRunner
 
+import box.utils as ut
 from box.cli import cli
 from box.config import PyProjectParser
 from box.packager import PackageApp
-import box.utils as ut
 
 
 @pytest.mark.parametrize(

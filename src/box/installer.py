@@ -1,17 +1,17 @@
 # Create an OS specific installer for GUI or CLI application.
 
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 
 import rich_click as click
 
-from box import RELEASE_DIR_NAME
-from box.config import PyProjectParser
 import box.formatters as fmt
 import box.utils as ut
+from box import RELEASE_DIR_NAME
+from box.config import PyProjectParser
 
 
 class CreateInstaller:
@@ -322,11 +322,11 @@ def get_icon(suffix: str = None) -> Path:
         ):
             continue
 
-        for dir in dirs:
-            if dir != "assets":
+        for my_dir in dirs:
+            if my_dir != "assets":
                 continue
 
-            icon_file = Path.cwd().joinpath(f"{root}/{dir}/icon")
+            icon_file = Path.cwd().joinpath(f"{root}/{my_dir}/icon")
 
             if suffix:
                 suffixes = [suffix]  # overwrite exisiting and only check this.
