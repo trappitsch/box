@@ -179,5 +179,9 @@ def test_env_unset(rye_project):
     runner.invoke(cli, ["env", "--unset", var])
     result_2 = runner.invoke(cli, ["env", "--get", var])
 
+    result_3 = runner.invoke(cli, ["env", "--unset", var])
+
     assert "Warning" not in result_1.output
     assert "Warning" in result_2.output
+
+    assert "Warning" in result_3.output
