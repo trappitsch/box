@@ -3,11 +3,11 @@
 import os
 import shutil
 import sys
-from pathlib import Path
 import urllib.request
+from pathlib import Path
 
-from click.testing import CliRunner
 import pytest
+from click.testing import CliRunner
 
 from box.cli import cli
 

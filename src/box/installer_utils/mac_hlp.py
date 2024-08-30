@@ -1,7 +1,7 @@
 # Helper functions to create Mac Installers
 
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 
 def dmgbuild_settings(target_path: Path, name_pkg: str, icon: Path) -> dict:

@@ -40,6 +40,27 @@ docs = [
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+[tool.ruff]
+target-version = "py38"
+
+[tool.ruff.lint]
+select = [
+	"A",    # warn about shadowing built-ins
+	"E",    # style stuff, whitespaces
+	"F",    # important pyflakes lints
+	"I",    # import sorting
+	"N",    # naming
+	"T100", # breakpoints (probably don't want these in prod!)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["box-packager", "box"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/box/installer_utils/linux_hlp.py" = ["E501"]
+"src/box/installer_utils/mac_hlp.py" = ["E501"]
+"src/box/installer_utils/windows_hlp.py" = ["E501"]
+
 [tool.rye]
 managed = true
 dev-dependencies = [

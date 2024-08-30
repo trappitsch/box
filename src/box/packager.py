@@ -1,20 +1,20 @@
 # Build the project with PyApp
 
 import os
-import sys
-from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tarfile
-from typing import List, Union
 import urllib.request
+from pathlib import Path
+from typing import List, Union
 
 import rich_click as click
 
-from box import BUILD_DIR_NAME, RELEASE_DIR_NAME
-from box.config import PyProjectParser
 import box.formatters as fmt
 import box.utils as ut
+from box import BUILD_DIR_NAME, RELEASE_DIR_NAME
+from box.config import PyProjectParser
 
 PYAPP_SOURCE_URL = "https://github.com/ofek/pyapp/releases/"
 PYAPP_SOURCE_NAME = "source.tar.gz"

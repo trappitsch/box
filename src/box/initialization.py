@@ -4,10 +4,10 @@ from typing import List
 
 import rich_click as click
 
-from box.config import PyProjectParser, pyproject_writer
 import box.formatters as fmt
-from box.packager import PackageApp
 import box.utils as ut
+from box.config import PyProjectParser, pyproject_writer
+from box.packager import PackageApp
 
 
 class InitializeProject:

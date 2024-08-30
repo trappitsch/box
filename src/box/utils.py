@@ -1,9 +1,9 @@
 # Utility and helper functions
 
-from contextlib import contextmanager
 import os
-from pathlib import Path
 import subprocess
+from contextlib import contextmanager
+from pathlib import Path
 
 from rich_click import ClickException
 
@@ -67,14 +67,14 @@ def is_windows() -> bool:
 
 
 @contextmanager
-def set_dir(dir: Path) -> None:
+def set_dir(my_dir: Path) -> None:
     """Context manager to change directory to a specific one and then go back on exit.
 
-    :param dir: Folder to move to with `os.chdir`
+    :param my_dir: Folder to move to with `os.chdir`
     """
     origin = Path.cwd()
     try:
-        os.chdir(dir)
+        os.chdir(my_dir)
         yield
     finally:
         os.chdir(origin)

@@ -1,7 +1,7 @@
 # Tests for setting environment variables with `box env ...`
 
-from click.testing import CliRunner
 import pytest
+from click.testing import CliRunner
 
 from box.cli import cli
 
@@ -15,11 +15,11 @@ def test_env_not_box_project(rye_project_no_box):
     assert "not a box project" in result.output
 
 
-@pytest.mark.parametrize("vars", [["PYAPP_SOMETHING", 1], ["TEST_ENV", "qerty"]])
-def test_env_set(rye_project, vars):
+@pytest.mark.parametrize("my_vars", [["PYAPP_SOMETHING", 1], ["TEST_ENV", "qerty"]])
+def test_env_set(rye_project, my_vars):
     """Set some environments in the box project and ensure they are there."""
-    var = vars[0]
-    value = vars[1]
+    var = my_vars[0]
+    value = my_vars[1]
 
     runner = CliRunner()
     result = runner.invoke(cli, ["env", "--set", f"{var}={value}"])
@@ -139,13 +139,13 @@ def test_env_get(rye_project):
 
 def test_env_list(rye_project):
     """List all environment variables set in the box project."""
-    vars = [["PYAPP_SOMETHING", 1], ["TEST_ENV", "qerty"]]
+    my_vars = [["PYAPP_SOMETHING", 1], ["TEST_ENV", "qerty"]]
 
     runner = CliRunner()
 
     result_none = runner.invoke(cli, ["env", "--list"])
 
-    for var, value in vars:
+    for var, value in my_vars:
         runner.invoke(cli, ["env", "--set", f"{var}={value}"])
     result_some = runner.invoke(cli, ["env", "--list"])
 
@@ -153,7 +153,7 @@ def test_env_list(rye_project):
     assert "No variables set" in result_none.output
 
     assert result_some.exit_code == 0
-    for var, value in vars:
+    for var, value in my_vars:
         assert var in result_some.output
         assert f"{value}" in result_some.output
 

@@ -1,7 +1,7 @@
 # Clean the project folder
 
-from pathlib import Path
 import shutil
+from pathlib import Path
 
 import box.formatters as fmt
 

@@ -5,14 +5,14 @@ from pathlib import Path
 import rich_click as click
 
 import box
+import box.formatters as fmt
+import box.utils as ut
 from box import env_vars
 from box.cleaner import CleanProject
 from box.config import uninitialize
 from box.initialization import InitializeProject
 from box.installer import CreateInstaller
-import box.formatters as fmt
 from box.packager import PackageApp
-import box.utils as ut
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
@@ -45,7 +45,9 @@ def cli():
     "--gui",
     is_flag=True,
     default=None,
-    help="Set the project as a GUI project. In quiet mode, this will default to `False`.",
+    help=(
+        "Set the project as a GUI project. In quiet mode, this will default to `False`."
+    ),
 )
 @click.option("-e", "--entry", help="Set the app entry for the project.")
 @click.option(
