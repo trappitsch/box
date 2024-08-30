@@ -87,6 +87,9 @@ def init(
 
 @cli.command(name="env")
 @click.option(
+    "--get", "get_var", help="Get the value that is currently set to a variable."
+)
+@click.option(
     "--set",
     "set_string",
     help=("Set a `key=value` environmental variable pair with a string value."),
@@ -102,7 +105,7 @@ def init(
     "--set-int",
     help=("Set a `key=value` environmental variable pair with an integer value."),
 )
-def env(set_bool, set_int, set_string):
+def env(get_var, set_bool, set_int, set_string):
     """Manage the environmental variables.
 
     All environmental variables will be set when packaging the app with PyApp.
@@ -110,6 +113,8 @@ def env(set_bool, set_int, set_string):
     """
     ut.check_boxproject()
 
+    if get_var:
+        env_vars.get_var(get_var)
     if set_bool:
         env_vars.set_bool(set_bool)
     if set_int:

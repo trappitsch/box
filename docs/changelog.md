@@ -8,6 +8,7 @@
   - Add `box env --set KEY=VALUE` to add string variables.
   - Add `box env --set-int KEY=VALUE` to add integer variables.
   - Add `box env --set-bool KEY=VALUE` to add boolean variables.
+  - Add `box env --get VAR_NAME` to get the value of a variable.
 
 If this breaks your project, you can either run `box uninit` followed by `box init` and re-enter the variables, or you can manually edit the `pyproject.toml` file.
 

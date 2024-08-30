@@ -61,6 +61,16 @@ For example, to set a string variable `MY_VAR` to `my_value`, type:
 box env --set MY_VAR=my_value
 ```
 
+### Get an environmental variable
+
+Once set, you can simply get an environmental variable by typing:
+
+```
+box env --get VARIABLE_NAME
+```
+
+If not variable with this name is defined, a warning will be printed.
+
 ## Packaging
 
 To package your project, simply run:

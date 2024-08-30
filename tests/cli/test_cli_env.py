@@ -47,7 +47,7 @@ def test_env_set_key_value_invalid(rye_project, key_val):
 
 
 def test_env_set_int(rye_project):
-    """Set some environments in the box project and ensure they are there."""
+    """Set an integer environments in the box project and ensure they it's there."""
     var = "MY_VARIABLE"
     value = 42
 
@@ -67,7 +67,7 @@ def test_env_set_int(rye_project):
 
 
 def test_env_set_int_convertion_error(rye_project):
-    """Set some environments in the box project and ensure they are there."""
+    """Raise conversion error if int variable setting with invalid value."""
     var = "MY_VARIABLE"
     value = "b3sdf"
 
@@ -91,7 +91,7 @@ def test_env_set_int_convertion_error(rye_project):
     ],
 )
 def test_env_set_bool(rye_project, value_bool):
-    """Set some environments in the box project and ensure they are there."""
+    """Set some bool environments in the box project and ensure they are there."""
     var = "MY_VARIABLE"
     value, vbool = value_bool
 
@@ -111,7 +111,7 @@ def test_env_set_bool(rye_project, value_bool):
 
 
 def test_env_set_bool_convertion_error(rye_project):
-    """Set some environments in the box project and ensure they are there."""
+    """Raise conversion error if bool variable setting with invalid bool."""
     var = "MY_VARIABLE"
     value = "b3sdf a"
 
@@ -121,3 +121,26 @@ def test_env_set_bool_convertion_error(rye_project):
     assert result.exit_code != 0
     assert "Cannot convert" in result.output
     assert value in result.output
+
+
+def test_env_get(rye_project):
+    """First set, then get an environment variable from box project."""
+    var = "MY_VARIABLE"
+    value = "42"
+
+    runner = CliRunner()
+    runner.invoke(cli, ["env", "--set-int", f"{var}={value}"])
+    result = runner.invoke(cli, ["env", "--get", var])
+
+    assert result.exit_code == 0
+    assert value in result.output
+    assert var not in result.output
+
+
+def test_env_get_na(rye_project):
+    """If no variable with given name is present, print a warning."""
+    runner = CliRunner()
+    result = runner.invoke(cli, "env --get SOME_VARIABLE")
+
+    assert result.exit_code == 0
+    assert "Warning:" in result.output

@@ -2,7 +2,9 @@
 
 from enum import Enum
 
+import rich_click as click
 from rich_click import ClickException
+
 import box.config as cfg
 import box.formatters as fmt
 
@@ -13,6 +15,17 @@ class VariableType(Enum):
     STRING = "string"  # default
     INT = "int"
     BOOL = "bool"
+
+
+def get_var(name: str) -> None:
+    """Get a variable name and display its name."""
+    parser = cfg.PyProjectParser()
+    env_vars = parser.env_var_pyapp
+
+    try:
+        click.secho(env_vars[name])
+    except KeyError:
+        fmt.warning(f"No variable named {name} found in the configuration.")
 
 
 def set_bool(key_val: str) -> None:

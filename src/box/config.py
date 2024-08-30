@@ -77,8 +77,8 @@ class PyProjectParser:
         """Return optional pyapp variables as list (if set), otherwise empty dict."""
         try:
             return self._pyproject["tool"]["box"]["env-vars"]
-        except KeyError:
-            return {}
+        except (KeyError, TypeError):
+            return dict()
 
     @property
     def possible_app_entries(self) -> OrderedDict:
