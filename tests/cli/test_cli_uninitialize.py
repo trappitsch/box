@@ -19,6 +19,15 @@ def test_uninitialize(rye_project):
     assert not pyproj.is_box_project
 
 
+def test_uninintialize_not_box(rye_project_no_box):
+    """Assure uninit checks if box project."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ["uninit"])
+
+    assert result.exit_code != 0
+    assert "not a box project" in result.output
+
+
 def test_uninitialize_clean(rye_project, mocker):
     """Assure a full clean is called if option `-c` is given."""
     clean_mock = mocker.patch("box.cli.clean")

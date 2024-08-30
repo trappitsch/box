@@ -265,7 +265,7 @@ def uninit(clean_project):
 
     All references to `box` will be removed from the `pyproject.toml` file.
     """
-    ut.check_pyproject()
+    ut.check_boxproject()
     if clean_project:
         clean()
     uninitialize()
