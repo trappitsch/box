@@ -1,6 +1,15 @@
 ## v0.4.0
 
+**If you are setting PyApp variables, this is a breaking change!**
+
+- Move environmental variables to their own table in `pyproject.toml`. They are now in `[tool.box.env-vars]`.
 - Remove PyApp Variables from initialization and put them into their own command.
+- Add a new command `box env` in order to manage environmental variables.
+  - Add `box env --set KEY=VALUE` to add string variables.
+  - Add `box env --set-int KEY=VALUE` to add integer variables.
+  - Add `box env --set-bool KEY=VALUE` to add boolean variables.
+
+If this breaks your project, you can either run `box uninit` followed by `box init` and re-enter the variables, or you can manually edit the `pyproject.toml` file.
 
 ## v0.3.0
 

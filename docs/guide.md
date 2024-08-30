@@ -40,6 +40,27 @@ If you provided all the answers, your project should have been successfully init
     If you re-initalize a project, `box` will use the already set values as proposed default values.
     If you re-initialize in quiet mode and just give one new option, all other options will stay the same.
 
+## Manage environmental variables
+
+PyApp uses environmental variables for all configurations.
+While `box` includes the basics of PyApp configuration,
+you might want to set additional environmental variables.
+This is done with the `box env` command.
+
+### Set an environmental variable
+
+You can set three types of environmental variables:
+
+- `--set KEY=VALUE` to set a string variable.
+- `--set-int KEY=VALUE` to set an integer variable.
+- `--set-bool KEY=VALUE` to set a boolean variable.
+
+For example, to set a string variable `MY_VAR` to `my_value`, type:
+
+```
+box env --set MY_VAR=my_value
+```
+
 ## Packaging
 
 To package your project, simply run:

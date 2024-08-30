@@ -5,6 +5,7 @@ from pathlib import Path
 import rich_click as click
 
 import box
+from box import env_vars
 from box.cleaner import CleanProject
 from box.config import uninitialize
 from box.initialization import InitializeProject
@@ -82,6 +83,39 @@ def init(
         python_version=python_version,
     )
     my_init.initialize()
+
+
+@cli.command(name="env")
+@click.option(
+    "--set",
+    "set_string",
+    help=("Set a `key=value` environmental variable pair with a string value."),
+)
+@click.option(
+    "--set-bool",
+    help=(
+        "Set a `key=value` environmental variable pair with a boolean. "
+        "Valid boolean values are `0`, `1`, `True`, `False` (case insensitive)."
+    ),
+)
+@click.option(
+    "--set-int",
+    help=("Set a `key=value` environmental variable pair with an integer value."),
+)
+def env(set_bool, set_int, set_string):
+    """Manage the environmental variables.
+
+    All environmental variables will be set when packaging the app with PyApp.
+    Therefore, if you want to set specific PYAPP_X variables, set them here.
+    """
+    ut.check_boxproject()
+
+    if set_bool:
+        env_vars.set_bool(set_bool)
+    if set_int:
+        env_vars.set_int(set_int)
+    if set_string:
+        env_vars.set_string(set_string)
 
 
 @cli.command(name="package")
