@@ -17,6 +17,18 @@ class VariableType(Enum):
     BOOL = "bool"
 
 
+def get_list() -> None:
+    """Get a list of all environmental variables set in the configuration."""
+    parser = cfg.PyProjectParser()
+    env_vars = parser.env_var_pyapp
+
+    if not env_vars:
+        fmt.warning("No variables set.")
+    else:
+        for key, value in env_vars.items():
+            click.secho(f"{key}: {value}")
+
+
 def get_var(name: str) -> None:
     """Get a variable name and display its name."""
     parser = cfg.PyProjectParser()
@@ -53,6 +65,21 @@ def set_string(key_val: str) -> None:
     """
     typ = VariableType.STRING
     _set_variable(key_val, typ)
+
+
+def unset(var: str) -> None:
+    """Unset a variable.
+
+    If set, will print a success message, otherwise a warning that variable
+    could not be found.
+
+    :param var: Variable name.
+    """
+    status = cfg.unset_env_variable(var)
+    if status:
+        fmt.success(f"Variable {var} unset.")
+    else:
+        fmt.warning(f"Could not find variable {var}.")
 
 
 def _check_bool(val: str) -> bool:

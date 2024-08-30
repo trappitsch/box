@@ -89,6 +89,7 @@ def init(
 @click.option(
     "--get", "get_var", help="Get the value that is currently set to a variable."
 )
+@click.option("--list", "list_vars", is_flag=True, help="List all variables set.")
 @click.option(
     "--set",
     "set_string",
@@ -105,7 +106,8 @@ def init(
     "--set-int",
     help=("Set a `key=value` environmental variable pair with an integer value."),
 )
-def env(get_var, set_bool, set_int, set_string):
+@click.option("--unset", help="Unset variable with a given name.")
+def env(get_var, list_vars, set_bool, set_int, set_string, unset):
     """Manage the environmental variables.
 
     All environmental variables will be set when packaging the app with PyApp.
@@ -121,6 +123,10 @@ def env(get_var, set_bool, set_int, set_string):
         env_vars.set_int(set_int)
     if set_string:
         env_vars.set_string(set_string)
+    if unset:
+        env_vars.unset(unset)
+    if list_vars:
+        env_vars.get_list()
 
 
 @cli.command(name="package")

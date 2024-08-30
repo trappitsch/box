@@ -137,6 +137,27 @@ def test_env_get(rye_project):
     assert var not in result.output
 
 
+def test_env_list(rye_project):
+    """List all environment variables set in the box project."""
+    vars = [["PYAPP_SOMETHING", 1], ["TEST_ENV", "qerty"]]
+
+    runner = CliRunner()
+
+    result_none = runner.invoke(cli, ["env", "--list"])
+
+    for var, value in vars:
+        runner.invoke(cli, ["env", "--set", f"{var}={value}"])
+    result_some = runner.invoke(cli, ["env", "--list"])
+
+    assert result_none.exit_code == 0
+    assert "No variables set" in result_none.output
+
+    assert result_some.exit_code == 0
+    for var, value in vars:
+        assert var in result_some.output
+        assert f"{value}" in result_some.output
+
+
 def test_env_get_na(rye_project):
     """If no variable with given name is present, print a warning."""
     runner = CliRunner()
@@ -144,3 +165,19 @@ def test_env_get_na(rye_project):
 
     assert result.exit_code == 0
     assert "Warning:" in result.output
+
+
+def test_env_unset(rye_project):
+    """Unset an already set variable."""
+    var = "MY_VAR"
+    val = 42
+
+    runner = CliRunner()
+
+    runner.invoke(cli, ["env", "--set-int", f"{var}={val}"])
+    result_1 = runner.invoke(cli, ["env", "--get", var])
+    runner.invoke(cli, ["env", "--unset", var])
+    result_2 = runner.invoke(cli, ["env", "--get", var])
+
+    assert "Warning" not in result_1.output
+    assert "Warning" in result_2.output

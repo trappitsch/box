@@ -70,6 +70,19 @@ box env --get VARIABLE_NAME
 ```
 
 If not variable with this name is defined, a warning will be printed.
+To list all currently set variables, type:
+
+```
+box env --list
+```
+
+### Unset a variable
+
+To unset a variable, type:
+
+```
+box env --unset VARIABLE_NAME
+```
 
 ## Packaging
 

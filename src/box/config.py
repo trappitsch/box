@@ -198,3 +198,24 @@ def uninitialize() -> None:
 
     with open(pyproject_file, "w", newline="\n") as f:
         tomlkit.dump(doc, f)
+
+
+def unset_env_variable(var_name: str) -> bool:
+    """Unset a variable name and return status if done or not.
+
+    :param var_name: Variable name in ["tool.box.env-vars"]
+
+    :return: True if variable successfully unset, False if not found, otherwise.
+    """
+    pyproject_file = Path("pyproject.toml")
+
+    with open(pyproject_file, "rb") as f:
+        doc = tomlkit.load(f)
+
+    try:
+        doc["tool"]["box"]["env-vars"].remove(var_name)
+        with open(pyproject_file, "w", newline="\n") as f:
+            tomlkit.dump(doc, f)
+        return True
+    except:  # noqa: E722
+        return False
