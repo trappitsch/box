@@ -1,3 +1,7 @@
+## v0.4.0
+
+- Remove PyApp Variables from initialization and put them into their own command.
+
 ## v0.3.0
 
 - Fix linux GUI uninstaller, such that it will only delete the installation folder if it is empty.

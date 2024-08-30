@@ -277,7 +277,7 @@ class PackageApp:
         os.environ["PYAPP_PYTHON_VERSION"] = py_version
         if value := self.config.optional_dependencies:
             os.environ["PYAPP_PROJECT_FEATURES"] = value
-        optional_pyapp_vars = self.config.optional_pyapp_variables
+        optional_pyapp_vars = self.config.env_var_pyapp
         for key, value in optional_pyapp_vars.items():
             os.environ[key] = value
         if self.config.is_gui:

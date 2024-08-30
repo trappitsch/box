@@ -11,7 +11,7 @@ import box.utils as ut
 
 @pytest.mark.parametrize(
     "app_entry",
-    ["\n\n\nhello\n\n3.8\nPYAPP_FULL_ISOLATION 1", "\ngui\n\n127\nhello\nmodule\n\n"],
+    ["\n\n\nhello\n\n3.8\n", "\ngui\n\n127\nhello\nmodule\n\n"],
 )
 def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     """Initialize a new project."""
@@ -21,7 +21,6 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
     app_entry_exp = app_entry_split[-4]
     entry_type_exp = app_entry_split[-3]
     py_version_exp = app_entry_split[-2]
-    optional_pyapp_vars_exp = app_entry_split[-1]
 
     # modify pyproject.toml to contain an app entry
     with open("pyproject.toml") as fin:
@@ -67,16 +66,6 @@ def test_initialize_project_app_entry_typed(rye_project_no_box, app_entry):
         py_version_exp = ut.PYAPP_PYTHON_VERSIONS[-1]
     assert pyproj.python_version == py_version_exp
 
-    # optional pyapp variables
-    if optional_pyapp_vars_exp == "":
-        exp_dict = {}
-    else:
-        tmp_split = optional_pyapp_vars_exp.split()
-        exp_dict = {}
-        for it in range(0, len(tmp_split), 2):
-            exp_dict[tmp_split[it]] = tmp_split[it + 1]
-    assert pyproj.optional_pyapp_variables == exp_dict
-
 
 @pytest.mark.parametrize("gui", [True, False])
 def test_initialize_with_options(rye_project_no_box, gui):
@@ -99,8 +88,6 @@ def test_initialize_with_options(rye_project_no_box, gui):
         optional_deps,
         "-b",
         builder,
-        "--opt-pyapp-vars",
-        "PYAPP_FULL_ISOLATION 1",
     ]
     if gui:
         args.append("--gui")
@@ -122,11 +109,9 @@ def test_initialize_with_options(rye_project_no_box, gui):
     assert pyproj.is_gui == gui
     assert pyproj.app_entry == entry_point
     assert pyproj.app_entry_type == entry_type
-    assert pyproj.optional_pyapp_variables == {"PYAPP_FULL_ISOLATION": "1"}
 
 
-@pytest.mark.parametrize("pyapp_extra_vars", ["PYAPP_FULL_ISOLATION 1", None])
-def test_initialize_project_again(rye_project_no_box, pyapp_extra_vars):
+def test_initialize_project_again(rye_project_no_box):
     """Initialization of a previous project sets defaults from previous config."""
     builder = "build"
     entry_point = "myapp:entry"
@@ -148,9 +133,6 @@ def test_initialize_project_again(rye_project_no_box, pyapp_extra_vars):
         builder,
         "--gui",
     ]
-    if pyapp_extra_vars:
-        args.append("--opt-pyapp-vars")
-        args.append(pyapp_extra_vars)
 
     runner = CliRunner()
     runner.invoke(
@@ -194,21 +176,6 @@ def test_initialize_project_builders(rye_project_no_box, builder):
     # assert that default builder is set to rye
     pyproj = PyProjectParser()
     assert pyproj.builder == builder
-
-
-def test_initialize_project_wrong_number_of_pyapp_vars(rye_project_no_box):
-    """Initialize a new project with a specific builder."""
-    runner = CliRunner()
-    result = runner.invoke(
-        cli,
-        ["init"],
-        input="\n\n\nhello\n\n\nPYAPP_FULL_ISOLATION 1 2\nPYAPP_FULL_ISOLATION 1",
-    )
-    assert result.exit_code == 0
-
-    pyproj = PyProjectParser()
-    exp_dict = {"PYAPP_FULL_ISOLATION": "1"}
-    assert pyproj.optional_pyapp_variables == exp_dict
 
 
 def test_initialize_project_quiet_no_project_script(rye_project_no_box):

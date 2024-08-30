@@ -73,10 +73,11 @@ class PyProjectParser:
             return None
 
     @property
-    def optional_pyapp_variables(self) -> Dict:
+    def env_var_pyapp(self) -> Dict:
         """Return optional pyapp variables as list (if set), otherwise empty dict."""
+        # TODO: Move this to `tool.box.env-vars.pyapp`
         try:
-            return self._pyproject["tool"]["box"]["optional_pyapp_vars"]
+            return self._pyproject["tool"]["box"]["env-vars"]
         except KeyError:
             return {}
 

@@ -46,14 +46,6 @@ def cli():
     default=None,
     help="Set the project as a GUI project. In quiet mode, this will default to `False`.",
 )
-@click.option(
-    "--opt-pyapp-vars",
-    help=(
-        "Set optional PyApp variables for the project. "
-        "`Example: PYAPP_FULL_ISOLATION 1`"
-    ),
-    type=str,
-)
 @click.option("-e", "--entry", help="Set the app entry for the project.")
 @click.option(
     "-et",
@@ -77,7 +69,6 @@ def init(
     entry,
     entry_type,
     python_version,
-    opt_pyapp_vars,
 ):
     """Initialize a new project in the current folder."""
     ut.check_pyproject()
@@ -89,7 +80,6 @@ def init(
         app_entry=entry,
         app_entry_type=entry_type,
         python_version=python_version,
-        opt_pyapp_vars=opt_pyapp_vars,
     )
     my_init.initialize()
 
