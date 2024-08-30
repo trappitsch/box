@@ -89,13 +89,13 @@ def test_pyproject_parser_env_vars(rye_project):
         fl.flush()
 
     parser = PyProjectParser()
-    assert parser.env_var_pyapp == env_vars
+    assert parser.env_vars == env_vars
 
 
 def test_pyproject_parser_env_vars_always_returns_dict(rye_project):
     """Ensure that the environment variable parser returns empty dict if key not there."""
     parser = PyProjectParser()
-    ret_val = parser.env_var_pyapp
+    ret_val = parser.env_vars
     assert ret_val == {}
 
 

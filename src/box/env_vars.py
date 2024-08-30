@@ -20,7 +20,7 @@ class VariableType(Enum):
 def get_list() -> None:
     """Get a list of all environmental variables set in the configuration."""
     parser = cfg.PyProjectParser()
-    env_vars = parser.env_var_pyapp
+    env_vars = parser.env_vars
 
     if not env_vars:
         fmt.warning("No variables set.")
@@ -32,7 +32,7 @@ def get_list() -> None:
 def get_var(name: str) -> None:
     """Get a variable name and display its name."""
     parser = cfg.PyProjectParser()
-    env_vars = parser.env_var_pyapp
+    env_vars = parser.env_vars
 
     try:
         click.secho(env_vars[name])

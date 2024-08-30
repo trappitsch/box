@@ -20,4 +20,4 @@ def test_quiet_init(rye_project_no_box):
     assert pyproj.app_entry == f"{rye_project_no_box.name}:run"
     assert pyproj.app_entry_type == "spec"
     assert pyproj.python_version == "3.12"
-    assert pyproj.env_var_pyapp == {}
+    assert pyproj.env_vars == {}

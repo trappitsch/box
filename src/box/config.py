@@ -41,6 +41,14 @@ class PyProjectParser:
         return self._pyproject["tool"]["box"]["builder"]
 
     @property
+    def env_vars(self) -> Dict:
+        """Return optional pyapp variables as list (if set), otherwise empty dict."""
+        try:
+            return self._pyproject["tool"]["box"]["env-vars"]
+        except (KeyError, TypeError):
+            return dict()
+
+    @property
     def is_box_project(self):
         """Return if this folder is a box project or not."""
         try:
@@ -71,14 +79,6 @@ class PyProjectParser:
             return self._pyproject["tool"]["box"]["optional_deps"]
         except KeyError:
             return None
-
-    @property
-    def env_var_pyapp(self) -> Dict:
-        """Return optional pyapp variables as list (if set), otherwise empty dict."""
-        try:
-            return self._pyproject["tool"]["box"]["env-vars"]
-        except (KeyError, TypeError):
-            return dict()
 
     @property
     def possible_app_entries(self) -> OrderedDict:
