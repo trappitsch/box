@@ -45,12 +45,12 @@ target-version = "py38"
 
 [tool.ruff.lint]
 select = [
-	"A",    # warn about shadowing built-ins
+	"A",    # shadowing built-ins
 	"E",    # style stuff, whitespaces
-	"F",    # important pyflakes lints
-	"I",    # import sorting
+	"F",    # pyflakes lints
+	"I",    # sorting
 	"N",    # naming
-	"T100", # breakpoints (probably don't want these in prod!)
+	"T100", # breakpoints
 ]
 
 [tool.ruff.lint.isort]
