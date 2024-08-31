@@ -152,6 +152,25 @@ def test_initialize_project_again(rye_project_no_box):
     assert pyproj.app_entry_type == entry_type
 
 
+def test_initialize_again_custom_builder(rye_project_no_box):
+    """If a custom builder is specified, make sure that re-initialization keeps it."""
+    build_cmd = "command -my-package --python"
+
+    runner = CliRunner()
+    result = runner.invoke(
+        cli, ["init", "-q", "-b", "custom", "--build-command", build_cmd]
+    )
+    assert result.exit_code == 0
+
+    builder_1 = PyProjectParser().builder
+
+    result = runner.invoke(cli, ["init", "-q"])
+    assert result.exit_code == 0
+
+    builder_2 = PyProjectParser().builder
+    assert builder_1 == builder_2
+
+
 def test_initialize_project_quiet(rye_project_no_box):
     """Initialize a new project quietly."""
     runner = CliRunner()
