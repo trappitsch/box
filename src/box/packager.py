@@ -82,14 +82,26 @@ class PackageApp:
             self._config = PyProjectParser()
         return self._config
 
+    @property
+    def builder_command(self) -> List[str]:
+        """Get the command list to run for specific builder.
+
+        :param builder: Builder to run with.
+
+        :raises KeyError: Unknown builder.
+        """
+        builder = self.config.builder
+        try:
+            return self._builders[builder]
+        except KeyError as e:
+            raise KeyError(f"Unknown {builder=}") from e
+
     def build(self):
         """Build the project with PyApp."""
         builder = self.config.builder
         fmt.info(f"Building project with {builder}...")
-        try:
-            subprocess.run(self._builders[builder], **self.subp_kwargs)
-        except KeyError as e:
-            raise KeyError(f"Unknown {builder=}") from e
+
+        subprocess.run(self.builder_command, **self.subp_kwargs)
 
         fmt.success(f"Project built with {builder}.")
 
