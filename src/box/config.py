@@ -102,7 +102,6 @@ class PyProjectParser:
             possible_entries["scripts"] = self._project["scripts"]
         except KeyError:
             pass
-        print(possible_entries)
         return possible_entries
 
     @property
