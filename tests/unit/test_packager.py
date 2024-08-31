@@ -73,6 +73,27 @@ def test_builders(min_proj_no_box, mocker, builder):
     assert packager._dist_path == expected_path
 
 
+def test_custom_builder(min_proj_no_box, mocker):
+    """Test custom builder called correctly."""
+    # mock subprocess.run
+    sp_mock = mocker.patch("subprocess.run")
+
+    build_cmd = "my -build --command=3"
+
+    # write builder to pyproject.toml file
+    pyproject_writer("builder", f"custom='{build_cmd}'")
+
+    packager = PackageApp()
+    packager.build()
+
+    sp_mock.assert_called_with(
+        build_cmd.split(" "), stdout=mocker.ANY, stderr=mocker.ANY
+    )
+
+    expected_path = min_proj_no_box.joinpath("dist")
+    assert packager._dist_path == expected_path
+
+
 def test_get_pyapp_extraction(rye_project, mocker):
     """Extract and set and path for PyApp source code."""
     mocker.patch.object(urllib.request, "urlretrieve")

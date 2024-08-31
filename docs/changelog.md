@@ -1,3 +1,5 @@
+- Add the capability to define a completely custom builder.
+
 ## v0.4.0
 
 **If you are setting PyApp variables, this is a breaking change!**

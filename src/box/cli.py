@@ -35,8 +35,16 @@ def cli():
 @click.option(
     "-b",
     "--builder",
-    type=click.Choice(PackageApp().builders),
+    type=click.Choice(PackageApp().builders_and_custom),
     help="Set the builder for the project.",
+)
+@click.option(
+    "--build-command",
+    type=str,
+    help=(
+        "If builder is set to `custom`, set the build command to specify "
+        "how the project should be built."
+    ),
 )
 @click.option(
     "-opt", "--optional-deps", help="Set optional dependencies for the project."
@@ -67,6 +75,7 @@ def cli():
 def init(
     quiet,
     builder,
+    build_command,
     optional_deps,
     gui,
     entry,
@@ -78,6 +87,7 @@ def init(
     my_init = InitializeProject(
         quiet=quiet,
         builder=builder,
+        build_command=build_command,
         optional_deps=optional_deps,
         is_gui=gui,
         app_entry=entry,
