@@ -91,6 +91,11 @@ class PackageApp:
         :raises KeyError: Unknown builder.
         """
         builder = self.config.builder
+
+        if builder.lower().startswith("custom"):
+            cmd = builder.split("=", 1)[1].strip("'\"")
+            return cmd.split(" ")
+
         try:
             return self._builders[builder]
         except KeyError as e:
