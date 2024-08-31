@@ -39,7 +39,7 @@ class InitializeProject:
         """
         self._quiet = quiet
         self._builder = builder
-        self._custom_builder = build_command
+        self._build_command = build_command
         self._optional_deps = optional_deps
         self._is_gui = is_gui
         self._opt_paypp_vars = opt_pyapp_vars
@@ -50,8 +50,8 @@ class InitializeProject:
         self.app_entry = None
         self.pyproj = None
 
-        if self._custom_builder:
-            self._custom_builder = self._custom_builder.strip("'\"")
+        if self._build_command:
+            self._build_command = self._build_command.strip("'\"")
 
         self._set_pyproj()
 
@@ -154,8 +154,8 @@ class InitializeProject:
         if self._builder:
             builder = self._builder
             if builder == "custom":
-                if self._custom_builder:
-                    builder = f"{builder}={self._custom_builder}"
+                if self._build_command:
+                    builder = f"{builder}={self._build_command}"
                 else:
                     raise click.ClickException(
                         "Custom build command must be set (--build-command)."
@@ -170,8 +170,8 @@ class InitializeProject:
                     default=default_builder,
                 )
                 if builder == "custom":
-                    if self._custom_builder:
-                        builder_cmd = self._custom_builder
+                    if self._build_command:
+                        builder_cmd = self._build_command
                     else:
                         builder_cmd = click.prompt(
                             "Enter the custom builder command for the project.",

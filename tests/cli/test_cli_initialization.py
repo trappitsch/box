@@ -209,6 +209,20 @@ def test_initialize_project_custom_builder(rye_project_no_box):
     assert pyproj.builder == "custom=build -my --package --now"
 
 
+def test_initialize_project_custom_builder_build_command_provided(rye_project_no_box):
+    """Initialize with a custom builder and build command provided (rare)."""
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        ["init", "--build-command", "'build -my --package --now'"],
+        input="custom\n\n\nsome_entry",
+    )
+    assert result.exit_code == 0
+
+    pyproj = PyProjectParser()
+    assert pyproj.builder == "custom=build -my --package --now"
+
+
 def test_initialize_custom_builder_option(rye_project_no_box):
     """Initialize with custom builder and quiet."""
     runner = CliRunner()
