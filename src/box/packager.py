@@ -63,8 +63,13 @@ class PackageApp:
 
     @property
     def builders(self) -> List:
-        """Return a list of supported builders and their commands."""
+        """Return a list of supported builders."""
         return list(self._builders.keys())
+
+    @property
+    def builders_and_custom(self) -> List:
+        """Return a list of supported builders and custom builder."""
+        return self.builders + ["custom"]
 
     @property
     def binary_name(self):

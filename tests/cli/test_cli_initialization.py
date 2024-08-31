@@ -178,6 +178,46 @@ def test_initialize_project_builders(rye_project_no_box, builder):
     assert pyproj.builder == builder
 
 
+def test_initialize_project_custom_builder(rye_project_no_box):
+    """Initialize with a custom builder."""
+    runner = CliRunner()
+    result = runner.invoke(
+        cli, ["init"], input="custom\nbuild -my --package --now\n\n\nsome_entry"
+    )
+    assert result.exit_code == 0
+
+    pyproj = PyProjectParser()
+    assert pyproj.builder == "custom=build -my --package --now"
+
+
+def test_initialize_custom_builder_option(rye_project_no_box):
+    """Initialize with custom builder and quiet."""
+    runner = CliRunner()
+    result = runner.invoke(
+        cli,
+        [
+            "init",
+            "-b",
+            "custom",
+            "--build-command",
+            "'build -my --package --now'",
+            "-q",
+        ],
+    )
+    assert result.exit_code == 0
+
+    pyproj = PyProjectParser()
+    assert pyproj.builder == "custom=build -my --package --now"
+
+
+def test_initialize_custom_builder_quiet_cmd_not_set(rye_project_no_box):
+    """Fail if builder is custom, quiet is set, but no cmd is supplied."""
+    runner = CliRunner()
+    result = runner.invoke(cli, ["init", "-b", "custom", "-q"])
+    assert result.exit_code != 0
+    assert "Custom build command must be set" in result.output
+
+
 def test_initialize_project_quiet_no_project_script(rye_project_no_box):
     """Initialize a new project quietly with app_entry as the package name."""
     runner = CliRunner()

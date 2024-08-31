@@ -17,6 +17,7 @@ class InitializeProject:
         self,
         quiet: bool = False,
         builder: str = None,
+        build_command: str = None,
         optional_deps: str = None,
         is_gui: bool = None,
         app_entry: str = None,
@@ -28,6 +29,7 @@ class InitializeProject:
 
         :param quiet: Flag to suppress output
         :param builder: Builder tool to use.
+        :param build_command: Build command to use with custom builder.
         :param optional_deps: Optional dependencies for the project.
         :param is_gui: Flag to set the project as a GUI project.
         :param app_entry: App entry for the project.
@@ -37,6 +39,7 @@ class InitializeProject:
         """
         self._quiet = quiet
         self._builder = builder
+        self._custom_builder = build_command
         self._optional_deps = optional_deps
         self._is_gui = is_gui
         self._opt_paypp_vars = opt_pyapp_vars
@@ -46,6 +49,9 @@ class InitializeProject:
 
         self.app_entry = None
         self.pyproj = None
+
+        if self._custom_builder:
+            self._custom_builder = self._custom_builder.strip("'\"")
 
         self._set_pyproj()
 
@@ -137,7 +143,7 @@ class InitializeProject:
 
     def _set_builder(self):
         """Set the builder for the project (defaults to rye)."""
-        possible_builders = PackageApp().builders
+        possible_builders = PackageApp().builders_and_custom
 
         default_builder = "rye"
         try:
@@ -147,6 +153,13 @@ class InitializeProject:
 
         if self._builder:
             builder = self._builder
+            if builder == "custom":
+                if self._custom_builder:
+                    builder = f"{builder}={self._custom_builder}"
+                else:
+                    raise click.ClickException(
+                        "Custom build command must be set (--build-command)."
+                    )
         else:
             if self._quiet:
                 builder = default_builder
@@ -156,6 +169,15 @@ class InitializeProject:
                     type=click.Choice(possible_builders),
                     default=default_builder,
                 )
+                if builder == "custom":
+                    if self._custom_builder:
+                        builder_cmd = self._custom_builder
+                    else:
+                        builder_cmd = click.prompt(
+                            "Enter the custom builder command for the project.",
+                            type=str,
+                        )
+                    builder = f"{builder}={builder_cmd}"
 
         pyproject_writer("builder", builder)
         # reload
